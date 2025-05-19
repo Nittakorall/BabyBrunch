@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct MainTabView: View {
-    
+    //shows which tab shoud opens by default, uses tags
+    @State private var selectedTab = 2
     
     //Cince swiftUI doesn't let to change the color of inactive tab, added UIKit that was supposed to be in appDelegate
     init() {
@@ -23,25 +24,24 @@ struct MainTabView: View {
         //}
     }
                 var body: some View {
-                    TabView {
+                    TabView(selection: $selectedTab) {
                     ProfileView()
                             .tabItem {
                                 Image(systemName: "person.crop.circle.fill")
                         }
+                            .tag(1)
                     
                         MapView()
                             .tabItem {
                                 Image(systemName: "map.fill")
                             }
-                           // .badge("!")
+                            .tag(2)
 
                         FavouritesView()
                             .tabItem {
                                 Image(systemName: "heart")
-                                   
-                                
                             }
-                         
+                            .tag(3)
                     }
                 }
             }
