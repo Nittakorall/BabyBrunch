@@ -9,34 +9,25 @@ import SwiftUI
 
 struct MainTabView: View {
    
-//        init() {
-//                    let appearance = UITabBarAppearance()
-//                    appearance.configureWithOpaqueBackground()
-//           // appearance.backgroundColor = UIColor(named: "tabViewLight")
-//             //       appearance.shadowColor = UIColor.black.withAlphaComponent(0.2)
-//
-//                    UITabBar.appearance().standardAppearance = appearance
-//                    if #available(iOS 15.0, *) {
-//                        UITabBar.appearance().scrollEdgeAppearance = appearance
-//                    }
-//                }
+
 
                 var body: some View {
                     TabView {
-                    ProfileView()                       .tabItem {
-                            Label("Profile", systemImage: "circle")
+                    ProfileView()
+                            .tabItem {
+                            Label("Profile", systemImage: "person.crop.circle.fill")
                         }
                     
                         MapView()
                             .tabItem {
-                                Label("Explore", systemImage: "circle")
+                                Label("Map", systemImage: "map.fill")
                             }
-                            .badge("!")
+                           // .badge("!")
 
-//                    //    SignUpView()
-//                            .tabItem {
-//                                Label("Favourites", systemImage: "circle")
-//                            }
+                        FavouritesView()
+                            .tabItem {
+                                Label("Favourites", systemImage: "heart.fill")
+                            }
                     }
                 }
             }
