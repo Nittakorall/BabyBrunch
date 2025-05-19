@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		10951EB62DD4BD5F00E3DA08 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */; };
+		4E20AF052DD4B96200184744 /* BabyBrunchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */; };
 		4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF082DD4B96400184744 /* Assets.xcassets */; };
 		4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF0B2DD4B96400184744 /* Preview Assets.xcassets */; };
 		4E20AF162DD4B96400184744 /* BabyBrunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF152DD4B96400184744 /* BabyBrunchTests.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4E20AF012DD4B96200184744 /* BabyBrunch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BabyBrunch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchApp.swift; sourceTree = "<group>"; };
 		4E20AF082DD4B96400184744 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4E20AF0B2DD4B96400184744 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4E20AF112DD4B96400184744 /* BabyBrunchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BabyBrunchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,6 +112,7 @@
 				4E20AF082DD4B96400184744 /* Assets.xcassets */,
 				4E20AF0A2DD4B96400184744 /* Preview Content */,
 				10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */,
+				4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */,
 			);
 			path = BabyBrunch;
 			sourceTree = "<group>";
@@ -283,6 +286,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4E20AF052DD4B96200184744 /* BabyBrunchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
