@@ -15,12 +15,12 @@ public class AuthViewmodel {
     
     func saveToFirestore(user: User) {
         guard let user = auth.currentUser else { return }
-        let userRef = db.collection("users") //check if logged in
-        let users = db.collection("users")([
-            "uid": user.uid,
-            "email": user.email ?? "",
-            "favorites": user.favorites ?? "",
-            "isAnonymous": user.isAnonymous
+        let userRef = db.collection("User") //check if logged in
+        let users = db.collection("User")([
+            id: user.uid,
+            email: user.email ?? "",
+            favorites: user.favorites ?? "",
+            isAnonymous: user.isAnonymous ?? false
         ])
         do{
             try userRef.get()
