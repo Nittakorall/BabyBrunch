@@ -103,16 +103,36 @@ struct LoginView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)                   )
+                
+                Button(action: {
+                    
+                }, label: {
+                    Text("Sign in as guest")
+                        
+                        .foregroundColor(.white)
+                        .frame(width: 250, height: 10)
+                        .padding()
+                        .background(Color("raisinBlack"))
+                        .cornerRadius(10)
+                        .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 1)
+                            
+                    )
+                }
+                       
+                       
+                )
+                .frame(maxHeight: .infinity, alignment: .top)
             }
-            .frame(maxHeight: .infinity, alignment: .top)
+            
         }
         
     }
     
-}
-
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView()
+    struct LoginView_Previews: PreviewProvider {
+        static var previews: some View {
+            LoginView()
+        }
     }
 }
