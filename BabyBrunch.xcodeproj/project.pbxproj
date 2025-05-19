@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		10951EB62DD4BD5F00E3DA08 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */; };
 		4E20AF052DD4B96200184744 /* BabyBrunchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */; };
 		4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF082DD4B96400184744 /* Assets.xcassets */; };
 		4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF0B2DD4B96400184744 /* Preview Assets.xcassets */; };
@@ -16,6 +15,7 @@
 		4E20AF222DD4B96400184744 /* BabyBrunchUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF212DD4B96400184744 /* BabyBrunchUITestsLaunchTests.swift */; };
 		4E20AF302DD4BB4700184744 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4E20AF2F2DD4BB4700184744 /* FirebaseAuth */; };
 		4E20AF322DD4BB4700184744 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E20AF312DD4BB4700184744 /* FirebaseFirestore */; };
+		9337D2092DDB1E6400E79926 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9337D2082DDB1E6400E79926 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +36,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4E20AF012DD4B96200184744 /* BabyBrunch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BabyBrunch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchApp.swift; sourceTree = "<group>"; };
 		4E20AF082DD4B96400184744 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -46,6 +45,7 @@
 		4E20AF1B2DD4B96400184744 /* BabyBrunchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BabyBrunchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E20AF1F2DD4B96400184744 /* BabyBrunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchUITests.swift; sourceTree = "<group>"; };
 		4E20AF212DD4B96400184744 /* BabyBrunchUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		9337D2082DDB1E6400E79926 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -110,8 +110,8 @@
 				DE3E5C452DDB141700DA0FB4 /* ViewModels */,
 				DE3E5C442DDB140C00DA0FB4 /* Models */,
 				4E20AF082DD4B96400184744 /* Assets.xcassets */,
+				9337D2082DDB1E6400E79926 /* GoogleService-Info.plist */,
 				4E20AF0A2DD4B96400184744 /* Preview Content */,
-				10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */,
 				4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */,
 			);
 			path = BabyBrunch;
@@ -260,8 +260,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */,
+				9337D2092DDB1E6400E79926 /* GoogleService-Info.plist in Resources */,
 				4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */,
-				10951EB62DD4BD5F00E3DA08 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
