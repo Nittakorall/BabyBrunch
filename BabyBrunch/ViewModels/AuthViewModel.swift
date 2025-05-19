@@ -23,7 +23,7 @@ public class AuthViewmodel {
         ]
         userRef.setData(userData, merge: true){ error in
             if let err = error {
-                print("cant save to fireStore")
+                print("cant save to fireStore \(err)")
             } else {
                 print("saved to fireStore")
             }
