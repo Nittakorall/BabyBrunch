@@ -52,7 +52,6 @@
 		DE3E5C442DDB140C00DA0FB4 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
 		DE3E5C452DDB141700DA0FB4 /* ViewModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewModels; sourceTree = "<group>"; };
 		DE3E5C462DDB142000DA0FB4 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
-		DE3E5C512DDB14FD00DA0FB4 /* Other */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Other; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,7 +104,6 @@
 		4E20AF032DD4B96200184744 /* BabyBrunch */ = {
 			isa = PBXGroup;
 			children = (
-				DE3E5C512DDB14FD00DA0FB4 /* Other */,
 				DE3E5C462DDB142000DA0FB4 /* Views */,
 				DE3E5C452DDB141700DA0FB4 /* ViewModels */,
 				DE3E5C442DDB140C00DA0FB4 /* Models */,
@@ -161,7 +159,6 @@
 				DE3E5C442DDB140C00DA0FB4 /* Models */,
 				DE3E5C452DDB141700DA0FB4 /* ViewModels */,
 				DE3E5C462DDB142000DA0FB4 /* Views */,
-				DE3E5C512DDB14FD00DA0FB4 /* Other */,
 			);
 			name = BabyBrunch;
 			packageProductDependencies = (
