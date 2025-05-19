@@ -80,9 +80,9 @@ struct SignUpView: View {
                     .padding()
                     .background(Color("oldRose"))
                     .cornerRadius(10)
-                    .overlay( // Красивая граница со скруглением
+                    .overlay( 
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1) //check how to make borderRadius
+                            .stroke(Color.black, lineWidth: 1)
                     )
                     .padding(.top, 70)
                     
@@ -97,7 +97,7 @@ struct SignUpView: View {
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.black, lineWidth: 1) 
+                        .stroke(Color.black, lineWidth: 1)
                 )
             }
             .frame(maxHeight: .infinity, alignment: .top)
