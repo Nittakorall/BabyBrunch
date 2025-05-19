@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct SignUpView: View {
+    
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
+    @State private var error_: String?
     
     
     var body: some View {
@@ -73,14 +76,14 @@ struct SignUpView: View {
                     
                     //Sign up button
                     Button("Sign Up") {
-                        
+                        isSignedUp()
                     }
                     .foregroundColor(.white)
                     .frame(width: 250, height: 10)
                     .padding()
                     .background(Color("oldRose"))
                     .cornerRadius(10)
-                    .overlay( 
+                    .overlay(
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.black, lineWidth: 1)
                     )
@@ -105,10 +108,30 @@ struct SignUpView: View {
         
     }
     
+    func isSignedUp() {
+        guard !email.isEmpty, !password.isEmpty else {
+            error_ = "email & password, tack"
+            return
+        }
+        
+        guard password.count >= 6 else {
+            error_ = "6 tecken pga. Firebase restrictions"
+            return
+        }
+        
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let err = error {
+                error_ = "Fel vid registrering: \(err.localizedDescription)"
+            } else {
+                MapView()
+            }
+        }
+    }
+    
 }
 
-struct SignUpView_Previews: PreviewProvider {
-    static var previews: some View {
-        SignUpView()
-    }
-}
+//struct SignUpView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SignUpView(isSignedUp: .init(get: { true }, set: { _ in }))
+//    }
+//}

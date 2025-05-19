@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isChecked = false
+    @Binding var isSignedUp: Bool
+    @State private var error_: String?
     
     var body: some View {
         
@@ -109,10 +112,21 @@ struct LoginView: View {
         
     }
     
+    func signUp() {
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if let err = error {
+                error_ = err.localizedDescription
+                print("Sign in failed: \(err)")
+            } else {
+                isSignedUp = true
+            }
+        }
+    }
+    
 }
 
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView()
-    }
-}
+//struct LoginView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        LoginView()
+//    }
+//}
