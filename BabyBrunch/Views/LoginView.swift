@@ -19,6 +19,8 @@ struct LoginView: View {
                    .ignoresSafeArea()
               
                VStack{
+                   
+                   
                    Text("BABYBrunch")
                        .padding(.top, 50)
                        .padding(.bottom, 50)
@@ -37,7 +39,7 @@ struct LoginView: View {
                            .padding()
                            .overlay(
                                RoundedRectangle(cornerRadius: 10)
-                                   .stroke(Color("raisinBlack"), lineWidth: 2) //check how to make borderRadius
+                                   .stroke(Color("raisinBlack"), lineWidth: 2)
                            )
                            .background(Color.white)
                            .cornerRadius(8)
@@ -49,9 +51,9 @@ struct LoginView: View {
                       
                            .textContentType(.password)
                            .padding()
-                           .overlay( // Красивая граница со скруглением
+                           .overlay(
                                RoundedRectangle(cornerRadius: 10)
-                                   .stroke(Color("raisinBlack"), lineWidth: 2) //check how to make borderRadius
+                                   .stroke(Color("raisinBlack"), lineWidth: 2)
                            )
                            .background(Color.white)
                            .cornerRadius(8)
@@ -67,9 +69,9 @@ struct LoginView: View {
                        .padding()
                        .background(Color("oldRose"))
                        .cornerRadius(10)
-                       .overlay( // Красивая граница со скруглением
+                       .overlay(
                            RoundedRectangle(cornerRadius: 10)
-                               .stroke(Color.black, lineWidth: 1) //check how to make borderRadius
+                               .stroke(Color.black, lineWidth: 1)
                        )
                        Button(action: {
                           
@@ -91,10 +93,9 @@ struct LoginView: View {
                    .frame(width: 300, height: 450)
                    .background(Color.white)
                    .cornerRadius(10)
-                   .overlay( // Красивая граница со скруглением
+                   .overlay(
                        RoundedRectangle(cornerRadius: 10)
-                           .stroke(Color.black, lineWidth: 1) //check how to make borderRadius
-                   )
+                           .stroke(Color.black, lineWidth: 1)                   )
                }
                .frame(maxHeight: .infinity, alignment: .top)
            }
