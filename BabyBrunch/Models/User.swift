@@ -10,5 +10,6 @@ import Foundation
 struct User: Identifiable, Codable {
     let id: String
     let email: String?
+    let favorites: String?
     let isSignedUp: Bool
 }

@@ -14,18 +14,19 @@ public class AuthViewmodel {
     let auth = Auth.auth()
     
     func saveToFirestore(user: User) {
-        guard let user = auth.currentUser else { return }
-        let userRef = db.collection("User") //check if logged in
-        let users = db.collection("User")([
-            id: user.uid,
-            email: user.email ?? "",
-            favorites: user.favorites ?? "",
-            isAnonymous: user.isAnonymous ?? false
-        ])
-        do{
-            try userRef.get()
-        } catch {
-            print("Can't save to firestore")
+        let userRef = db.collection("User").document(user.id)
+        let userData:[String: Any] = [
+            "id": user.id,
+            "email": user.email ?? "",
+            "favorites": user.favorites ?? "",
+            "isSignedUp": user.isSignedUp
+        ]
+        userRef.setData(userData, merge: true){ error in
+            if let err = error {
+                print("cant save to fireStore")
+            } else {
+                print("saved to fireStore")
+            }
         }
     }
     func listenToFirestore(){
