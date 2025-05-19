@@ -3,13 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		10951EB62DD4BD5F00E3DA08 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */; };
-		4E20AF052DD4B96200184744 /* BabyBrunchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */; };
-		4E20AF072DD4B96200184744 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF062DD4B96200184744 /* ContentView.swift */; };
 		4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF082DD4B96400184744 /* Assets.xcassets */; };
 		4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF0B2DD4B96400184744 /* Preview Assets.xcassets */; };
 		4E20AF162DD4B96400184744 /* BabyBrunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF152DD4B96400184744 /* BabyBrunchTests.swift */; };
@@ -39,8 +37,6 @@
 /* Begin PBXFileReference section */
 		10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4E20AF012DD4B96200184744 /* BabyBrunch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BabyBrunch.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchApp.swift; sourceTree = "<group>"; };
-		4E20AF062DD4B96200184744 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4E20AF082DD4B96400184744 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4E20AF0B2DD4B96400184744 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4E20AF112DD4B96400184744 /* BabyBrunchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BabyBrunchTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -49,6 +45,13 @@
 		4E20AF1F2DD4B96400184744 /* BabyBrunchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchUITests.swift; sourceTree = "<group>"; };
 		4E20AF212DD4B96400184744 /* BabyBrunchUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		DE3E5C442DDB140C00DA0FB4 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
+		DE3E5C452DDB141700DA0FB4 /* ViewModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewModels; sourceTree = "<group>"; };
+		DE3E5C462DDB142000DA0FB4 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
+		DE3E5C512DDB14FD00DA0FB4 /* Other */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Other; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		4E20AEFE2DD4B96200184744 /* Frameworks */ = {
@@ -100,8 +103,10 @@
 		4E20AF032DD4B96200184744 /* BabyBrunch */ = {
 			isa = PBXGroup;
 			children = (
-				4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */,
-				4E20AF062DD4B96200184744 /* ContentView.swift */,
+				DE3E5C512DDB14FD00DA0FB4 /* Other */,
+				DE3E5C462DDB142000DA0FB4 /* Views */,
+				DE3E5C452DDB141700DA0FB4 /* ViewModels */,
+				DE3E5C442DDB140C00DA0FB4 /* Models */,
 				4E20AF082DD4B96400184744 /* Assets.xcassets */,
 				4E20AF0A2DD4B96400184744 /* Preview Content */,
 				10951EB52DD4BD5F00E3DA08 /* GoogleService-Info.plist */,
@@ -148,6 +153,12 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DE3E5C442DDB140C00DA0FB4 /* Models */,
+				DE3E5C452DDB141700DA0FB4 /* ViewModels */,
+				DE3E5C462DDB142000DA0FB4 /* Views */,
+				DE3E5C512DDB14FD00DA0FB4 /* Other */,
 			);
 			name = BabyBrunch;
 			packageProductDependencies = (
@@ -272,8 +283,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4E20AF072DD4B96200184744 /* ContentView.swift in Sources */,
-				4E20AF052DD4B96200184744 /* BabyBrunchApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
