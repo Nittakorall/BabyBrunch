@@ -6,3 +6,40 @@
 //
 
 import Foundation
+import Firebase
+import FirebaseAuth
+
+public class AuthViewmodel {
+    let db = Firestore.firestore()
+    let auth = Auth.auth()
+    
+    func saveToFirestore(user: User) {
+        guard let user = auth.currentUser else { return }
+        let userRef = db.collection("users") //check if logged in
+        let users = db.collection("users")([
+            "uid": user.uid,
+            "email": user.email ?? "",
+            "favorites": user.favorites ?? "",
+            "isAnonymous": user.isAnonymous
+        ])
+        do{
+            try userRef.get()
+        } catch {
+            print("Can't save to firestore")
+        }
+    }
+    func listenToFirestore(){
+        guard let user = auth.currentUser else { return }
+        let userRef = db.collection("users").document("\(user.uid)")
+        let users = db.collection("users")
+        
+        userRef.addSnapshotListener { documentSnapshot, error in
+            guard let documentSnapshot = documentSnapshot else {
+                print("Error fetching document: \(error!)")
+                return
+            }
+            print("Does it work?")
+        }
+        
+    }
+}
