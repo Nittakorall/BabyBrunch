@@ -8,26 +8,40 @@
 import SwiftUI
 
 struct MainTabView: View {
-   
-
-
+    
+    
+    //Cince swiftUI doesn't let to change the color of inactive tab, added UIKit that was supposed to be in appDelegate
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(named: "raisinBlack")
+        appearance.stackedLayoutAppearance.selected.iconColor = UIColor(named: "oldRose")
+        UITabBar.appearance().standardAppearance = appearance
+        //add rows below if you want to add background to tabView
+        
+      //  if #available(iOS 15.0, *) {
+         //   UITabBar.appearance().scrollEdgeAppearance = appearance
+        //}
+    }
                 var body: some View {
                     TabView {
                     ProfileView()
                             .tabItem {
-                            Label("Profile", systemImage: "person.crop.circle.fill")
+                                Image(systemName: "person.crop.circle.fill")
                         }
                     
                         MapView()
                             .tabItem {
-                                Label("Map", systemImage: "map.fill")
+                                Image(systemName: "map.fill")
                             }
                            // .badge("!")
 
                         FavouritesView()
                             .tabItem {
-                                Label("Favourites", systemImage: "heart.fill")
+                                Image(systemName: "heart")
+                                   
+                                
                             }
+                         
                     }
                 }
             }
