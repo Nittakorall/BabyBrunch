@@ -14,6 +14,7 @@ struct LoginView: View {
     @State private var isChecked = false
     @State private var error_: String?
     @EnvironmentObject private var authVM: AuthViewModel
+    @State private var openSignUpView = false
     
     var body: some View {
         
@@ -116,12 +117,29 @@ struct LoginView: View {
                 .foregroundColor(.white)
                 .frame(width: 250, height: 10)
                 .padding()
+                .background(Color("thistle"))
+                .cornerRadius(10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.black, lineWidth: 1)
+                )
+                
+                Button("Register") {
+                    openSignUpView = true
+                }
+          
+                .foregroundColor(.white)
+                .frame(width: 250, height: 10)
+                .padding()
                 .background(Color("oldRose"))
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)
                 )
+                .sheet(isPresented: $openSignUpView) {
+                    SignUpView()
+                }
             }
             
         }
@@ -135,8 +153,8 @@ struct LoginView: View {
     }
     
 }
-//struct LoginView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LoginView()
-//    }
-//}
+struct LoginView_Previews: PreviewProvider {
+    static var previews: some View {
+        LoginView()
+    }
+}
