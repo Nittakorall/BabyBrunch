@@ -111,7 +111,7 @@ struct LoginView: View {
                 
                 //MARK: sign in as guest button
                 Button("Sign in as guest") {
-                    //    auth.signInAsGuest()
+                    authVM.signInAsGuest()
                 }
                 .foregroundColor(.white)
                 .frame(width: 250, height: 10)
