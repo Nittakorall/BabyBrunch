@@ -16,6 +16,7 @@ struct UIKitMapView : UIViewRepresentable {
     @Binding var mapViewRef: MKMapView?
     @Binding var selectedVenue : MKMapItem?
     
+    @StateObject private var vm = LocationViewModel()
           
     
     
@@ -61,6 +62,9 @@ struct UIKitMapView : UIViewRepresentable {
          ✅ Ställer in kartan att visa just det området.
          ✅ Returnerar kartan så att den kan visas i din SwiftUI-layout.
          */
+        
+        
+    
         let region = MKCoordinateRegion( // Du skapar ett nytt objekt av typen MKCoordinateRegion. Det används av MKMapView för att definiera vilken del av kartan som ska visas.
             center: CLLocationCoordinate2D(latitude: 59.8609, longitude: 17.6486), // Uppsala
             //         center: CLLocationCoordinate2D(latitude: 59.325, longitude: 18.05), // Stockholm

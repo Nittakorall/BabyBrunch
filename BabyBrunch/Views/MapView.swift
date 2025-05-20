@@ -29,6 +29,9 @@ struct MapView: View {
          mapViewRef: $mapViewRef,
          selectedVenue: $selectedVenue)
       .ignoresSafeArea()
+      .onAppear() {
+          vm.checkIfLocationServicesEnabled()
+      }
       .alert(isPresented: $showAlert) {
          Alert(
             title: Text(alertTitle),
