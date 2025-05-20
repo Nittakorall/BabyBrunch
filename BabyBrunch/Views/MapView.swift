@@ -19,6 +19,8 @@ struct MapView: View {
    @State private var alertMessage = ""
    @State private var showSheet = false
    
+    @StateObject private var vm = LocationViewModel()
+    
    var body : some View {
       UIKitMapView(
          showAlert: $showAlert,
