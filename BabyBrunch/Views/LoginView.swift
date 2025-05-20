@@ -9,10 +9,10 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject private var auth: AuthViewModel
-        @State private var email = ""
-        @State private var password = ""
-        @State private var isChecked = false
-
+    @State private var email = ""
+    @State private var password = ""
+    @State private var isChecked = false
+    
     var body: some View {
         
         ZStack{
@@ -80,6 +80,20 @@ struct LoginView: View {
                             .stroke(Color.black, lineWidth: 1)
                     )
                     
+                    //MARK: sign in as guest button
+                    Button("Sign in as guest") {
+                        auth.signInAsGuest()
+                    }
+                    .foregroundColor(.white)
+                    .frame(width: 250, height: 10)
+                    .padding()
+                    .background(Color("oldRose"))
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 1)
+                    )
+                    
                     //forgot password button
                     Button(action: {
                         
@@ -90,7 +104,7 @@ struct LoginView: View {
                             .frame(width: 250, height: 1)
                             .padding()
                     }
-                    .padding(.top, 50)
+                    .padding(.top, 30)
                     
                     
                 }
@@ -98,41 +112,24 @@ struct LoginView: View {
                 //white field in the middle of the screen
                 .padding()
                 .frame(maxHeight: .infinity, alignment: .top)
-                .frame(width: 300, height: 450)
+                .frame(width: 300, height: 500)
                 .background(Color.white)
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)                   )
-                //MARK: sign in as guest button (needs a redesign)
-                Button("Sign in as guest") {
-                    auth.signInAsGuest()
-                }
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color("raisinBlack"))
-                        .cornerRadius(10)
-                        .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1)
-                        
-                        //MARK: might need error handling here or in authviewmodel
-                            
-                    )
-                }
-                       
-                       
-                
-                .frame(maxHeight: .infinity, alignment: .top)
             }
             
+            .frame(maxHeight: .infinity, alignment: .top)
         }
         
     }
     
-    struct LoginView_Previews: PreviewProvider {
-        static var previews: some View {
-            LoginView()
-        }
+}
+
+struct LoginView_Previews: PreviewProvider {
+    static var previews: some View {
+        LoginView()
     }
+}
 
