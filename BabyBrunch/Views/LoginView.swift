@@ -12,7 +12,7 @@ struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isChecked = false
-    @Binding var isSignedUp: Bool
+    @State var isSignedUp = false
     @State private var error_: String?
     
     var body: some View {
@@ -70,7 +70,7 @@ struct LoginView: View {
                     
                     //sign in button
                     Button("Sign In") {
-                        
+                        signIn()
                     }
                     .foregroundColor(.white)
                     .frame(width: 250, height: 10)
@@ -112,7 +112,7 @@ struct LoginView: View {
         
     }
     
-    func signUp() {
+    func signIn() {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let err = error {
                 error_ = err.localizedDescription

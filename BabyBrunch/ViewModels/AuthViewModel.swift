@@ -9,17 +9,20 @@ import Foundation
 import Firebase
 import FirebaseAuth
 
-public class AuthViewmodel {
+public class AuthViewmodel: ObservableObject {
+    @Published var currentUser: User? = nil
+    @Published var errorMessage: String? = nil
+    
     let db = Firestore.firestore()
     let auth = Auth.auth()
     
     func saveToFirestore(user: User) {
-        let userRef = db.collection("User").document(user.id)
+        let userRef = db.collection("users").document(user.id)
         let userData:[String: Any] = [
             "id": user.id,
             "email": user.email ?? "",
-            "favorites": user.favorites ?? "",
-            "isSignedUp": user.isSignedUp
+            "favorites": user.favorites ?? [],
+            "register": user.isSignedUp
         ]
         userRef.setData(userData, merge: true){ error in
             if let err = error {
@@ -29,18 +32,31 @@ public class AuthViewmodel {
             }
         }
     }
-    func listenToFirestore(){
-        guard let user = auth.currentUser else { return }
-        let userRef = db.collection("users").document("\(user.uid)")
-        let users = db.collection("users")
-        
-        userRef.addSnapshotListener { documentSnapshot, error in
-            guard let documentSnapshot = documentSnapshot else {
-                print("Error fetching document: \(error!)")
-                return
+    func listenToFirestore() {
+            guard let user = auth.currentUser else { return }
+            let userRef = db.collection("users").document(user.uid)
+            
+            userRef.addSnapshotListener { snapshot, error in
+                if let error = error {
+                    self.errorMessage = "Lyssningsfel: \(error.localizedDescription)"
+                    return
+                }
+                
+                guard let data = snapshot?.data() else {
+                    self.errorMessage = "Ingen data hittades"
+                    return
+                }
+
+                let user = User(
+                    id: data["id"] as? String ?? "",
+                    email: data["email"] as? String ?? "",
+                    favorites: data["favorites"] as? [String] ?? [],
+                    isSignedUp: data["register"] as? Bool ?? false
+                )
+                
+                DispatchQueue.main.async {
+                    self.currentUser = user
+                }
             }
-            print("Does it work?")
         }
-        
     }
-}

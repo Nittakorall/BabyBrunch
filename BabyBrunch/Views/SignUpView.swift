@@ -14,6 +14,7 @@ struct SignUpView: View {
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
     @State private var error_: String?
+    @State private var isSignedUp = false
     
     
     var body: some View {
@@ -75,8 +76,8 @@ struct SignUpView: View {
                         .cornerRadius(8)
                     
                     //Sign up button
-                    Button("Sign Up") {
-                        isSignedUp()
+                    Button("register") {
+                        register()
                     }
                     .foregroundColor(.white)
                     .frame(width: 250, height: 10)
@@ -108,22 +109,20 @@ struct SignUpView: View {
         
     }
     
-    func isSignedUp() {
+    func register() {
         guard !email.isEmpty, !password.isEmpty else {
             error_ = "email & password, tack"
             return
         }
-        
         guard password.count >= 6 else {
             error_ = "6 tecken pga. Firebase restrictions"
             return
         }
-        
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let err = error {
                 error_ = "Fel vid registrering: \(err.localizedDescription)"
             } else {
-                MapView()
+                isSignedUp = true
             }
         }
     }
