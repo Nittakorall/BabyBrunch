@@ -20,6 +20,7 @@ public class AuthViewModel: ObservableObject {
     let db = Firestore.firestore()
     let auth = Auth.auth()
     
+    //Funktion för att spara användaren som skickas in till firestore under users. varje användare får sitt uid som id
     func saveUser(_ user: User) {
         do {
             try db.collection("users").document(user.id).setData(from: user) { error in
@@ -34,6 +35,8 @@ public class AuthViewModel: ObservableObject {
         }
     }
     
+    //Funktion för att logga in som gäst och få tillgång till appen fast med variabeln isSignedUp som false, som används för att begränsa appen senare.
+    //sparar currentUser som den nyskapade guestUser.
     func signInAsGuest() {
         Auth.auth().signInAnonymously { result, error in
             if let error = error {
@@ -46,6 +49,8 @@ public class AuthViewModel: ObservableObject {
         }
     }
     
+    //Funktion för att skapa ett konto och då få tillgång till hela appen genom isSignedUp = true.
+    //Denna user sparas också i firestore för att kunna lagra mer info som favoritlistor etc.
     func signUpWithEmail(email: String, password: String, onSuccess: @escaping (Bool) -> Void){
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let err = error {
@@ -60,6 +65,8 @@ public class AuthViewModel: ObservableObject {
         }
     }
     
+    //Funktion för att logga in användare som har konto och alltså har tillgång till hela appen
+    //Kallar på fetchUserInfo för att få med all data och sätter även där currentUser med hjälp av kontots uid
     func signIn(email: String, password: String) {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if let err = error {
