@@ -31,7 +31,7 @@ struct BabyBrunchApp: App {
             }
             else{
                 LoginView()
-                //SignUpView()
+              //  SignUpView()
                     .environmentObject(authViewModel)
             }
         }
