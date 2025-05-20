@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct LoginView: View {
-    @EnvironmentObject private var auth: AuthViewModel
-    @State private var email = ""
-    @State private var password = ""
+    @State private var email: String = ""
+    @State private var password: String = ""
     @State private var isChecked = false
+    @State private var error_: String?
+    @EnvironmentObject private var authVM: AuthViewModel
     
     var body: some View {
         
@@ -20,7 +22,7 @@ struct LoginView: View {
             //background color
             Color("lavenderBlush")
                 .ignoresSafeArea()
-            VStack {
+            VStack{
                 VStack{
                     
                     /// logo
@@ -68,7 +70,7 @@ struct LoginView: View {
                         
                         //sign in button
                         Button("Sign In") {
-                            
+                            authVM.signIn(email: email, password: password)
                         }
                         .foregroundColor(.white)
                         .frame(width: 250, height: 10)
@@ -79,7 +81,6 @@ struct LoginView: View {
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.black, lineWidth: 1)
                         )
-                        
                         
                         //forgot password button
                         Button(action: {
@@ -92,9 +93,9 @@ struct LoginView: View {
                                 .padding()
                         }
                         .padding(.top, 50)
-                        
-                        
                     }
+                    
+                    
                     
                     //white field in the middle of the screen
                     .padding()
@@ -104,13 +105,13 @@ struct LoginView: View {
                     .cornerRadius(10)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1)                   )
+                            .stroke(Color.black, lineWidth: 1))
                 }
                 .frame(maxHeight: .infinity, alignment: .top)
                 
                 //MARK: sign in as guest button
                 Button("Sign in as guest") {
-                //    auth.signInAsGuest()
+                    //    auth.signInAsGuest()
                 }
                 .foregroundColor(.white)
                 .frame(width: 250, height: 10)
@@ -122,16 +123,20 @@ struct LoginView: View {
                         .stroke(Color.black, lineWidth: 1)
                 )
             }
-
+            
         }
         
     }
     
-}
-
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView()
+    struct LoginView_Previews: PreviewProvider {
+        static var previews: some View {
+            LoginView()
+        }
     }
+    
 }
-
+//struct LoginView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        LoginView()
+//    }
+//}
