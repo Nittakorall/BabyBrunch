@@ -19,10 +19,20 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct BabyBrunchApp: App {
+    @StateObject var authViewModel = AuthViewModel()
+    
    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
    var body: some Scene {
       WindowGroup {
-          SignUpView()
+          if authViewModel.isLoggedIn {
+              MainTabView()
+                  .environmentObject(authViewModel)
+          }
+          else{
+              SignUpView()
+                  .environmentObject(authViewModel)
+          }
       }
    }
 }

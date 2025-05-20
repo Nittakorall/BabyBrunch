@@ -8,8 +8,8 @@
 import Foundation
 
 struct User: Identifiable, Codable {
-    let id: String
-    let email: String?
-    let favorites: [String]?
-    let isSignedUp: Bool
+    var id: String
+    var email: String = ""
+    var favorites: [String] = []
+    var isSignedUp: Bool
 }

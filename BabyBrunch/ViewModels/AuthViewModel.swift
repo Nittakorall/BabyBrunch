@@ -9,20 +9,23 @@ import Foundation
 import Firebase
 import FirebaseAuth
 
-public class AuthViewmodel: ObservableObject {
+@MainActor
+public class AuthViewModel: ObservableObject {
     @Published var currentUser: User? = nil
     @Published var errorMessage: String? = nil
     @Published var isLoggedIn = false
+     private var error_: String?
+     private var isSignedUp = false
     
     let db = Firestore.firestore()
     let auth = Auth.auth()
     
-    func saveToFirestore(user: User) {
+    func saveUserToFirestore(user: User) {
         let userRef = db.collection("users").document(user.id)
         let userData:[String: Any] = [
             "id": user.id,
-            "email": user.email ?? "",
-            "favorites": user.favorites ?? [],
+            "email": user.email,
+            "favorites": user.favorites,
             "register": user.isSignedUp
         ]
         userRef.setData(userData, merge: true){ error in
@@ -31,40 +34,37 @@ public class AuthViewmodel: ObservableObject {
             } else {
                 print("saved to fireStore")
             }
-
-    
-    // Guest flow
-    func signInAsGuest() {
-        Task {
-            let result = try await Auth.auth().signInAnonymously()
-            finishSignIn(uid: result.user.uid, email: nil, isSignedUp: false)
+            
+            
+            
+            // Guest flow
+//            func signInAsGuest() {
+//                Task {
+//                    let result = try await Auth.auth().signInAnonymously()
+//                    finishSignIn(uid: result.user.uid, email: nil, isSignedUp: false)
+//                }
+//            }
         }
     }
-    func listenToFirestore() {
-            guard let user = auth.currentUser else { return }
-            let userRef = db.collection("users").document(user.uid)
-            
-            userRef.addSnapshotListener { snapshot, error in
-                if let error = error {
-                    self.errorMessage = "Lyssningsfel: \(error.localizedDescription)"
-                    return
-                }
-                
-                guard let data = snapshot?.data() else {
-                    self.errorMessage = "Ingen data hittades"
-                    return
-                }
-
-                let user = User(
-                    id: data["id"] as? String ?? "",
-                    email: data["email"] as? String ?? "",
-                    favorites: data["favorites"] as? [String] ?? [],
-                    isSignedUp: data["register"] as? Bool ?? false
-                )
-                
-                DispatchQueue.main.async {
-                    self.currentUser = user
-                }
+    func signUpWithEmail(email: String, password: String, onSuccess: @escaping (Bool) -> Void){
+        Auth.auth().createUser(withEmail: email, password: password) { result, error in
+            if let err = error {
+                print("Fel vid registrering: \(err.localizedDescription)")
+                onSuccess(false)
+            } else {
+                self.isSignedUp = true
+                onSuccess(true)
             }
         }
     }
+    
+    func signIn(email: String, password: String) {
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if let err = error {
+                print("Sign in failed: \(err)")
+            } else {
+                self.isLoggedIn = true
+            }
+        }
+    }
+}

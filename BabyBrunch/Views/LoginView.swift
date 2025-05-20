@@ -12,10 +12,8 @@ struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isChecked = false
-    @State var isSignedUp = false
     @State private var error_: String?
-    
-    @EnvironmentObject private var auth: AuthViewModel
+    @EnvironmentObject private var authVM: AuthViewModel
         
     var body: some View {
         
@@ -72,7 +70,7 @@ struct LoginView: View {
                     
                     //sign in button
                     Button("Sign In") {
-                        signIn()
+                        authVM.signIn(email: email, password: password)
                     }
                     .foregroundColor(.white)
                     .frame(width: 250, height: 10)
@@ -109,40 +107,27 @@ struct LoginView: View {
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)                   )
                 //MARK: sign in as guest button (needs a redesign)
-                Button("Sign in as guest") {
-                    auth.signInAsGuest()
+//                Button("Sign in as guest") {
+//                    auth.signInAsGuest()
+//                }
+//                        .foregroundColor(.white)
+//                        .padding()
+//                        .background(Color("raisinBlack"))
+//                        .cornerRadius(10)
+//                        .overlay(
+//                        RoundedRectangle(cornerRadius: 10)
+//                            .stroke(Color.black, lineWidth: 1)
+//                        
+//                        //MARK: might need error handling here or in authviewmodel
+//                            
+//                    )
                 }
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color("raisinBlack"))
-                        .cornerRadius(10)
-                        .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1)
-                        
-                        //MARK: might need error handling here or in authviewmodel
-                            
-                    )
-                }
-                       
-                       
-                
                 .frame(maxHeight: .infinity, alignment: .top)
             }
-            
         }
-        
-    }
     
-    func signIn() {
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let err = error {    error_ = err.localizedDescription
-                print("Sign in failed: \(err)")
-            } else {
-                isSignedUp = true
-            }
-}
 
+}
 //struct LoginView_Previews: PreviewProvider {
 //    static var previews: some View {
 //        LoginView()

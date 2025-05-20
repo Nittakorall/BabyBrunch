@@ -15,6 +15,7 @@ struct SignUpView: View {
     @State private var confirmPassword: String = ""
     @State private var error_: String?
     @State private var isSignedUp = false
+    @EnvironmentObject private var authVM : AuthViewModel
     
     
     var body: some View {
@@ -111,20 +112,21 @@ struct SignUpView: View {
     
     func register() {
         guard !email.isEmpty, !password.isEmpty else {
-            error_ = "email & password, tack"
+            print("email & password, tack")
             return
         }
         guard password.count >= 6 else {
-            error_ = "6 tecken pga. Firebase restrictions"
+            print("6 tecken pga. Firebase restrictions")
             return
         }
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if let err = error {
-                error_ = "Fel vid registrering: \(err.localizedDescription)"
+        authVM.signUpWithEmail(email: email, password: password){ success in
+            if success{
+                authVM.signIn(email: email, password: password)
             } else {
-                isSignedUp = true
+                print("Failure")
             }
         }
+        
     }
     
 }
