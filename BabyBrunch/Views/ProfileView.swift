@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @EnvironmentObject private var authVM: AuthViewModel
+    
     var body: some View {
         ZStack{
                     Color("lavenderBlush")
@@ -24,9 +26,9 @@ struct ProfileView: View {
                         .foregroundColor(Color("oldRose"))
                         Spacer()
                         Button(action: {
-
+                            authVM.signOut()
                         }) {
-                            Text("Delete account")
+                            Text("Sign Out")
                                 .foregroundColor(.white)
                                                 .frame(width: 200, height: 10)
                                                 .padding()
