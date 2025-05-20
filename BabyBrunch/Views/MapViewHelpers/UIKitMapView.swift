@@ -63,8 +63,10 @@ struct UIKitMapView : UIViewRepresentable {
          ✅ Returnerar kartan så att den kan visas i din SwiftUI-layout.
          */
         
-        
     
+        
+        //We don't need region variable here because we get location data from locationVM, replaced region it with vm.realRegion
+       
         let region = MKCoordinateRegion( // Du skapar ett nytt objekt av typen MKCoordinateRegion. Det används av MKMapView för att definiera vilken del av kartan som ska visas.
             center: CLLocationCoordinate2D(latitude: 59.8609, longitude: 17.6486), // Uppsala
             //         center: CLLocationCoordinate2D(latitude: 59.325, longitude: 18.05), // Stockholm
@@ -72,12 +74,16 @@ struct UIKitMapView : UIViewRepresentable {
             //         center: CLLocationCoordinate2D(latitude: 56.04673, longitude: 12.69437), // Helsingborg
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
         )
-        mapView.setRegion(region, animated: false) // Du instruerar MKMapView att visa just den region du nyss skapat. setRegion(_:animated:) är en metod som uppdaterar kartans vy. animated: false betyder att den direkt hoppar till regionen utan animering (ingen zoom eller glidning). Sätter du animated: true, kommer kartan animera sig själv till den nya platsen, vilket kan vara trevligare för användaren.
+        mapView.setRegion(vm.realRegion, animated: false) // Du instruerar MKMapView att visa just den region du nyss skapat. setRegion(_:animated:) är en metod som uppdaterar kartans vy. animated: false betyder att den direkt hoppar till regionen utan animering (ingen zoom eller glidning). Sätter du animated: true, kommer kartan animera sig själv till den nya platsen, vilket kan vara trevligare för användaren.
         
         return mapView // Du returnerar det nykonfigurerade MKMapView-objektet från makeUIView(context:) i UIViewRepresentable. Den här kartan kommer att visas i din SwiftUI-vy.
     }
     
-    func updateUIView(_ uiView: MKMapView, context: Context) { } // Denna behövs för att UIKitMapView ska kunna ör att fullfölja kraven i protokollet UIViewRepresentable.
+    func updateUIView(_ uiView: MKMapView, context: Context) {
+        
+        //uppdates the map if user location changes
+        uiView.setRegion(vm.realRegion, animated: false)
+    } // Denna behövs för att UIKitMapView ska kunna ör att fullfölja kraven i protokollet UIViewRepresentable.
     
     
 }

@@ -29,6 +29,9 @@ struct MapView: View {
          mapViewRef: $mapViewRef,
          selectedVenue: $selectedVenue)
       .ignoresSafeArea()
+      .accentColor(Color(.thistle))
+       
+       //checks if user needs to give permission
       .onAppear() {
           vm.checkIfLocationServicesEnabled()
       }
