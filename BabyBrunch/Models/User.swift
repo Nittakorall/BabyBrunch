@@ -10,5 +10,5 @@ import Foundation
 struct User: Identifiable, Codable {
     let id: String
     let email: String?
-    let isSignedUp: Bool //used for guest account
+    let isSignedUp: Bool
 }

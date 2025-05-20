@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct LoginView: View {
-    @EnvironmentObject private var auth: AuthViewModel
-        @State private var email = ""
-        @State private var password = ""
-        @State private var isChecked = false
-
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var isChecked = false
+    
     var body: some View {
         
         ZStack{
@@ -104,35 +103,16 @@ struct LoginView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)                   )
-                //MARK: sign in as guest button (needs a redesign)
-                Button("Sign in as guest") {
-                    auth.signInAsGuest()
-                }
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color("raisinBlack"))
-                        .cornerRadius(10)
-                        .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1)
-                        
-                        //MARK: might need error handling here or in authviewmodel
-                            
-                    )
-                }
-                       
-                       
-                
-                .frame(maxHeight: .infinity, alignment: .top)
             }
-            
+            .frame(maxHeight: .infinity, alignment: .top)
         }
         
     }
     
-    struct LoginView_Previews: PreviewProvider {
-        static var previews: some View {
-            LoginView()
-        }
-    }
+}
 
+struct LoginView_Previews: PreviewProvider {
+    static var previews: some View {
+        LoginView()
+    }
+}
