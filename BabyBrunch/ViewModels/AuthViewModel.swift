@@ -14,8 +14,8 @@ public class AuthViewModel: ObservableObject {
     @Published var currentUser: User? = nil
     @Published var errorMessage: String? = nil
     @Published var isLoggedIn = false
-     private var error_: String?
-     private var isSignedUp = false
+    private var error_: String?
+    private var isSignedUp = false
     
     let db = Firestore.firestore()
     let auth = Auth.auth()
@@ -38,12 +38,12 @@ public class AuthViewModel: ObservableObject {
             
             
             // Guest flow
-//            func signInAsGuest() {
-//                Task {
-//                    let result = try await Auth.auth().signInAnonymously()
-//                    finishSignIn(uid: result.user.uid, email: nil, isSignedUp: false)
-//                }
-//            }
+            //            func signInAsGuest() {
+            //                Task {
+            //                    let result = try await Auth.auth().signInAnonymously()
+            //                    finishSignIn(uid: result.user.uid, email: nil, isSignedUp: false)
+            //                }
+            //            }
         }
     }
     func signUpWithEmail(email: String, password: String, onSuccess: @escaping (Bool) -> Void){

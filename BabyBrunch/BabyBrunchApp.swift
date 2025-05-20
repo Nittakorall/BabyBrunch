@@ -9,30 +9,31 @@ import SwiftUI
 import FirebaseCore
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-   func application(_ application: UIApplication,
-                    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-      FirebaseApp.configure()
-      
-      return true
-   }
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        return true
+    }
 }
 
 @main
 struct BabyBrunchApp: App {
     @StateObject var authViewModel = AuthViewModel()
     
-   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
-   var body: some Scene {
-      WindowGroup {
-          if authViewModel.isLoggedIn {
-              MainTabView()
-                  .environmentObject(authViewModel)
-          }
-          else{
-              SignUpView()
-                  .environmentObject(authViewModel)
-          }
-      }
-   }
+    var body: some Scene {
+        WindowGroup {
+            if authViewModel.isLoggedIn {
+                MainTabView()
+                    .environmentObject(authViewModel)
+            }
+            else{
+                LoginView()
+                //SignUpView()
+                    .environmentObject(authViewModel)
+            }
+        }
+    }
 }
