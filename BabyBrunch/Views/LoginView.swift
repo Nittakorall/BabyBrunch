@@ -104,12 +104,11 @@ struct LoginView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)                   )
-                
+                //MARK: sign in as guest button (needs a redesign)
                 Button("Sign in as guest") {
                     auth.signInAsGuest()
                 }
                         .foregroundColor(.white)
-                        .frame(width: 250, height: 10)
                         .padding()
                         .background(Color("raisinBlack"))
                         .cornerRadius(10)
