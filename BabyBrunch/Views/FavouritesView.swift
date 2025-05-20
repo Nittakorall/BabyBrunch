@@ -9,54 +9,53 @@ import SwiftUI
 
 
 
-        struct FavouritesView: View {
+struct FavouritesView: View {
+    
+    
+    let testList = ["BabyCafe", "AnotherBabyCafe", "CafeBaby"]
+    
+    var body: some View {
+        ZStack{
+            Color("lavenderBlush")
+                .ignoresSafeArea()
             
-            
-            let testList = ["BabyCafe", "AnotherBabyCafe", "CafeBaby"]
-
-            var body: some View {
-                ZStack{
-                    Color("lavenderBlush")
-                        .ignoresSafeArea()
-
-                    VStack{
-
-                        Text("My favourites")
-                            .padding(.top, 50)
-                            .fontDesign(.rounded)
-                            .font(.title)
-                            .foregroundColor(Color("oldRose"))
-                        List() {
-                           
-                            ForEach(testList, id: \.self) { testItem in
-                                VStack{
-                                    HStack{
-                                        Text(testItem)
-                                        Spacer()
-                                        Text("4.6")
-
-                                    }
-                                    
-                                }
-                             
-                                .padding(.vertical, 20)
-                            }
-                            .listRowBackground(Color("lavenderBlush"))
-                          
-                        }
-                     
-                        .padding(.vertical, 20)
-            
-                      //  .background(Color("oldRose"))//I keep it to find another area, can remove it later
-                        
-                    }
+            VStack{
+                
+                Text("My favourites")
+                    .padding(.top, 50)
+                    .fontDesign(.rounded)
+                    .font(.title)
+                    .foregroundColor(Color("oldRose"))
+                List() {
                     
-                    .frame(maxHeight: .infinity, alignment: .top)
+                    ForEach(testList, id: \.self) { testItem in
+                        VStack{
+                            HStack{
+                                Text(testItem)
+                                Spacer()
+                                Text("4.6")
+                                
+                            }
+                            
+                        }
+                        
+                        .padding(.vertical, 20)
+                    }
+                    .listRowBackground(Color("lavenderBlush"))
+                    
                 }
-               
+                
+                .padding(.vertical, 20)
+                .scrollContentBackground(.hidden)
+                
             }
-
+            
+            .frame(maxHeight: .infinity, alignment: .top)
         }
+        
+    }
+    
+}
 
 #Preview {
     FavouritesView()

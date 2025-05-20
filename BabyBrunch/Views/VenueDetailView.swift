@@ -16,8 +16,8 @@ struct VenueDetailView: View {
         ZStack{
             // Background color
             Color("lavenderBlush")
-            .edgesIgnoringSafeArea(.all) // lets ignore safe area and place Image up there
-          
+                .edgesIgnoringSafeArea(.all) // lets ignore safe area and place Image up there
+            
             // VStack for venueImage
             VStack{
                 Image("venue")
@@ -26,14 +26,14 @@ struct VenueDetailView: View {
                     .frame(width: UIScreen.main.bounds.width, height: 250) // changes height
                     .padding(.bottom, 20)
                 
-
+                
                 //Vstack for vanue information
                 VStack{
                     StarsView(rating : rating)
                     Text("Name of Venue")
                         .foregroundColor(Color(.oldRose))
                         .font(.custom("Beau Rivage", size: 40)) // Don't know how to add custom fonts, I'll fix later
-           
+                    
                     Text("Address")
                         .foregroundColor(Color(.oldRose))
                         .fontDesign(.rounded)
@@ -44,7 +44,7 @@ struct VenueDetailView: View {
                         .foregroundColor(Color(.oldRose))
                     
                     ReviewListView(reviews : reviews)
-
+                    
                     
                     //  Spacer()
                     Button("Rate venue") {
@@ -110,6 +110,7 @@ struct ReviewListView: View {
             }
             .listRowBackground(Color("lavenderBlush"))
         }
-        .background(Color(.lavenderBlush)) // why doesn't it work :(
+        .scrollContentBackground(.hidden)
+        
     }
 }
