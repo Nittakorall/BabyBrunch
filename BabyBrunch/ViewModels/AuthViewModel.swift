@@ -12,6 +12,7 @@ import FirebaseAuth
 public class AuthViewmodel: ObservableObject {
     @Published var currentUser: User? = nil
     @Published var errorMessage: String? = nil
+    @Published var isLoggedIn = false
     
     let db = Firestore.firestore()
     let auth = Auth.auth()
@@ -30,6 +31,13 @@ public class AuthViewmodel: ObservableObject {
             } else {
                 print("saved to fireStore")
             }
+
+    
+    // Guest flow
+    func signInAsGuest() {
+        Task {
+            let result = try await Auth.auth().signInAnonymously()
+            finishSignIn(uid: result.user.uid, email: nil, isSignedUp: false)
         }
     }
     func listenToFirestore() {

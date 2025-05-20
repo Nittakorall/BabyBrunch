@@ -15,6 +15,8 @@ struct LoginView: View {
     @State var isSignedUp = false
     @State private var error_: String?
     
+    @EnvironmentObject private var auth: AuthViewModel
+        
     var body: some View {
         
         ZStack{
@@ -106,23 +108,39 @@ struct LoginView: View {
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
                         .stroke(Color.black, lineWidth: 1)                   )
+                //MARK: sign in as guest button (needs a redesign)
+                Button("Sign in as guest") {
+                    auth.signInAsGuest()
+                }
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color("raisinBlack"))
+                        .cornerRadius(10)
+                        .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.black, lineWidth: 1)
+                        
+                        //MARK: might need error handling here or in authviewmodel
+                            
+                    )
+                }
+                       
+                       
+                
+                .frame(maxHeight: .infinity, alignment: .top)
             }
-            .frame(maxHeight: .infinity, alignment: .top)
+            
         }
         
     }
     
     func signIn() {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let err = error {
-                error_ = err.localizedDescription
+            if let err = error {    error_ = err.localizedDescription
                 print("Sign in failed: \(err)")
             } else {
                 isSignedUp = true
             }
-        }
-    }
-    
 }
 
 //struct LoginView_Previews: PreviewProvider {
