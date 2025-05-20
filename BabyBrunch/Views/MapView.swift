@@ -31,10 +31,34 @@ struct MapView: View {
             title: Text(alertTitle),
             message: Text(alertMessage),
             primaryButton: .default(Text("Yes"), action: {
-               
+               savePOItoPin()
             }),
             secondaryButton: .cancel(Text("Cancel"))
          )
+      }
+   }
+   
+   func savePOItoPin () {
+      if let venue = selectedVenue, let mapView = mapViewRef {
+         if let name = venue.placemark.name,
+            let streetAddress = venue.placemark.thoroughfare,
+            let streetNo = venue.placemark.subThoroughfare,
+            let website = venue.url?.absoluteString,
+            let phoneNumber = venue.phoneNumber {
+            let latitude = venue.placemark.coordinate.latitude
+            let longitude = venue.placemark.coordinate.longitude
+            
+            let newPin = Pin(
+               name: name,
+               streetAddress: streetAddress,
+               streetNo: streetNo,
+               website: website,
+               phoneNumber: phoneNumber,
+               latitude: latitude,
+               longitude: longitude
+            )
+            print(newPin)
+         }
       }
    }
 }

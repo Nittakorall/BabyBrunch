@@ -91,7 +91,7 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
             DispatchQueue.main.async { // Du gör detta för att uppdatera UI:t på huvudtråden. Exempelvis: lägga till en pin på kartan.
                self.selectedVenue = nearest
                self.alertTitle = nearest.placemark.name ?? "Unknown"
-               self.alertMessage = "Do you want to review \(nearest.placemark.name ?? "Unknown")?"
+               self.alertMessage = "Do you want to add a pin for \(nearest.placemark.name ?? "Unknown")?"
                self.showAlert = true
             }
          }
