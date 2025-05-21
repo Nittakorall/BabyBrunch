@@ -19,6 +19,8 @@ struct MapView: View {
    @State private var alertMessage = ""
    @State private var showSheet = false
    
+    @StateObject private var vm = LocationViewModel()
+    
    var body : some View {
       UIKitMapView(
          showAlert: $showAlert,
@@ -27,6 +29,12 @@ struct MapView: View {
          mapViewRef: $mapViewRef,
          selectedVenue: $selectedVenue)
       .ignoresSafeArea()
+      .accentColor(Color(.thistle))
+       
+       //checks if user needs to give permission
+      .onAppear() {
+          vm.checkIfLocationServicesEnabled()
+      }
       .alert(isPresented: $showAlert) {
          Alert(
             title: Text(alertTitle),
