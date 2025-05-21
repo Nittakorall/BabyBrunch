@@ -26,7 +26,7 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
            checkIfLocationServicesEnabled()
        }
        
-    //TODO: check out this warning, never seen before
+ 
     
     //function that checks if location services are enabled on the phone
     func checkIfLocationServicesEnabled() {
@@ -35,6 +35,7 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             locationManager = CLLocationManager()
             // we can add it if we need it later, it's use to choose how precicely we'll show users location
             //    locationManager?.desiredAccuracy = kCLLocationAccuracyBest
+            
             locationManager!.delegate = self
             
         } else {
@@ -50,21 +51,18 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
        //shows if we never asked before
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization( )
+        
+        
         case .restricted:
             print("Restricted location")
+        
+        
         case .denied:
             print("You denied location")
             
             //if we're already shared the location, it will change region to our location
         case .authorizedAlways, .authorizedWhenInUse:
-            if let location = locationManager.location {
-                            DispatchQueue.main.async {
-                                self.realRegion = MKCoordinateRegion(
-                                    center: location.coordinate,
-                                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-                                )
-                            }
-                        }
+            locationManager.startUpdatingLocation()
             //idk how to get here and how to cause default in this case, so I just break
         @unknown default:
             break
@@ -76,6 +74,17 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         checkLocationAuthorization()
     }
 
-    
+    //function that follows anf updates the map based om where the user is
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let latestLocation = locations.last else { return }
+
+        DispatchQueue.main.async {
+            self.realRegion = MKCoordinateRegion(
+                center: latestLocation.coordinate,
+                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+            )
+            self.locationManager?.stopUpdatingLocation() 
+        }
+    }
 }
 

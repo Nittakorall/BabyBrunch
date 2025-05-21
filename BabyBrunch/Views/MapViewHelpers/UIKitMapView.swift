@@ -16,7 +16,9 @@ struct UIKitMapView : UIViewRepresentable {
     @Binding var mapViewRef: MKMapView?
     @Binding var selectedVenue : MKMapItem?
     let mapViewModel = MapViewModel()
-    @StateObject private var vm = LocationViewModel()
+    @StateObject var vm : LocationViewModel
+    //used for user location
+    @Binding var region: MKCoordinateRegion
           
     
     
@@ -67,14 +69,14 @@ struct UIKitMapView : UIViewRepresentable {
         
         //We don't need region variable here because we get location data from locationVM, replaced region it with vm.realRegion
        
-        let region = MKCoordinateRegion( // Du skapar ett nytt objekt av typen MKCoordinateRegion. Det används av MKMapView för att definiera vilken del av kartan som ska visas.
-            center: CLLocationCoordinate2D(latitude: 59.8609, longitude: 17.6486), // Uppsala
-            //         center: CLLocationCoordinate2D(latitude: 59.325, longitude: 18.05), // Stockholm
+        let defaultRegion = MKCoordinateRegion( // Du skapar ett nytt objekt av typen MKCoordinateRegion. Det används av MKMapView för att definiera vilken del av kartan som ska visas.
+           // center: CLLocationCoordinate2D(latitude: 59.8609, longitude: 17.6486), // Uppsala
+                    center: CLLocationCoordinate2D(latitude: 59.325, longitude: 18.05), // Stockholm
             //         center: CLLocationCoordinate2D(latitude: 57.706, longitude: 11.954), // Göteborg
             //         center: CLLocationCoordinate2D(latitude: 56.04673, longitude: 12.69437), // Helsingborg
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
         )
-        mapView.setRegion(vm.realRegion, animated: false) // Du instruerar MKMapView att visa just den region du nyss skapat. setRegion(_:animated:) är en metod som uppdaterar kartans vy. animated: false betyder att den direkt hoppar till regionen utan animering (ingen zoom eller glidning). Sätter du animated: true, kommer kartan animera sig själv till den nya platsen, vilket kan vara trevligare för användaren.
+        mapView.setRegion(defaultRegion, animated: false) // Du instruerar MKMapView att visa just den region du nyss skapat. setRegion(_:animated:) är en metod som uppdaterar kartans vy. animated: false betyder att den direkt hoppar till regionen utan animering (ingen zoom eller glidning). Sätter du animated: true, kommer kartan animera sig själv till den nya platsen, vilket kan vara trevligare för användaren.
         
       mapViewModel.fetchAllPins { success in
          if success {

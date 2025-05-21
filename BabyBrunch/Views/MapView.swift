@@ -27,7 +27,9 @@ struct MapView: View {
          alertTitle: $alertTitle,
          alertMessage: $alertMessage,
          mapViewRef: $mapViewRef,
-         selectedVenue: $selectedVenue)
+         selectedVenue: $selectedVenue,
+         vm : vm,
+         region: $vm.realRegion)
       .ignoresSafeArea()
       .accentColor(Color(.thistle))
        
