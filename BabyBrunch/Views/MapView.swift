@@ -52,6 +52,17 @@ struct MapView: View {
                 vm.mapShouldBeUpdated = true
                 vm.checkIfLocationServicesEnabled()
             }
+            
+            .foregroundColor(.white)
+            .frame(width: 150, height: 10)
+            .padding()
+            .background(Color("oldRose"))
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.black, lineWidth: 1)
+            )
+            .padding(.bottom, 600)
         }
   
     }
