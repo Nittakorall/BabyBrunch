@@ -15,6 +15,7 @@ struct UIKitMapView : UIViewRepresentable {
    @Binding var alertMessage: String
    @Binding var mapViewRef: MKMapView?
    @Binding var selectedVenue : MKMapItem?
+   let mapViewModel = MapViewModel()
    
    
    func makeCoordinator() -> Coordinator {
@@ -67,6 +68,21 @@ struct UIKitMapView : UIViewRepresentable {
          span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
       )
       mapView.setRegion(region, animated: false) // Du instruerar MKMapView att visa just den region du nyss skapat. setRegion(_:animated:) är en metod som uppdaterar kartans vy. animated: false betyder att den direkt hoppar till regionen utan animering (ingen zoom eller glidning). Sätter du animated: true, kommer kartan animera sig själv till den nya platsen, vilket kan vara trevligare för användaren.
+      
+      mapViewModel.fetchAllPins { success in
+         if success {
+            for annotation in mapView.annotations{
+               mapView.removeAnnotation(annotation)
+            }
+            DispatchQueue.main.async {
+               for annotation in mapViewModel.venuePins.values {
+                  mapView.addAnnotation(annotation)
+               }
+            }
+         } else {
+            print("Could not add annotations from Firestore to mapView in UIKitMapView.")
+         }
+      }
       
       return mapView // Du returnerar det nykonfigurerade MKMapView-objektet från makeUIView(context:) i UIViewRepresentable. Den här kartan kommer att visas i din SwiftUI-vy.
    }

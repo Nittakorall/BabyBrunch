@@ -7,9 +7,10 @@
 
 import Foundation
 import Firebase
+import MapKit
 
 class MapViewModel : ObservableObject {
-   
+   @Published var venuePins : [String: MKPointAnnotation] = [:]
    let db = Firestore.firestore()
    
    /*
@@ -45,5 +46,52 @@ class MapViewModel : ObservableObject {
          }
       }
    }
+   
+   /*
+    * Fetch all pins from pin collection on Firestore.
+    * For each pin-document in the snapshot, parse it to our Pin-object.
+    * For each also create an annotation to store in venuePins. 
+    * Callback returns true also if the snapshot is empty (no pins have been created yet).
+    * Function is called in UIKitMapView when the mapView is created.
+    * The callback (when true) loops over venuePins and adds each annotation to the mapView to be displayed on the map. 
+    */
+   func fetchAllPins(completion: @escaping (Bool) -> Void) {
+      let ref = db.collection("pins")
+      
+      ref.getDocuments { snap, err in
+         if let error = err {
+            print("Failed to get fetch all pins from Firestore: \(error.localizedDescription)")
+            completion(false)
+         }
+         guard let snapshot = snap else {
+            print("No snapshot returned.")
+            completion(false)
+            return
+         }
+         if snapshot.isEmpty {
+            print("No snap documents exist, venuePins is npw empty.")
+            completion(true)
+            return
+         }
+         
+         for doc in snapshot.documents {
+            do {
+               let pin = try doc.data(as: Pin.self)
+               if let id = pin.id {
+                  let annotation = MKPointAnnotation()
+                  annotation.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
+                  annotation.title = pin.name
+                  annotation.subtitle = String(format: "⭐️: %.1f", pin.averageRating)
+                  self.venuePins[id] = annotation
+               }
+            } catch {
+               print("Could not parse Firestore pin: \(error.localizedDescription)")
+               continue
+            }
+         }
+         completion(true)
+      }
+   }
+   
    
 }
