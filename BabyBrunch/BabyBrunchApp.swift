@@ -30,7 +30,8 @@ struct BabyBrunchApp: App {
                     .environmentObject(authViewModel)
             }
             else{
-                LoginView()
+                VenueDetailView()
+                //LoginView()
               //  SignUpView()
                     .environmentObject(authViewModel)
             }
