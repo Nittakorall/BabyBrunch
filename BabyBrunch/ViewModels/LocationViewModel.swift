@@ -14,6 +14,8 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     @Published var realRegion: MKCoordinateRegion
     var locationManager: CLLocationManager?
+    var mapShouldBeUpdated = true
+    
     
     //we override init of NSObject
     override init() {
@@ -91,6 +93,12 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
                 center: latestLocation.coordinate,
                 span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
             )
+            if self.mapShouldBeUpdated {
+                self.realRegion = MKCoordinateRegion(
+                        center: latestLocation.coordinate,
+                        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+                    )
+            }
             self.locationManager?.stopUpdatingLocation()
         }
     }

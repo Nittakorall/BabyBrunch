@@ -22,35 +22,39 @@ struct MapView: View {
     @StateObject private var vm = LocationViewModel()
     
     var body : some View {
-        UIKitMapView(
-            showAlert: $showAlert,
-            alertTitle: $alertTitle,
-            alertMessage: $alertMessage,
-            mapViewRef: $mapViewRef,
-            selectedVenue: $selectedVenue,
-            vm : vm,
-            region: $vm.realRegion)
-        .ignoresSafeArea()
-        .accentColor(Color(.thistle))
-        
-        //checks if user needs to give permission
-        .onAppear() {
-            vm.checkIfLocationServicesEnabled()
+        ZStack{
+            UIKitMapView(
+                showAlert: $showAlert,
+                alertTitle: $alertTitle,
+                alertMessage: $alertMessage,
+                mapViewRef: $mapViewRef,
+                selectedVenue: $selectedVenue,
+                vm : vm,
+                region: $vm.realRegion)
+            .ignoresSafeArea()
+            .accentColor(Color(.thistle))
+            
+            //checks if user needs to give permission
+            .onAppear() {
+                vm.checkIfLocationServicesEnabled()
+            }
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text(alertTitle),
+                    message: Text(alertMessage),
+                    primaryButton: .default(Text("Yes"), action: {
+                        savePOItoPin()
+                    }),
+                    secondaryButton: .cancel(Text("Cancel"))
+                )
+            }
+            Button("Where am I?") {
+                vm.mapShouldBeUpdated = true
+                vm.checkIfLocationServicesEnabled()
+            }
         }
-        .alert(isPresented: $showAlert) {
-            Alert(
-                title: Text(alertTitle),
-                message: Text(alertMessage),
-                primaryButton: .default(Text("Yes"), action: {
-                    savePOItoPin()
-                }),
-                secondaryButton: .cancel(Text("Cancel"))
-            )
-        }
-        
-        
+  
     }
-    
     
     // MARK: Functions
     

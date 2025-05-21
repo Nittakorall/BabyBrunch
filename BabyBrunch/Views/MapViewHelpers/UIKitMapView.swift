@@ -16,7 +16,7 @@ struct UIKitMapView : UIViewRepresentable {
     @Binding var mapViewRef: MKMapView?
     @Binding var selectedVenue : MKMapItem?
     let mapViewModel = MapViewModel()
-    @StateObject var vm : LocationViewModel
+    @ObservedObject var vm : LocationViewModel
     //used for user location
     @Binding var region: MKCoordinateRegion
     
@@ -24,6 +24,7 @@ struct UIKitMapView : UIViewRepresentable {
     
     func makeCoordinator() -> Coordinator {
         Coordinator(
+            parent: self,
             showAlert: $showAlert,
             alertTitle: $alertTitle,
             alertMessage: $alertMessage,
@@ -97,11 +98,11 @@ struct UIKitMapView : UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        
-        //uppdates the map if user location changes
-        uiView.setRegion(vm.realRegion, animated: false)
-    } // Denna behövs för att UIKitMapView ska kunna ör att fullfölja kraven i protokollet UIViewRepresentable.
-    
+        if vm.mapShouldBeUpdated {
+            //uppdates the map if user location changes
+            uiView.setRegion(vm.realRegion, animated: false)
+        } // Denna behövs för att UIKitMapView ska kunna ör att fullfölja kraven i protokollet UIViewRepresentable.
+    }
 }
 
 
