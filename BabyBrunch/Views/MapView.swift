@@ -58,7 +58,7 @@ struct MapView: View {
     * If successful, call function to create an annotation to be places on the mapView.
     */
    func savePOItoPin () {
-      if let venue = selectedVenue, let mapView = mapViewRef {
+      if let venue = selectedVenue, let _ = mapViewRef {
          if let name = venue.placemark.name,
             let streetAddress = venue.placemark.thoroughfare,
             let streetNo = venue.placemark.subThoroughfare,
@@ -92,7 +92,7 @@ struct MapView: View {
     * Add the annotation to the mapView.
     */
    func createAnnotationForMapView(pin: Pin) {
-      if let venue = selectedVenue, let mapView = mapViewRef {
+      if let _ = selectedVenue, let mapView = mapViewRef {
          let annotation = MKPointAnnotation()
          annotation.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
          annotation.title = pin.name

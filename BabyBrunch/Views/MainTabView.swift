@@ -19,32 +19,32 @@ struct MainTabView: View {
         UITabBar.appearance().standardAppearance = appearance
         //add rows below if you want to add background to tabView
         
-      //  if #available(iOS 15.0, *) {
-         //   UITabBar.appearance().scrollEdgeAppearance = appearance
+        //  if #available(iOS 15.0, *) {
+        //   UITabBar.appearance().scrollEdgeAppearance = appearance
         //}
     }
-                var body: some View {
-                    TabView(selection: $selectedTab) {
-                    ProfileView()
-                            .tabItem {
-                                Image(systemName: "person.crop.circle.fill")
-                        }
-                            .tag(1)
-                    
-                        MapView()
-                            .tabItem {
-                                Image(systemName: "map.fill")
-                            }
-                            .tag(2)
-
-                        FavouritesView()
-                            .tabItem {
-                                Image(systemName: "heart")
-                            }
-                            .tag(3)
-                    }
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            ProfileView()
+                .tabItem {
+                    Image(systemName: "person.crop.circle.fill")
                 }
-            }
-    #Preview {
-        MainTabView()
+                .tag(1)
+            
+            MapView()
+                .tabItem {
+                    Image(systemName: "map.fill")
+                }
+                .tag(2)
+            
+            FavouritesView()
+                .tabItem {
+                    Image(systemName: "heart")
+                }
+                .tag(3)
+        }
     }
+}
+#Preview {
+    MainTabView()
+}

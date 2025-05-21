@@ -127,7 +127,7 @@ struct LoginView: View {
                 Button("Register") {
                     openSignUpView = true
                 }
-          
+                
                 .foregroundColor(.white)
                 .frame(width: 250, height: 10)
                 .padding()
