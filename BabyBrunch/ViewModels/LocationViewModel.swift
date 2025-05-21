@@ -24,7 +24,7 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         )
         
         super.init()
-        checkIfLocationServicesEnabled()
+       // checkIfLocationServicesEnabled()
     }
     
     
