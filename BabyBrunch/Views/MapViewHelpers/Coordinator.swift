@@ -50,6 +50,32 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
      Visa information
      Med mera.
      */
+    
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?{
+        guard !(annotation is MKUserLocation) else { return nil}
+        let identifier = "customPin"
+        
+        var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+        
+        if annotationView == nil{
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            annotationView?.canShowCallout = true
+            let pinView = MapPinView()
+            let controller = UIHostingController(rootView: pinView)
+            controller.view.frame = CGRect(x: 0, y: 0, width: 40, height: 70)
+            controller.view.backgroundColor = .clear
+            let renderer = UIGraphicsImageRenderer(size: controller.view.bounds.size)
+            let image = renderer.image { context in
+                controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)}
+            annotationView?.image = image
+            annotationView?.centerOffset = CGPoint(x: 0, y: -35)
+            
+        } else {
+            annotationView?.annotation = annotation
+        }
+        return annotationView
+    }
+    
     @objc func handleTap(_ gestureRecognizer: UITapGestureRecognizer) { // @objc: Gör funktionen tillgänglig för Objective-C runtime – nödvändigt för att koppla den till t.ex. en UITapGestureRecognizer. handleTap: Namnet på funktionen som körs när användaren trycker på kartan. gestureRecognizer: UITapGestureRecognizer: Det objekt som skickas in när en "tap" har upptäckts.
         
         parent.vm.mapShouldBeUpdated = false
