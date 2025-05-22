@@ -12,12 +12,15 @@ import MapKit
 class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
 
     var parent : UIKitMapView
+    //Sparar vilken pin som var klickad på senast för att hålla koll på dubbelklick och öppna en detaljvy
+    private var lastSelectedAnnotation: MKAnnotation?
     
     @Binding var showAlert: Bool
     @Binding var alertTitle : String
     @Binding var alertMessage: String
     @Binding var selectedVenue : MKMapItem?
     @StateObject var vm = LocationViewModel()
+    @Binding var selectedPin: Pin?
     /*
      I klasser måste du själv skriva en init(...) där du binder @Binding-variablerna manuellt. @Binding är bara en "wrapper", och du måste deklarera den med _variabelnamn = ....
      Notera hur vi använder understreck (_showAlert) för att koppla bindningen till egenskaperna.
@@ -27,12 +30,14 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         showAlert: Binding<Bool>,
         alertTitle: Binding<String>,
         alertMessage: Binding<String>,
-        selectedVenue: Binding<MKMapItem?>) {
+        selectedVenue: Binding<MKMapItem?>,
+        selectedPin: Binding<Pin?>) {
             self.parent = parent
             _showAlert = showAlert
             _alertTitle = alertTitle
             _alertMessage = alertMessage
             _selectedVenue = selectedVenue
+            _selectedPin = selectedPin
         }
     
     let region = MKCoordinateRegion(
@@ -56,19 +61,15 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         
         guard let mapView = gestureRecognizer.view as? MKMapView else { return } // gestureRecognizer.view: Ger dig den UIView som gesterna sker på. as? MKMapView: Försöker type-casta till en MKMapView. guard let ... else { return }: Om casten misslyckas (dvs. om gesten inte sker på en karta), så avslutas funktionen direkt. Detta skyddar koden från att krascha.✅ Resultat: Nu har du en referens till den karta (mapView) som användaren tryckt på.
         let location = gestureRecognizer.location(in: mapView) // gestureRecognizer.location(in: mapView): Hämtar x/y-koordinaten (i pixlar) för var på mapView användaren tryckt.
+        
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView) // mapView.convert(...): Översätter CGPoint-positionen (i pixlar) till en CLLocationCoordinate2D, alltså en latitud och longitud. toCoordinateFrom: mapView: Säger att konverteringen ska utgå från det koordinatsystemet som kartan har. ✅ Resultat: Du har nu en CLLocationCoordinate2D (ex: lat: 59.86, long: 17.64) – alltså den exakta geografiska platsen där användaren tryckte.
         let tappedCoordinate = coordinate
       
-       //This check stops the tap search from going off if its close to a nearby annotation. Currently set at 5 meters around.
-       //If its on a POI that already has a pin then returns out of the tapGesture
-       let nearbyAnnotations = mapView.annotations.filter {
-           $0.coordinate.distance(to: tappedCoordinate) < 5
-       }
-       
-       if !nearbyAnnotations.isEmpty {
-           print("Tap on pin ignore POI search")
-           return
-       }
+       //Stoppar search och lägga till ny pin om användare klickat på en pin
+        if let tappedView = mapView.hitTest(location, with: nil),
+           tappedView is MKAnnotationView {
+            return
+        }
        
         let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
         let smallRegion = MKCoordinateRegion(center: tappedCoordinate, span: span)
@@ -132,6 +133,46 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
                 }
             }
         }
+    }
+    
+    //Körs när pin klickas och sparar senaste klicka pinnen för att kunna spåra dubbelklick
+    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+        lastSelectedAnnotation = view.annotation
+    }
+    
+    //
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard !(annotation is MKUserLocation) else { return nil }
+        
+        let identifier = "PinView"
+        var view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
+        
+        if view == nil {
+            view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            
+            let tap = UITapGestureRecognizer(target: self, action: #selector(handleAnnotationTap(_:)))
+            view?.addGestureRecognizer(tap)
+        } else {
+            view?.annotation = annotation
+        }
+        
+        return view
+    }
+    
+    //håller koll på vilken pin som är klickad på och om det är första eller andra gången
+    @objc func handleAnnotationTap(_ gesture: UITapGestureRecognizer) {
+        guard let view = gesture.view as? MKAnnotationView,
+              let annotation = view.annotation as? PinAnnotation,
+              let pin = annotation.pin else { return }
+        
+        //Kontroll om klick är på samma pin som senaste
+        guard let last = lastSelectedAnnotation,
+              last === annotation else {
+            return
+        }
+        
+        //Triggar sheet i mapView om det är andra klicket på samma pin
+        selectedPin = pin
     }
 }
 

@@ -78,7 +78,8 @@ class MapViewModel : ObservableObject {
             do {
                let pin = try doc.data(as: Pin.self)
                if let id = pin.id {
-                  let annotation = MKPointAnnotation()
+                   let annotation = PinAnnotation()
+                   annotation.pin = pin
                   annotation.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
                   annotation.title = pin.name
                   annotation.subtitle = String(format: "⭐️: %.1f", pin.averageRating)
