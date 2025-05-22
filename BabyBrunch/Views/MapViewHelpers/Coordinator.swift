@@ -10,6 +10,7 @@ import SwiftUI
 import MapKit
 
 class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
+
     var parent : UIKitMapView
     
     @Binding var showAlert: Bool
@@ -57,6 +58,18 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         let location = gestureRecognizer.location(in: mapView) // gestureRecognizer.location(in: mapView): Hämtar x/y-koordinaten (i pixlar) för var på mapView användaren tryckt.
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView) // mapView.convert(...): Översätter CGPoint-positionen (i pixlar) till en CLLocationCoordinate2D, alltså en latitud och longitud. toCoordinateFrom: mapView: Säger att konverteringen ska utgå från det koordinatsystemet som kartan har. ✅ Resultat: Du har nu en CLLocationCoordinate2D (ex: lat: 59.86, long: 17.64) – alltså den exakta geografiska platsen där användaren tryckte.
         let tappedCoordinate = coordinate
+      
+       //This check stops the tap search from going off if its close to a nearby annotation. Currently set at 5 meters around.
+       //If its on a POI that already has a pin then returns out of the tapGesture
+       let nearbyAnnotations = mapView.annotations.filter {
+           $0.coordinate.distance(to: tappedCoordinate) < 5
+       }
+       
+       if !nearbyAnnotations.isEmpty {
+           print("Tap on pin ignore POI search")
+           return
+       }
+       
         let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
         let smallRegion = MKCoordinateRegion(center: tappedCoordinate, span: span)
         /*
@@ -83,8 +96,7 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
                 print("Sökfel: \(error.localizedDescription)")
                 return
             }
-            
-            
+                        
             /*
              ✅ Hitta den plats (MKMapItem) i items som ligger närmast den plats du tryckte på i kartan – alltså coordinate.
              ✅ Skapar en annotation för den platsen
@@ -94,6 +106,22 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
                 $0.placemark.coordinate.distance(to: coordinate) <
                     $1.placemark.coordinate.distance(to: coordinate)
             }) {
+              
+              //Check for if a pin with the same name within the given distance already exists. currently set at 30 meters around.
+             //If it already exists return out of the tapGesture again.
+             let pinAlreadyExists = mapView.annotations.contains(where: { annotation in
+                 guard let title = annotation.title ?? nil else { return false }
+                 
+                 let sameName = title == nearest.name
+                 let closeDistance = annotation.coordinate.distance(to: nearest.placemark.coordinate) < 30
+                 
+                 return sameName && closeDistance
+             })
+             
+             if pinAlreadyExists {
+                 print("Pin already exists")
+                 return
+             }
                 
                 DispatchQueue.main.async { // Du gör detta för att uppdatera UI:t på huvudtråden. Exempelvis: lägga till en pin på kartan.
              //       self.vm.mapShouldBeUpdated = false
