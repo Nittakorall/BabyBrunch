@@ -125,6 +125,52 @@ public class AuthViewModel: ObservableObject {
             self.handleErrors(error)
         }
     }
+    
+//    func deleteUser(password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func deleteUser(password: String, completion: @escaping (Bool) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+//            completion(.failure(NSError(domain: "AuthError", code: 401, userInfo: [NSLocalizedDescriptionKey: "Ingen användare är inloggad."])))
+            return
+        }
+        if let email = user.email{
+            
+            // Skapa inloggningsuppgifterna
+            let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+            
+            // 1. Reautenticera användaren
+            user.reauthenticate(with: credential) { result, error in
+                if let error = error {
+//                    completion(.failure(error))
+                    completion(false)
+                    return
+                }
+                
+                let db = Firestore.firestore()
+                let userID = user.uid
+                
+                // 2. Radera dokumentet i Firestore
+                db.collection("users").document(userID).delete { err in
+                    if let err = err {
+//                        completion(.failure(err))
+                    completion(false)
+                        return
+                    }
+                    
+                    // 3. Radera användaren från Firebase Authentication
+                    user.delete { error in
+                        if let error = error {
+//                            completion(.failure(error))
+                            completion(false)
+                        } else {
+                            print("Användare och Firestore-dokument raderades.")
+//                            completion(.success(()))
+                            completion(true)
+                        }
+                    }
+                }
+            }
+        }
+    }
     private func handleErrors(_ error: Error) {
         let mapped = AuthErrorHandler.from(error)
         errorMessage = mapped.localizedDescription
