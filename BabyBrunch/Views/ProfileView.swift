@@ -34,19 +34,33 @@ struct ProfileView: View {
                         .padding()
                         .background(Color("oldRose"))
                         .cornerRadius(10)
-                        .overlay( 
+                        .overlay(
                             RoundedRectangle(cornerRadius: 10)
                                 .stroke(Color.black, lineWidth: 1)
                         )
                 }
-                .padding(.bottom, 50)
-                
-                
+                    Button(action: {
+                       
+                    }) {
+                        Text("Delete Account")
+                            .foregroundColor(.white)
+                            .frame(width: 200, height: 10)
+                            .padding()
+                            .background(Color(.raisinBlack))
+                            .cornerRadius(10)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.black, lineWidth: 1)
+                            )
+                    }
+                    .padding(.bottom, 50)
+                    
+                    
+                }
             }
         }
-    }
+    
 }
-
 #Preview {
     ProfileView()
 }
