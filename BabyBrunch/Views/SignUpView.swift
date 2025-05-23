@@ -13,8 +13,6 @@ struct SignUpView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
-    @State private var error_: String?
-    @State private var isSignedUp = false
     @EnvironmentObject private var authVM : AuthViewModel
     
     
@@ -90,8 +88,6 @@ struct SignUpView: View {
                             .stroke(Color.black, lineWidth: 1)
                     )
                     .padding(.top, 70)
-                    
-                    
                 }
                 
                 //white space in the middle of the screen
@@ -105,25 +101,38 @@ struct SignUpView: View {
                         .stroke(Color.black, lineWidth: 1)
                 )
             }
+            //MARK: alerts are handled here:
+            .alert(item: $authVM.authError) {
+                err in
+                Alert(title: Text("Error"), message: Text(err.localizedDescription), dismissButton: .default(Text("OK")){ authVM.authError = nil })
+            }
+            
             .frame(maxHeight: .infinity, alignment: .top)
         }
         
     }
     
+    // guard sections can be removed if we do not want frontend to handle these error alerts. When removed, the '.alert' above will display errors from the firebase server instead
     func register() {
-        guard !email.isEmpty, !password.isEmpty else {
-            print("email & password, tack")
+        guard !email.isEmpty else {
+            authVM.authError = .emailEmpty
             return
         }
         guard password.count >= 6 else {
-            print("6 tecken pga. Firebase restrictions")
+            authVM.authError = .passwordTooShort
+            return
+        }
+        guard password == confirmPassword else {
+            authVM.authError = .passwordMismatch
             return
         }
         authVM.signUpWithEmail(email: email, password: password){ success in
             if success{
                 authVM.signIn(email: email, password: password)
             } else {
-                print("Failure")
+                if authVM.authError == nil {
+                    assertionFailure("signUpWithEmail returned false with no authError") //will not display to the user, only shows up in the log. ⚠️⚠️⚠️ This will crash the app when debugging (running the simulation), that is intended
+                }
             }
         }
         

@@ -14,13 +14,13 @@ public class AuthViewModel: ObservableObject {
     @Published var currentUser: User? = nil
     @Published var errorMessage: String? = nil
     @Published var isLoggedIn = false
-    private var error_: String?
+    @Published var authError: AuthErrorHandler? = nil // not in use atm but leaving just in case
+    
     private var isSignedUp = false
+    private let db = Firestore.firestore()
+    private let auth = Auth.auth()
     
-    let db = Firestore.firestore()
-    let auth = Auth.auth()
-    
-    //Funktion för att spara användaren som skickas in till firestore under users. varje användare får sitt uid som id
+    //Function to save a user that is then sent to firestore under 'users'. Each user gets their uid as id
     func saveUser(_ user: User) {
         do {
             try db.collection("users").document(user.id).setData(from: user) { error in
@@ -35,53 +35,71 @@ public class AuthViewModel: ObservableObject {
         }
     }
     
-    //Funktion för att logga in som gäst och få tillgång till appen fast med variabeln isSignedUp som false, som används för att begränsa appen senare.
-    //sparar currentUser som den nyskapade guestUser.
+    //Function to log in as guest and get access to some app features, isSignedUp is set to false to restrict some access
+    //saves currentUser as the newly created guestUser.
     func signInAsGuest() {
-        Auth.auth().signInAnonymously { result, error in
+        auth.signInAnonymously { [weak self] result, error in guard let self = self else { return }
             if let error = error {
-                print(error.localizedDescription)
-            } else if let user = result?.user {
-                let guestUser = User(id: user.uid, isSignedUp: false)
-                self.currentUser = guestUser
-                self.isLoggedIn = true
+                self.handleErrors(error)
+                return
             }
+            // prevents crashes in case of e.g. server issues and a guest user is not stored correctly
+            guard let user = result?.user else {
+                self.handleErrors(NSError(
+                    domain: "Auth",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey : "User object missing"] )
+                )
+                return
+            }
+            self.currentUser = User(id: user.uid, isSignedUp: false)
+            self.isLoggedIn = true
         }
     }
     
-    //Funktion för att skapa ett konto och då få tillgång till hela appen genom isSignedUp = true.
-    //Denna user sparas också i firestore för att kunna lagra mer info som favoritlistor etc.
-    func signUpWithEmail(email: String, password: String, onSuccess: @escaping (Bool) -> Void){
-        Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if let err = error {
-                print("Fel vid registrering: \(err.localizedDescription)")
+    //Function to create and account and to then get access to all the app's features through the bool isSignedUp = true.
+    //This user is also saved to FIrestor to be able to save stuff like favorites etc
+    func signUpWithEmail(email: String, password: String, onSuccess: @escaping (Bool) -> Void = { _ in }) {
+        auth.createUser(withEmail: email, password: password) { result, error in
+            if let error {
+                self.handleErrors(error)
                 onSuccess(false)
-            } else if let user = result?.user {
+                return
+            }
+            guard let user = result?.user else { onSuccess(false); return }
                 let newUser = User(id: user.uid, email: email, isSignedUp: true)
                 self.saveUser(newUser)
                 self.currentUser = newUser
                 onSuccess(true)
             }
         }
-    }
     
-    //Funktion för att logga in användare som har konto och alltså har tillgång till hela appen
-    //Kallar på fetchUserInfo för att få med all data och sätter även där currentUser med hjälp av kontots uid
-    func signIn(email: String, password: String) {
-        Auth.auth().signIn(withEmail: email, password: password) { result, error in
-            if let err = error {
-                print("Sign in failed: \(err)")
-            } else {
-                self.isLoggedIn = true
-                if let user = result?.user {
-                    self.isLoggedIn = true
-                    self.fetchUserInfo(uid: user.uid)
-                }
+    //Function to log in the user who has an account (and therefore has access to the entire app)
+    //Calls on fetchUserInfo to get all data and also sets currentUser with the help of uid
+    func signIn(email: String, password: String, completion: @escaping (Bool) -> Void = { _ in }) {
+        auth.signIn(withEmail: email, password: password) { [weak self] result, error in guard let self = self else { return }
+            if let error {
+                self.handleErrors(error)
+                completion(false)
+                return
             }
+            // prevents crashes in case of e.g. server issues and a user is not registered correctly
+            guard let user = result?.user else {
+                self.handleErrors(NSError(
+                    domain: "Auth",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey : "User object missing"]))
+                completion(false)
+                return
+            }
+            self.isLoggedIn = true
+            self.fetchUserInfo(uid: user.uid)
+            completion(true)
         }
     }
     
-    //Funktion som körs efter du loggat in för att få med all info från userId:t i firestore ex. isSignedUp och favorites
+    
+    //Function that runs after you have logged in to collect all the info from the userId in fireStore, e.g. isSignedUp och favorites
     func fetchUserInfo(uid: String) {
         let docRef = db.collection("users").document(uid)
         docRef.getDocument { document, error in
@@ -102,9 +120,17 @@ public class AuthViewModel: ObservableObject {
         do {
             try Auth.auth().signOut()
             self.isLoggedIn = false
-            print("Successfully signed out")
-        } catch let signOutError as NSError {
-            print("Error signing out: %@", signOutError)
+            self.currentUser = nil
+        } catch {
+            self.handleErrors(error)
         }
     }
+    private func handleErrors(_ error: Error) {
+        let mapped = AuthErrorHandler.from(error)
+        errorMessage = mapped.localizedDescription
+        self.authError = mapped
+        print("ErrorHandler:", mapped.localizedDescription)
+    }
+
 }
+
