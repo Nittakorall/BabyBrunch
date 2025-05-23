@@ -120,7 +120,8 @@ struct MapView: View {
      */
     func createAnnotationForMapView(pin: Pin) {
         if let _ = selectedVenue, let mapView = mapViewRef {
-            let annotation = MKPointAnnotation()
+            let annotation = PinAnnotation()
+            annotation.pin = pin
             annotation.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
             annotation.title = pin.name
             annotation.subtitle = String(format: "⭐️: %.1f", pin.averageRating)

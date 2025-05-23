@@ -75,6 +75,10 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
             annotationView?.image = image
             annotationView?.centerOffset = CGPoint(x: 0, y: -35)
             
+            //Kallar på handleAnnotationTap vid klick på annotationviewen
+            let tap = UITapGestureRecognizer(target: self, action: #selector(handleAnnotationTap(_:)))
+            annotationView?.addGestureRecognizer(tap)
+            
         } else {
             annotationView?.annotation = annotation
         }
@@ -166,24 +170,6 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         lastSelectedAnnotation = view.annotation
     }
     
-    //
-    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        guard !(annotation is MKUserLocation) else { return nil }
-        
-        let identifier = "PinView"
-        var view = mapView.dequeueReusableAnnotationView(withIdentifier: identifier) as? MKMarkerAnnotationView
-        
-        if view == nil {
-            view = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            
-            let tap = UITapGestureRecognizer(target: self, action: #selector(handleAnnotationTap(_:)))
-            view?.addGestureRecognizer(tap)
-        } else {
-            view?.annotation = annotation
-        }
-        
-        return view
-    }
     
     //håller koll på vilken pin som är klickad på och om det är första eller andra gången
     @objc func handleAnnotationTap(_ gesture: UITapGestureRecognizer) {
