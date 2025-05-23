@@ -71,6 +71,11 @@ struct LoginView: View {
                         
                         //sign in button
                         Button("Sign In") {
+                            // guard code block can be removed if we only want errors to be handled server side. This one displays an error if the email field is empty (without it it will display "Please enter a functional email address" instead)
+                                guard !email.isEmpty else {
+                                    authVM.authError = .emailEmpty
+                                    return
+                                }
                             authVM.signIn(email: email, password: password)
                         }
                         .foregroundColor(.white)
@@ -140,9 +145,15 @@ struct LoginView: View {
                 .sheet(isPresented: $openSignUpView) {
                     SignUpView()
                 }
+                //MARK: alerts are handled here:
+                .alert(item: $authVM.authError) {
+                    err in
+                    Alert(title: Text("Error"), message: Text(err.localizedDescription), dismissButton: .default(Text("OK")){ authVM.authError = nil })
+                }
             }
             
         }
+        
         
     }
     
@@ -152,9 +163,4 @@ struct LoginView: View {
         }
     }
     
-}
-struct LoginView_Previews: PreviewProvider {
-    static var previews: some View {
-        LoginView()
-    }
 }
