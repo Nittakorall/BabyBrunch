@@ -173,6 +173,7 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
     
     //håller koll på vilken pin som är klickad på och om det är första eller andra gången
     @objc func handleAnnotationTap(_ gesture: UITapGestureRecognizer) {
+        parent.vm.mapShouldBeUpdated = false
         guard let view = gesture.view as? MKAnnotationView,
               let annotation = view.annotation as? PinAnnotation,
               let pin = annotation.pin else { return }
