@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct VenueDetailView: View {
+   
+   let pinKey : String?
+   @State private var pinToDisplay : Pin? = nil
+   private let mapVM = MapViewModel()
+   @State var isLoading = true
     
     var rating: Double = 5.0
     var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
@@ -18,6 +23,11 @@ struct VenueDetailView: View {
             Color("lavenderBlush")
                 .edgesIgnoringSafeArea(.all) // lets ignore safe area and place Image up there
             
+           if isLoading {
+              ProgressView("Loading...")
+                 .progressViewStyle(CircularProgressViewStyle(tint: Color("oldRose")))
+                 .scaleEffect(1.5)
+           } else if let pin = pinToDisplay {
             // VStack for venueImage
             VStack{
                 Image("venue")
@@ -30,17 +40,17 @@ struct VenueDetailView: View {
                 //Vstack for vanue information
                 VStack{
                     StarsView(rating : rating)
-                    Text("Name of Venue")
+                   Text(pin.name)
                         .foregroundColor(Color(.oldRose))
                         .font(.custom("Beau Rivage", size: 40)) // Don't know how to add custom fonts, I'll fix later
                     
-                    Text("Address")
+                   Text("\(pin.streetAddress)\(pin.streetNo)")
                         .foregroundColor(Color(.oldRose))
                         .fontDesign(.rounded)
-                    Text("Phone Number")
+                   Text(pin.phoneNumber)
                         .foregroundColor(Color(.oldRose))
                         .fontDesign(.rounded)
-                    Text("email@example.com")
+                   Text(pin.website)
                         .foregroundColor(Color(.oldRose))
                     
                     ReviewListView(reviews : reviews)
@@ -65,14 +75,32 @@ struct VenueDetailView: View {
             }
             .frame(maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
+           } else {
+              Text("Failed to load data")
+                 .foregroundColor(Color(.oldRose))
+           }
+        }
+           
+        .onAppear {
+           if let pinId = pinKey {
+              mapVM.fetchClickedPin(pinId: pinId) { fetchedPin in
+                 if let unwrappedPin = fetchedPin {
+                    DispatchQueue.main.async {
+                       pinToDisplay = unwrappedPin
+                       print("Successfully set pinToDisplay from fetchedPin: (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
+                       isLoading = false
+                    }
+                 }
+              }
+           }
         }
         
     }
 }
 
-#Preview {
-    VenueDetailView()
-}
+//#Preview {
+//    VenueDetailView()
+//}
 
 struct StarsView: View {
     var rating : Double

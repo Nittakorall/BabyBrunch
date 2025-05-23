@@ -18,6 +18,9 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
     @Binding var alertMessage: String
     @Binding var selectedVenue : MKMapItem?
     @StateObject var vm = LocationViewModel()
+   @Binding var selectedExistingPinAnnotation : MKAnnotation?
+   @StateObject var mapVM = MapViewModel()
+   @Binding var selectedPinKey : String?
     /*
      I klasser måste du själv skriva en init(...) där du binder @Binding-variablerna manuellt. @Binding är bara en "wrapper", och du måste deklarera den med _variabelnamn = ....
      Notera hur vi använder understreck (_showAlert) för att koppla bindningen till egenskaperna.
@@ -27,12 +30,16 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         showAlert: Binding<Bool>,
         alertTitle: Binding<String>,
         alertMessage: Binding<String>,
-        selectedVenue: Binding<MKMapItem?>) {
+        selectedVenue: Binding<MKMapItem?>,
+        selectedExistingPinAnnotation: Binding<MKAnnotation?>,
+        selectedPinKey: Binding<String?>){
             self.parent = parent
             _showAlert = showAlert
             _alertTitle = alertTitle
             _alertMessage = alertMessage
             _selectedVenue = selectedVenue
+           _selectedExistingPinAnnotation = selectedExistingPinAnnotation
+           _selectedPinKey = selectedPinKey
         }
     
     let region = MKCoordinateRegion(
@@ -59,6 +66,8 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView) // mapView.convert(...): Översätter CGPoint-positionen (i pixlar) till en CLLocationCoordinate2D, alltså en latitud och longitud. toCoordinateFrom: mapView: Säger att konverteringen ska utgå från det koordinatsystemet som kartan har. ✅ Resultat: Du har nu en CLLocationCoordinate2D (ex: lat: 59.86, long: 17.64) – alltså den exakta geografiska platsen där användaren tryckte.
         let tappedCoordinate = coordinate
       
+       
+       
        //This check stops the tap search from going off if its close to a nearby annotation. Currently set at 5 meters around.
        //If its on a POI that already has a pin then returns out of the tapGesture
        let nearbyAnnotations = mapView.annotations.filter {
@@ -66,7 +75,7 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
        }
        
        if !nearbyAnnotations.isEmpty {
-           print("Tap on pin ignore POI search")
+           print("Tap on pin ignore POI search (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
            return
        }
        
@@ -93,7 +102,7 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         search.start { response, error in // Den här raden startar själva sökningen. Den körs asynkront (i bakgrunden). Det betyder: du skickar sökningen, och när resultatet kommer tillbaka körs det som finns inom { ... } (slutklamrarna). Du får tillbaka två saker: response: Svaret från Apple Maps om platser den hittade. error: Ett eventuellt fel som uppstod under sökningen. 💡 Viktigt: Detta är en closure, vilket i Swift är som en liten funktion du skickar med och som körs senare.
             guard let items = response?.mapItems else { return } // response?.mapItems: Om svaret (response) existerar, hämtar vi listan över resultat (mapItems). mapItems är en array av MKMapItem – varje ett sådant representerar en plats, t.ex. en restaurang. guard let ... else { return }: Om mapItems inte finns (dvs. om response är nil), så avbryts funktionen direkt.
             if let error = error {
-                print("Sökfel: \(error.localizedDescription)")
+                print("Sökfel: \(error.localizedDescription) (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
                 return
             }
                         
@@ -107,21 +116,39 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
                     $1.placemark.coordinate.distance(to: coordinate)
             }) {
               
-              //Check for if a pin with the same name within the given distance already exists. currently set at 30 meters around.
-             //If it already exists return out of the tapGesture again.
-             let pinAlreadyExists = mapView.annotations.contains(where: { annotation in
-                 guard let title = annotation.title ?? nil else { return false }
-                 
-                 let sameName = title == nearest.name
-                 let closeDistance = annotation.coordinate.distance(to: nearest.placemark.coordinate) < 30
-                 
-                 return sameName && closeDistance
-             })
-             
-             if pinAlreadyExists {
-                 print("Pin already exists")
-                 return
-             }
+               if let matchedAnnotation = mapView.annotations.first(where: { annotation in
+                  guard let title = annotation.title ?? nil else {return false}
+                  let sameName = title == nearest.name
+                      let closeDistance = annotation.coordinate.distance(to: nearest.placemark.coordinate) < 30
+                      
+                      return sameName && closeDistance
+               }){
+                  if let key = self.parent.mapViewModel.venuePins.first(where: { $0.value === matchedAnnotation })?.key {
+                     self.selectedPinKey = key
+                     print("Existing pin key: \(String(describing: self.selectedPinKey)) (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
+                  }
+              }
+               
+               
+               /*
+                //Check for if a pin with the same name within the given distance already exists. currently set at 30 meters around.
+                 //If it already exists return out of the tapGesture again.
+                 let pinAlreadyExists = mapView.annotations.contains(where: { annotation in
+                     guard let title = annotation.title ?? nil else { return false }
+
+                     let sameName = title == nearest.name
+                     let closeDistance = annotation.coordinate.distance(to: nearest.placemark.coordinate) < 30
+
+                     return sameName && closeDistance
+                 })
+
+                 if pinAlreadyExists {
+                     print("Pin already exists")
+                     return
+                 }
+                */
+               
+               
                 
                 DispatchQueue.main.async { // Du gör detta för att uppdatera UI:t på huvudtråden. Exempelvis: lägga till en pin på kartan.
              //       self.vm.mapShouldBeUpdated = false

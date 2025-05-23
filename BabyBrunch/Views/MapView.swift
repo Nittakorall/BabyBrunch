@@ -13,11 +13,16 @@ struct MapView: View {
     @State private var mapViewRef: MKMapView? = nil
     @State private var selectedVenue : MKMapItem? = nil
     let mapVM = MapViewModel()
+   
+   @State private var selectedExistingPinAnnotation : MKAnnotation?
     
     @State private var showAlert = false
     @State private var alertTitle = ""
     @State private var alertMessage = ""
     @State private var showSheet = false
+   
+   @State private var selectedPinKey: String? = nil
+   @State private var showVenueDetailView = false
     
     @StateObject private var vm = LocationViewModel()
     
@@ -30,7 +35,9 @@ struct MapView: View {
                 mapViewRef: $mapViewRef,
                 selectedVenue: $selectedVenue,
                 vm : vm,
-                region: $vm.realRegion)
+                region: $vm.realRegion,
+                selectedExistingPinAnnotation: $selectedExistingPinAnnotation,
+                selectedPinKey: $selectedPinKey)
             .ignoresSafeArea()
             .accentColor(Color(.thistle))
             
@@ -38,6 +45,12 @@ struct MapView: View {
             .onAppear() {
                 vm.checkIfLocationServicesEnabled()
             }
+            .onChange(of: selectedPinKey) { key in
+               showVenueDetailView = true
+            }
+            .sheet(isPresented: $showVenueDetailView, content: {
+               VenueDetailView(pinKey: selectedPinKey)
+            })
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text(alertTitle),

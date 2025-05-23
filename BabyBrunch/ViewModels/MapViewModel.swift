@@ -27,20 +27,20 @@ class MapViewModel : ObservableObject {
       
       query.getDocuments { snap, err in
          if let error = err {
-            print("Error getting pin documents: \(error.localizedDescription)")
+            print("Error getting pin documents: \(error.localizedDescription) (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
             completion(false)
          } else {
             if snap!.isEmpty {
                do {
                   try ref.addDocument(from: pin)
-                  print("This pin is new, saved pin to Firestore.")
+                  print("This pin is new, saved pin to Firestore. (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
                   completion(true)
                } catch {
-                  print("Failed to save new pin to Firestore: \(error.localizedDescription)")
+                  print("Failed to save new pin to Firestore: \(error.localizedDescription) (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
                   completion(false)
                }
             } else {
-               print("This pin already exists on Firestore.")
+               print("This pin already exists on Firestore. (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
                completion(false)
             }
          }
@@ -60,7 +60,7 @@ class MapViewModel : ObservableObject {
       
       ref.getDocuments { snap, err in
          if let error = err {
-            print("Failed to get fetch all pins from Firestore: \(error.localizedDescription)")
+            print("Failed to get fetch all pins from Firestore: \(error.localizedDescription) (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
             completion(false)
          }
          guard let snapshot = snap else {
@@ -69,7 +69,7 @@ class MapViewModel : ObservableObject {
             return
          }
          if snapshot.isEmpty {
-            print("No snap documents exist, venuePins is npw empty.")
+            print("No snap documents exist, venuePins is npw empty. (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
             completion(true)
             return
          }
@@ -85,11 +85,38 @@ class MapViewModel : ObservableObject {
                   self.venuePins[id] = annotation
                }
             } catch {
-               print("Could not parse Firestore pin: \(error.localizedDescription)")
+               print("Could not parse Firestore pin: \(error.localizedDescription) (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
                continue
             }
          }
          completion(true)
+      }
+   }
+   
+   func fetchClickedPin(pinId : String, completion: @escaping (Pin?) -> Void) {
+      let ref = db.collection("pins").document(pinId)
+      
+      ref.getDocument { snap, err in
+         if let error = err {
+            print("Error fetching pin document from Firestore: \(error.localizedDescription) (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
+            completion(nil)
+            return
+         }
+         
+         guard let document = snap else {
+            print("Pin document does not exist. (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
+            completion(nil)
+            return
+         }
+         
+         do {
+            let pin = try document.data(as: Pin.self)
+            print("Successfully parsed pin from Firestore. (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
+            completion(pin)
+         } catch {
+            print("Could not parse pin: \(error.localizedDescription) (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
+            completion(nil)
+         }
       }
    }
    

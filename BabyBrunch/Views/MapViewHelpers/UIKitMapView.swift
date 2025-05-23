@@ -19,6 +19,8 @@ struct UIKitMapView : UIViewRepresentable {
     @ObservedObject var vm : LocationViewModel
     //used for user location
     @Binding var region: MKCoordinateRegion
+   @Binding var selectedExistingPinAnnotation : MKAnnotation?
+   @Binding var selectedPinKey : String?
     
     
     
@@ -28,7 +30,9 @@ struct UIKitMapView : UIViewRepresentable {
             showAlert: $showAlert,
             alertTitle: $alertTitle,
             alertMessage: $alertMessage,
-            selectedVenue: $selectedVenue)
+            selectedVenue: $selectedVenue,
+            selectedExistingPinAnnotation: $selectedExistingPinAnnotation,
+            selectedPinKey: $selectedPinKey)
     }
     
     func makeUIView(context: Context) -> MKMapView { // Denna behövs för att UIKitMapView ska kunna ör att fullfölja kraven i protokollet UIViewRepresentable.
@@ -90,7 +94,7 @@ struct UIKitMapView : UIViewRepresentable {
                     }
                 }
             } else {
-                print("Could not add annotations from Firestore to mapView in UIKitMapView.")
+                print("Could not add annotations from Firestore to mapView in UIKitMapView. (In file: \((#file as NSString).lastPathComponent), on line: \(#line))")
             }
         }
         
