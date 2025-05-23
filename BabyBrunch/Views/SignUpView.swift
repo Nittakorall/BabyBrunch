@@ -15,10 +15,25 @@ struct SignUpView: View {
     @State private var confirmPassword: String = ""
     @EnvironmentObject private var authVM : AuthViewModel
     
+    @State private var balloons: [FloatingBalloon] = []
+    
     
     var body: some View {
         //background
         ZStack{
+            
+            ForEach(balloons) { balloon in
+                BalloonEmoji()
+                    .offset(x: balloon.xOffset)
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+                            withAnimation {
+                                balloons.removeAll { $0.id == balloon.id }
+                            }
+                        }
+                    }
+            }
+            
             Color("lavenderBlush")
                 .ignoresSafeArea()
             //logo
@@ -126,6 +141,12 @@ struct SignUpView: View {
             authVM.authError = .passwordMismatch
             return
         }
+        
+        let newBalloon = FloatingBalloon(xOffset: CGFloat.random(in: -100...100))
+           withAnimation {
+               balloons.append(newBalloon)
+           }
+        
         authVM.signUpWithEmail(email: email, password: password){ success in
             if success{
                 authVM.signIn(email: email, password: password)
@@ -138,6 +159,29 @@ struct SignUpView: View {
         
     }
     
+}
+
+struct FloatingBalloon: Identifiable {
+    let id = UUID()
+    var xOffset: CGFloat
+}
+
+struct BalloonEmoji: View {
+    @State private var yOffset: CGFloat = 300
+    @State private var opacity: Double = 1
+
+    var body: some View {
+        Text("🎈")
+            .font(.system(size: 40))
+            .offset(y: yOffset)
+            .opacity(opacity)
+            .onAppear {
+                withAnimation(.easeOut(duration: 2.5)) {
+                    yOffset = -200
+                    opacity = 0
+                }
+            }
+    }
 }
 
 //struct SignUpView_Previews: PreviewProvider {
