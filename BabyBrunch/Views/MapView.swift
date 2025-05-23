@@ -19,6 +19,9 @@ struct MapView: View {
     @State private var alertMessage = ""
     @State private var showSheet = false
     
+    @State private var selectedPin: Pin? = nil
+    @State private var showPinSheet = false
+    
     @StateObject private var vm = LocationViewModel()
     
     var body : some View {
@@ -30,7 +33,8 @@ struct MapView: View {
                 mapViewRef: $mapViewRef,
                 selectedVenue: $selectedVenue,
                 vm : vm,
-                region: $vm.realRegion)
+                region: $vm.realRegion,
+                selectedPin: $selectedPin)
             .ignoresSafeArea()
             .accentColor(Color(.thistle))
             
@@ -38,6 +42,10 @@ struct MapView: View {
             .onAppear() {
                 vm.checkIfLocationServicesEnabled()
             }
+            //öppnar en sheet av venuedetails och skickar med den klickade pinnen
+            .sheet(item: $selectedPin) { pin in
+                    VenueDetailView(pin: pin)
+                }
             .alert(isPresented: $showAlert) {
                 Alert(
                     title: Text(alertTitle),
@@ -112,7 +120,8 @@ struct MapView: View {
      */
     func createAnnotationForMapView(pin: Pin) {
         if let _ = selectedVenue, let mapView = mapViewRef {
-            let annotation = MKPointAnnotation()
+            let annotation = PinAnnotation()
+            annotation.pin = pin
             annotation.coordinate = CLLocationCoordinate2D(latitude: pin.latitude, longitude: pin.longitude)
             annotation.title = pin.name
             annotation.subtitle = String(format: "⭐️: %.1f", pin.averageRating)
@@ -121,6 +130,7 @@ struct MapView: View {
         }
     }
 }
+
 
 //#Preview {
 //    MapView()

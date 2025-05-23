@@ -9,6 +9,7 @@ import SwiftUI
 
 struct VenueDetailView: View {
     
+    let pin: Pin
     var rating: Double = 5.0
     var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
     
@@ -30,14 +31,14 @@ struct VenueDetailView: View {
                 //Vstack for vanue information
                 VStack{
                     StarsView(rating : rating)
-                    Text("Name of Venue")
+                    Text(pin.name)
                         .foregroundColor(Color(.oldRose))
                         .font(.custom("Beau Rivage", size: 40)) // Don't know how to add custom fonts, I'll fix later
                     
                     Text("Address")
                         .foregroundColor(Color(.oldRose))
                         .fontDesign(.rounded)
-                    Text("Phone Number")
+                    Text(pin.phoneNumber)
                         .foregroundColor(Color(.oldRose))
                         .fontDesign(.rounded)
                     Text("email@example.com")
@@ -70,9 +71,9 @@ struct VenueDetailView: View {
     }
 }
 
-#Preview {
-    VenueDetailView()
-}
+//#Preview {
+//    VenueDetailView()
+//}
 
 struct StarsView: View {
     var rating : Double

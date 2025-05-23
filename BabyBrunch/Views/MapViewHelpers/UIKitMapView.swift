@@ -20,6 +20,8 @@ struct UIKitMapView : UIViewRepresentable {
     //used for user location
     @Binding var region: MKCoordinateRegion
     
+    @Binding var selectedPin: Pin?
+    
     
     
     func makeCoordinator() -> Coordinator {
@@ -28,7 +30,8 @@ struct UIKitMapView : UIViewRepresentable {
             showAlert: $showAlert,
             alertTitle: $alertTitle,
             alertMessage: $alertMessage,
-            selectedVenue: $selectedVenue)
+            selectedVenue: $selectedVenue,
+            selectedPin: $selectedPin)
     }
     
     func makeUIView(context: Context) -> MKMapView { // Denna behövs för att UIKitMapView ska kunna ör att fullfölja kraven i protokollet UIViewRepresentable.
