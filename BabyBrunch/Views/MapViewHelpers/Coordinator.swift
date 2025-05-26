@@ -13,7 +13,7 @@ import FirebaseAuth
 class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
 
     var parent : UIKitMapView
-    //Sparar vilken pin som var klickad på senast för att hålla koll på dubbelklick och öppna en detaljvy
+    //Stores which pin was last tapped to detect double taps and open a detail view
     private var lastSelectedAnnotation: MKAnnotation?
     
     let authVM: AuthViewModel
@@ -25,8 +25,9 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
     @StateObject var vm = LocationViewModel()
     @Binding var selectedPin: Pin?
     /*
-     I klasser måste du själv skriva en init(...) där du binder @Binding-variablerna manuellt. @Binding är bara en "wrapper", och du måste deklarera den med _variabelnamn = ....
-     Notera hur vi använder understreck (_showAlert) för att koppla bindningen till egenskaperna.
+     In classes, you must write an init(...) manually where you bind @Binding variables yourself.
+     @Binding is just a wrapper, and you must use _variableName = ... to bind it.
+     Note how we use underscores (_showAlert) to assign bindings to properties.
      */
     init(
         parent: UIKitMapView,
@@ -50,15 +51,15 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
     )
     /*
-     Denna funktion:
-     ✅ Körs när användaren trycker på kartan.
-     ✅ Hämtar platsen (i pixlar) där användaren tryckte.
-     ✅ Översätter den till en riktig latitud/longitud.
-     ✅ Du kan sedan använda coordinate för att:
-     Söka i närheten
-     Lägga till en pin
-     Visa information
-     Med mera.
+     This function:
+     ✅ Runs when the user taps on the map.
+     ✅ Gets the screen location (in pixels) of the tap.
+     ✅ Converts it to a real latitude/longitude.
+     ✅ You can then use the coordinate to:
+     Search nearby
+     Add a pin
+     Show information
+     And more.
      */
     
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView?{
@@ -100,7 +101,7 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView) // mapView.convert(...): Översätter CGPoint-positionen (i pixlar) till en CLLocationCoordinate2D, alltså en latitud och longitud. toCoordinateFrom: mapView: Säger att konverteringen ska utgå från det koordinatsystemet som kartan har. ✅ Resultat: Du har nu en CLLocationCoordinate2D (ex: lat: 59.86, long: 17.64) – alltså den exakta geografiska platsen där användaren tryckte.
         let tappedCoordinate = coordinate
       
-       //Stoppar search och lägga till ny pin om användare klickat på en pin
+       //Stops search and prevents adding a new pin if user tapped on an existing pin
         if let tappedView = mapView.hitTest(location, with: nil),
            tappedView is MKAnnotationView {
             return
@@ -117,11 +118,11 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
         let smallRegion = MKCoordinateRegion(center: tappedCoordinate, span: span)
         /*
-         Den här koden:
-         ✅ Skapar ett sökobjekt (en förfrågan).
-         ✅ Begränsar sökningen till den synliga kartytan.
-         ✅ Inkluderar alla typer av POI.
-         ✅ Letar efter restauranger.
+         This code:
+         ✅ Creates a search request object.
+         ✅ Limits the search to the visible map area.
+         ✅ Includes all types of POIs.
+         ✅ Filters for restaurants.
          */
         let request = MKLocalPointsOfInterestRequest(coordinateRegion: smallRegion)
         request.pointOfInterestFilter = MKPointOfInterestFilter(including: [.restaurant, .cafe])
@@ -129,11 +130,11 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         
         
         /*
-         ✅ Du skickar iväg sökningen till Apple Maps med search.start(...).
-         ✅ Du väntar asynkront på svar.
-         ✅ När svaret kommer:
-         - Om svaret innehåller platser: du hämtar dem via response.mapItems.
-         - Om något går fel: du skriver ut felet i konsolen.
+         ✅ You send the search request to Apple Maps using search.start(...).
+         ✅ You wait asynchronously for the result.
+         ✅ When the result arrives:
+         - If places are found: you get them via response.mapItems.
+         - If an error occurs: you print the error to the console.
          */
         let search = MKLocalSearch(request: request) // Du skapar en instans av MKLocalSearch och ger den en sökförfrågan (request) som du tidigare konfigurerat. Det är nu du förbereder själva sökningen som ska köras. Tänk på detta som att du skriver in något i Apple Maps appen – men ännu inte tryckt "Sök".
         search.start { response, error in // Den här raden startar själva sökningen. Den körs asynkront (i bakgrunden). Det betyder: du skickar sökningen, och när resultatet kommer tillbaka körs det som finns inom { ... } (slutklamrarna). Du får tillbaka två saker: response: Svaret från Apple Maps om platser den hittade. error: Ett eventuellt fel som uppstod under sökningen. 💡 Viktigt: Detta är en closure, vilket i Swift är som en liten funktion du skickar med och som körs senare.
@@ -144,9 +145,9 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
             }
                         
             /*
-             ✅ Hitta den plats (MKMapItem) i items som ligger närmast den plats du tryckte på i kartan – alltså coordinate.
-             ✅ Skapar en annotation för den platsen
-             ✅ Visar den som en pin på kartan
+             ✅ Finds the MKMapItem in items that is closest to where the user tapped on the map.
+             ✅ Creates an annotation for that place.
+             ✅ Displays it as a pin on the map.
              */
             if let nearest = items.min(by: { // items är en array av MKMapItem (resultat från en MKLocalSearch). .min(by:) returnerar det minsta elementet baserat på ett jämförelsekriterium. Det du skickar in i { ... } är en jämförelse mellan två MKMapItem-objekt, där du säger --> a är mindre än b om a ligger närmare coordinate än b. $0 och $1 är två MKMapItem-objekt. placemark.coordinate hämtar CLLocationCoordinate2D för varje. .distance(to:) är en custom extension (definierad i din kod) som räknar ut avståndet i meter mellan två koordinater. 📌 Resultat: Du får det MKMapItem-objekt som ligger närmast coordinate. Om vi hittade någon plats (dvs. items var inte tom), då: Gå in i blocket. Annars → ignorera.
                 $0.placemark.coordinate.distance(to: coordinate) <
@@ -180,25 +181,25 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         }
     }
     
-    //Körs när pin klickas och sparar senaste klicka pinnen för att kunna spåra dubbelklick
+    //Called when a pin is tapped and stores the last tapped pin to track double taps
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
         lastSelectedAnnotation = view.annotation
     }
     
     
-    //håller koll på vilken pin som är klickad på och om det är första eller andra gången
+    //Keeps track of which pin was tapped and whether it was the first or second tap
     @objc func handleAnnotationTap(_ gesture: UITapGestureRecognizer) {
         guard let view = gesture.view as? MKAnnotationView,
               let annotation = view.annotation as? PinAnnotation,
               let pin = annotation.pin else { return }
         
-        //Kontroll om klick är på samma pin som senaste
+        //Check if the tap is on the same pin as last time
         guard let last = lastSelectedAnnotation,
               last === annotation else {
             return
         }
         
-        //Triggar sheet i mapView om det är andra klicket på samma pin
+        //Triggers a sheet in MapView if it's the second tap on the same pin
         selectedPin = pin
     }
 }
@@ -206,10 +207,15 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
 
 
 extension CLLocationCoordinate2D {
-    func distance(to other: CLLocationCoordinate2D) -> CLLocationDistance { // Du skapar en instansmetod kallad distance(to:). Den returnerar CLLocationDistance (vilket är bara en typalias för Double – avstånd i meter). Parametern other är den koordinat du vill jämföra med.
-        // Skapa CLLocation-instanser. Dessa omvandlas till CLLocation, eftersom endast CLLocation har .distance(from:)-metoden. CLLocationCoordinate2D har inte inbyggt stöd för att räkna avstånd. Men CLLocation har det.
-        let a = CLLocation(latitude: latitude, longitude: longitude) // self (dvs. den aktuella CLLocationCoordinate2D som du anropar metoden på) blir punkt a.
-        let b = CLLocation(latitude: other.latitude, longitude: other.longitude) // other är punkt b.
-        return a.distance(from: b) // Använder CLLocation’s metod .distance(from:) för att beräkna avstånd i meter mellan a och b.
+    func distance(to other: CLLocationCoordinate2D) -> CLLocationDistance {
+        // This defines an instance method called distance(to:) that returns a CLLocationDistance (which is just a typealias for Double – the distance in meters.) The parameter 'other' is the coordinate you want to compare with.
+        // Create CLLocation instances. These are converted from CLLocationCoordinate2D to CLLocation,
+        // because only CLLocation has the .distance(from:) method.
+        // CLLocationCoordinate2D does not natively support distance calculation, but CLLocation does.
+        let a = CLLocation(latitude: latitude, longitude: longitude) // 'self' (the coordinate this method is called on) becomes point A.
+        let b = CLLocation(latitude: other.latitude, longitude: other.longitude) // 'other' becomes point B.
+
+        // Use CLLocation's method .distance(from:) to calculate the distance in meters between A and B.
+        return a.distance(from: b)
     }
 }
