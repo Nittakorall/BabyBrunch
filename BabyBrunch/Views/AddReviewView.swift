@@ -15,8 +15,7 @@ struct AddReviewView: View {
     //Tar med oss våran pin från detailView
     let pin: Pin
     private let mapVM = MapViewModel()
-
-    @Environment(\.dismiss) var dismiss
+@Environment(\.dismiss) var dismiss
     @State var showAlert = false
 
     var body: some View {
@@ -50,9 +49,9 @@ struct AddReviewView: View {
                             
                         }
                         //0.6 and 1 fraction is for some reason not centered without it
-                        .frame(maxWidth: .infinity, alignment: .center)
+                       // .frame(maxWidth: .infinity, alignment: .center)
                     }
-                    
+                        
                     //button "add review"
                     CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
                        if rating == 0 {
@@ -69,8 +68,8 @@ struct AddReviewView: View {
                     }
                     .padding(.bottom, 30)
                     .padding(.top, 5)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
-                
                 
                 .frame(maxHeight: .infinity, alignment: .top)
                 .onAppear {
@@ -82,7 +81,7 @@ struct AddReviewView: View {
                     
                 }
                 
-                    .padding(.top, 50)
+                  //  .padding(.top, 50)
                     .alert(isPresented: $showAlert) {
                         Alert(
                             title: Text("No rating"),
