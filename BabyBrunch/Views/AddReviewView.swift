@@ -14,9 +14,17 @@ struct AddReviewView: View {
     
     
     
+
+  
+    //Tar med oss våran pin från detailView
+    let pin: Pin
+    private let mapVM = MapViewModel()
+  
+
     @Environment(\.dismiss) var dismiss
     
     @State var showAlert = false
+
     
     
     var body: some View {
@@ -75,6 +83,26 @@ struct AddReviewView: View {
                     
                 }
                 
+
+                //button "add review"
+                CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
+                   if rating == 0 {
+                      print("Rating is 0, i.e. no star chosen.")
+                      showAlert = true
+                   } else {
+                       mapVM.addRating(to: pin, rating: rating) { success in
+                           if success {
+                               print("Added rating: \(rating)")
+                               dismiss()
+                           }
+                       }
+                     
+                   }
+  .frame(maxHeight: .infinity, alignment: .top)
+                .onAppear {
+                    viewHeight = geo.size.height
+                    
+                }
                 //updates the view if fraction size changes
                 .onChange(of: geo.size.height) { newValue in
                     viewHeight = newValue
@@ -126,6 +154,6 @@ struct AddReviewView: View {
     }
 }
 
-#Preview {
-    AddReviewView()
-}
+//#Preview {
+//    AddReviewView()
+//}

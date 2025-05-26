@@ -10,7 +10,6 @@ import SwiftUI
 struct VenueDetailView: View {
     
     let pin: Pin
-    var rating: Double = 5.0
     var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
     
     @State var addReviewSheet = false
@@ -32,7 +31,7 @@ struct VenueDetailView: View {
                 
                 //Vstack for vanue information
                 VStack{
-                    StarsView(rating : rating)
+                    StarsView(rating : pin.averageRating)
                     Text(pin.name)
                         .foregroundColor(Color(.oldRose))
                         .font(.custom("Beau Rivage", size: 40)) // Don't know how to add custom fonts, I'll fix later
@@ -82,7 +81,7 @@ struct VenueDetailView: View {
             .ignoresSafeArea()
         }
         .sheet(isPresented: $addReviewSheet) {
-            AddReviewView()
+            AddReviewView(pin: pin)
                 .presentationDetents([.fraction(0.3), .fraction(0.6), .large])
         }
     }
