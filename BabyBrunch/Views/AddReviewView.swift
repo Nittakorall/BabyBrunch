@@ -11,22 +11,14 @@ struct AddReviewView: View {
     @State private var reviewText = ""
     @State var rating = 0
     @State private var viewHeight: CGFloat = 0
-    
-    
-    
-
   
     //Tar med oss våran pin från detailView
     let pin: Pin
     private let mapVM = MapViewModel()
-  
 
     @Environment(\.dismiss) var dismiss
-    
     @State var showAlert = false
 
-    
-    
     var body: some View {
         ZStack {
             Color("lavenderBlush")
@@ -63,14 +55,17 @@ struct AddReviewView: View {
                     
                     //button "add review"
                     CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
-                        if rating == 0 {
-                            print("Rating is 0, i.e. no star chosen.")
-                            showAlert = true
-                        } else {
-                            // Call functions, e.g. to save rating to Firestore.
-                            print("Chosen rating: \(rating)")
-                            dismiss()
-                        }
+                       if rating == 0 {
+                          print("Rating is 0, i.e. no star chosen.")
+                          showAlert = true
+                       } else {
+                           mapVM.addRating(to: pin, rating: rating) { success in
+                               if success {
+                                   print("Added rating: \(rating)")
+                                   dismiss()
+                               }
+                           }
+                       }
                     }
                     .padding(.bottom, 30)
                     .padding(.top, 5)
@@ -80,37 +75,12 @@ struct AddReviewView: View {
                 .frame(maxHeight: .infinity, alignment: .top)
                 .onAppear {
                     viewHeight = geo.size.height
-                    
-                }
-                
-
-                //button "add review"
-                CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
-                   if rating == 0 {
-                      print("Rating is 0, i.e. no star chosen.")
-                      showAlert = true
-                   } else {
-                       mapVM.addRating(to: pin, rating: rating) { success in
-                           if success {
-                               print("Added rating: \(rating)")
-                               dismiss()
-                           }
-                       }
-                     
-                   }
-  .frame(maxHeight: .infinity, alignment: .top)
-                .onAppear {
-                    viewHeight = geo.size.height
-                    
                 }
                 //updates the view if fraction size changes
                 .onChange(of: geo.size.height) { newValue in
                     viewHeight = newValue
                     
                 }
-                    
-                    //button "add review"
-
                 
                     .padding(.top, 50)
                     .alert(isPresented: $showAlert) {
@@ -118,11 +88,8 @@ struct AddReviewView: View {
                             title: Text("No rating"),
                             message: Text("Please choose a star for your rating."),
                             dismissButton: .cancel(Text("OK")))
-                        
                     }
                 }
-            
-            
         }
     }
     
