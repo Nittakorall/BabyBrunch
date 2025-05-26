@@ -20,7 +20,7 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct BabyBrunchApp: App {
     @StateObject var authViewModel = AuthViewModel()
-    
+    @AppStorage("isDarkMode") private var isDarkMode = false
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
@@ -28,11 +28,13 @@ struct BabyBrunchApp: App {
             if authViewModel.isLoggedIn {
                 MainTabView()
                     .environmentObject(authViewModel)
+                    .preferredColorScheme(isDarkMode ? .dark : .light)
             }
             else{
                 
         LoginView()
                     .environmentObject(authViewModel)
+                    .preferredColorScheme(isDarkMode ? .dark : .light)
             }
         }
     }
