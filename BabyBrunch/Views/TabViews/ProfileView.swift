@@ -10,6 +10,7 @@ import SwiftUI
 struct ProfileView: View {
    @EnvironmentObject private var authVM: AuthViewModel
    @State var showDeletedAccountSheet = false
+   @AppStorage("isDarkMode") private var isDarkMode = false
     
    var body: some View {
        ZStack{
@@ -17,6 +18,9 @@ struct ProfileView: View {
                .ignoresSafeArea()
            VStack{
                CustomTitle(title: "My Profile")
+               Spacer()
+               Toggle("Dark Mode", isOn: $isDarkMode)
+                   .foregroundColor(.colorText)
                Spacer()
                CustomButton(label: "Sign Out", backgroundColor: "oldRose", width: 200) {
                    authVM.signOut()

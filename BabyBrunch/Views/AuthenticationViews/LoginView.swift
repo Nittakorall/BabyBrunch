@@ -31,7 +31,6 @@ struct LoginView: View {
                   Text("Email")
                   //Email input field
                   CustomTextField(input: $email, hint: "Email", type: .normal)
-                  
                   Text("Password")
                   //password input field
                   CustomTextField(input: $password, hint: "Password", type: .password)
@@ -66,6 +65,7 @@ struct LoginView: View {
                      .stroke(Color.black, lineWidth: 1))
             }
             .frame(maxHeight: .infinity, alignment: .top)
+            .foregroundColor(.colorText)
             
             //MARK: sign in as guest button
             CustomButton(label: "Sign In as Guest", backgroundColor: "thistle", width: 250) {
