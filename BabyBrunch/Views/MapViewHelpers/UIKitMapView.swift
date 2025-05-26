@@ -15,6 +15,7 @@ struct UIKitMapView : UIViewRepresentable {
     @Binding var alertMessage: String
     @Binding var mapViewRef: MKMapView?
     @Binding var selectedVenue : MKMapItem?
+    @EnvironmentObject var authVM: AuthViewModel // for error handling
     let mapViewModel = MapViewModel()
     @ObservedObject var vm : LocationViewModel
     //used for user location
@@ -31,7 +32,8 @@ struct UIKitMapView : UIViewRepresentable {
             alertTitle: $alertTitle,
             alertMessage: $alertMessage,
             selectedVenue: $selectedVenue,
-            selectedPin: $selectedPin)
+            selectedPin: $selectedPin,
+            authVM: authVM)
     }
     
     func makeUIView(context: Context) -> MKMapView { // Denna behövs för att UIKitMapView ska kunna ör att fullfölja kraven i protokollet UIViewRepresentable.

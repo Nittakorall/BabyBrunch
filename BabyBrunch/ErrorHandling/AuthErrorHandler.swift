@@ -5,7 +5,7 @@ import Foundation
 
 //❗❗❗TODO: please add more as we add features❗❗❗
 // each case has it's own error message, these are the names we use in our project
-enum AuthErrorHandler: LocalizedError, Identifiable {
+enum AuthErrorHandler: LocalizedError, Identifiable, Equatable {
     case emailInvalid
     case emailAlreadyInUse
     case emailEmpty

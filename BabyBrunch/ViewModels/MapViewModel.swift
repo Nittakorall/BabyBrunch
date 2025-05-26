@@ -74,7 +74,7 @@ class MapViewModel : ObservableObject {
             return
          }
          if snapshot.isEmpty {
-            print("No snap documents exist, venuePins is npw empty.")
+            print("No snap documents exist, venuePins is now empty.")
             completion(true)
             return
          }

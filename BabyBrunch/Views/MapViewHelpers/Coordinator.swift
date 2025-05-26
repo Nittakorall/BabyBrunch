@@ -8,12 +8,15 @@
 import Foundation
 import SwiftUI
 import MapKit
+import FirebaseAuth
 
 class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
 
     var parent : UIKitMapView
     //Sparar vilken pin som var klickad på senast för att hålla koll på dubbelklick och öppna en detaljvy
     private var lastSelectedAnnotation: MKAnnotation?
+    
+    let authVM: AuthViewModel
     
     @Binding var showAlert: Bool
     @Binding var alertTitle : String
@@ -31,13 +34,15 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         alertTitle: Binding<String>,
         alertMessage: Binding<String>,
         selectedVenue: Binding<MKMapItem?>,
-        selectedPin: Binding<Pin?>) {
+        selectedPin: Binding<Pin?>,
+        authVM: AuthViewModel) {
             self.parent = parent
             _showAlert = showAlert
             _alertTitle = alertTitle
             _alertMessage = alertMessage
             _selectedVenue = selectedVenue
             _selectedPin = selectedPin
+            self.authVM = authVM
         }
     
     let region = MKCoordinateRegion(
@@ -100,6 +105,14 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
            tappedView is MKAnnotationView {
             return
         }
+        
+        //checks if the user is guest before searching.
+        if Auth.auth().currentUser?.isAnonymous == true || authVM.currentUser?.isSignedUp == false {
+            DispatchQueue.main.async {
+                self.authVM.authError = .guestNotAllowed
+            }
+            return
+        }
        
         let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
         let smallRegion = MKCoordinateRegion(center: tappedCoordinate, span: span)
@@ -112,6 +125,8 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
          */
         let request = MKLocalPointsOfInterestRequest(coordinateRegion: smallRegion)
         request.pointOfInterestFilter = MKPointOfInterestFilter(including: [.restaurant, .cafe])
+        
+        
         
         /*
          ✅ Du skickar iväg sökningen till Apple Maps med search.start(...).
