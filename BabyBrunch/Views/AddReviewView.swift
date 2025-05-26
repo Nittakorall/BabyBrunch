@@ -16,6 +16,9 @@ struct AddReviewView: View {
     
     @State private var reviewText = ""
    @State var rating = 0
+    //Tar med oss våran pin från detailView
+    let pin: Pin
+    private let mapVM = MapViewModel()
     
     
     var body: some View {
@@ -75,7 +78,11 @@ struct AddReviewView: View {
                 
                 //button "add review"
                 CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
-                    
+                    mapVM.addRating(to: pin, rating: rating) { success in
+                        if success {
+                            print("Här kan vi göra något vid lyckad uppdatering")
+                        }
+                    }
                 }
                 .padding(.top, 50)
             }
@@ -114,6 +121,6 @@ struct StarRatingView: View {
    }
 }
 
-#Preview {
-    AddReviewView()
-}
+//#Preview {
+//    AddReviewView()
+//}

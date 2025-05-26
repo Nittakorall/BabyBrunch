@@ -93,6 +93,51 @@ class MapViewModel : ObservableObject {
          completion(true)
       }
    }
+    
+    //Funktion för att kunna lägga till en rating på en pin till firestore
+    //Tar in den pin som ska läggas till i och den rating som ska läggas till
+    func addRating(to pin: Pin, rating: Int, completion: @escaping (Bool) -> Void) {
+        guard let pinId = pin.id else {
+            print("No pin id")
+            completion(false)
+            return
+        }
+        
+        //Hämtar hela pin dokumentet
+        let ref = db.collection("pins").document(pinId)
+        
+        ref.getDocument { snapshot, error in
+            if let error = error {
+                print("Error getting pin: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            //Ur dokumentet hämtas ratings arrayen
+            guard let data = snapshot?.data(),
+                  var existingRatings = data["ratings"] as? [Int] else {
+                print("Failed reading array")
+                completion(false)
+                return
+            }
+            
+            //lägger till ratingen i arrayen som hämtats
+            existingRatings.append(rating)
+            
+            //uppdaterar firestore med den nya uppdaterade arrayeb
+            ref.updateData(["ratings": existingRatings]) { error in
+                if let error = error {
+                    print("Failed to update: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    print("Rating added!")
+                    completion(true)
+                }
+            }
+        }
+        
+        
+    }
    
    
 }
