@@ -10,12 +10,13 @@ import SwiftUI
 struct AddReviewView: View {
     
     
-    
+   @Environment(\.dismiss) var dismiss
     @State private var amounntStars = "⭐️⭐️⭐️"
     let stars = ["⭐️", "⭐️⭐️", "⭐️⭐️⭐️", "⭐️⭐️⭐️⭐️", "⭐️⭐️⭐️⭐️⭐️"]
     
     @State private var reviewText = ""
    @State var rating = 0
+   @State var showAlert = false
     
     
     var body: some View {
@@ -75,9 +76,22 @@ struct AddReviewView: View {
                 
                 //button "add review"
                 CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
-                    
+                   if rating == 0 {
+                      print("Rating is 0, i.e. no star chosen.")
+                      showAlert = true
+                   } else {
+                      // Call functions, e.g. to save rating to Firestore.
+                      print("Chosen rating: \(rating)")
+                      dismiss()
+                   }
                 }
                 .padding(.top, 50)
+                .alert(isPresented: $showAlert) {
+                   Alert(
+                     title: Text("No rating"),
+                     message: Text("Please choose a star for your rating."),
+                     dismissButton: .cancel(Text("OK")))
+                }
             }
             
             .frame(maxHeight: .infinity, alignment: .top)
