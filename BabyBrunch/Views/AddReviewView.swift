@@ -60,8 +60,17 @@ struct AddReviewView: View {
                         } else {
                             mapVM.addRating(to: pin, rating: rating) { success in
                                 if success {
-                                    print("Added rating: \(rating)")
-                                    dismiss()
+                                   print("Added rating: \(rating)")
+                                   // Only call mapVm.addReview if mapVM.addRating is successful AND reviewText variable is not empty.
+                                   // Else, just dismiss the sheet.
+                                   if !reviewText.isEmpty {
+                                      mapVM.addReview(pin: pin, review: reviewText, rating: rating) { success in
+                                         print("Added review: \(reviewText)")
+                                         dismiss()
+                                      }
+                                   } else {
+                                      dismiss()
+                                   }
                                 }
                             }
                         }
