@@ -83,15 +83,13 @@ struct AddReviewView: View {
                       print("Rating is 0, i.e. no star chosen.")
                       showAlert = true
                    } else {
-                      // Call functions, e.g. to save rating to Firestore.
-                      print("Chosen rating: \(rating)")
-                      dismiss()
+                       mapVM.addRating(to: pin, rating: rating) { success in
+                           if success {
+                               print("Added rating: \(rating)")
+                               dismiss()
+                           }
+                       }
                    }
-                    mapVM.addRating(to: pin, rating: rating) { success in
-                        if success {
-                            print("Här kan vi göra något vid lyckad uppdatering")
-                        }
-                    }
                 }
                 .padding(.top, 50)
                 .alert(isPresented: $showAlert) {
