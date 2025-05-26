@@ -10,8 +10,10 @@ import MapKit
 import CoreLocation
 
 struct MapView: View {
+    @EnvironmentObject private var authVM: AuthViewModel
     @State private var mapViewRef: MKMapView? = nil
     @State private var selectedVenue : MKMapItem? = nil
+    
     let mapVM = MapViewModel()
     
     @State private var showAlert = false
@@ -73,6 +75,10 @@ struct MapView: View {
      * If successful, call function to create an annotation to be places on the mapView.
      */
     func savePOItoPin () {
+        guard authVM.currentUser?.isSignedUp == true else {
+            authVM.authError = .guestNotAllowed //triggers the alert string found in AuthErrorHandler
+            return
+        }
         if let venue = selectedVenue, let _ = mapViewRef {
             if let name = venue.placemark.name,
                let streetAddress = venue.placemark.thoroughfare,

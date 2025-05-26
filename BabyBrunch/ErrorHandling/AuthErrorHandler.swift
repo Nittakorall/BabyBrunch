@@ -14,6 +14,7 @@ enum AuthErrorHandler: LocalizedError, Identifiable {
     case passwordMismatch
     case userNotFound
     case credentialsInvalid
+    case guestNotAllowed
     case networkError
     case unknown(_ debugMessage: String)
     
@@ -30,6 +31,7 @@ enum AuthErrorHandler: LocalizedError, Identifiable {
         case .passwordMismatch: return "Passwords do not match"
         case .userNotFound: return "There is no account connected to that email address"
         case .credentialsInvalid: return "Password or email is incorrect"
+        case .guestNotAllowed: return "Login or register a user to use this feature"
         case .networkError: return "Network error, check your connection before retrying"
         case .unknown(let msg): return "Something went wrong: \(msg)"
         }

@@ -19,6 +19,11 @@ class MapViewModel : ObservableObject {
     * If yes, do nothing.
     */
    func savePinToFirestore(pin: Pin, completion: @escaping (Bool) -> Void) {
+       if Auth.auth().currentUser?.isAnonymous == true {
+               print("Guest cannot create pins.")
+               completion(false)   // No alert here
+               return
+           }
       let ref = db.collection("pins")
       let query = ref
          .whereField("name", isEqualTo: pin.name)
