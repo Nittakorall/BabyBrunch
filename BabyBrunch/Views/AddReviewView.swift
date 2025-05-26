@@ -15,6 +15,7 @@ struct AddReviewView: View {
     let stars = ["⭐️", "⭐️⭐️", "⭐️⭐️⭐️", "⭐️⭐️⭐️⭐️", "⭐️⭐️⭐️⭐️⭐️"]
     
     @State private var reviewText = ""
+   @State var rating = 0
     
     
     var body: some View {
@@ -23,7 +24,8 @@ struct AddReviewView: View {
                 .edgesIgnoringSafeArea(.all)
             VStack {
                 
-                
+               CustomTitle(title: "Choose a star rating:")
+               StarRatingView(rating: $rating)
                 //ui for picker with stars, functional but will be replaced
                 //                HStack {
                 //                    Text("Rate your experience:")
@@ -85,6 +87,32 @@ struct AddReviewView: View {
     
 }
 
+struct StarRatingView: View {
+   @Binding var rating: Int
+   
+   var body: some View {
+      HStack {
+         // For each number 1-5:
+         ForEach(1...5, id: \.self) { index in
+            Image(systemName: index <= rating ? "star.fill" : "star")
+            // Gradient colour instead of one colour.
+               .foregroundStyle( index <= rating ?
+                     AnyShapeStyle(LinearGradient(colors: [Color(.lightYellowStar), Color(.darkYellowStar)], startPoint: .top, endPoint: .bottom)) :
+                     AnyShapeStyle(.gray))
+               .font(.system(size: 30)) // Size of stars.
+               .offset(y: index <= rating ? -10 : 0) // Move stars up on y-axis.
+               .shadow(color: .black.opacity(0.3), radius: 3, x: -2, y: 5) // Shadow around image for more 3D effect.
+               .scaleEffect(index == rating ? 1.3 : 1.0) // Upon click, enlarge star slightly.
+               .animation(.spring(), value: rating) // Upon click, animate when star get larger.
+               // When a star is clicked, set its index to our rating variable.
+               .onTapGesture {
+                  rating = index
+                  print("Rating: \(rating)")
+               }
+         }
+      }
+   }
+}
 
 #Preview {
     AddReviewView()
