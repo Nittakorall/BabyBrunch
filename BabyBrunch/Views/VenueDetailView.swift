@@ -13,6 +13,8 @@ struct VenueDetailView: View {
     var rating: Double = 5.0
     var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
     
+    @State var addReviewSheet = false
+    
     var body: some View {
         ZStack{
             // Background color
@@ -43,13 +45,25 @@ struct VenueDetailView: View {
                         .fontDesign(.rounded)
                     Text("email@example.com")
                         .foregroundColor(Color(.oldRose))
+                    VStack{
+                        HStack{
+                            Text("Your rating:")
+                            Text("\u{2B50} \u{2B50} \u{2B50} \u{2B50}")
+                                
+                        }
+                        Text("Your wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful review")
+                    }
+                    .padding()
+                    .background(Color(.thistle)) 
+                    .cornerRadius(12)
+                    .padding()
                     
                     ReviewListView(reviews : reviews)
                     
                     
                     //  Spacer()
                     Button("Rate venue") {
-                        
+                        addReviewSheet = true
                     }
                     .foregroundColor(.white)
                     .frame(width: 250, height: 10)
@@ -67,8 +81,12 @@ struct VenueDetailView: View {
             .frame(maxHeight: .infinity, alignment: .top)
             .ignoresSafeArea()
         }
-        
+        .sheet(isPresented: $addReviewSheet) {
+            AddReviewView()
+                .presentationDetents([.fraction(0.3), .fraction(0.6), .large])
+        }
     }
+    
 }
 
 //#Preview {
