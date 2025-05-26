@@ -14,9 +14,9 @@ struct AddReviewView: View {
     
     
     
-   @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) var dismiss
     
-   @State var showAlert = false
+    @State var showAlert = false
     
     
     var body: some View {
@@ -55,13 +55,20 @@ struct AddReviewView: View {
                     
                     //button "add review"
                     CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
-                        
+                        if rating == 0 {
+                            print("Rating is 0, i.e. no star chosen.")
+                            showAlert = true
+                        } else {
+                            // Call functions, e.g. to save rating to Firestore.
+                            print("Chosen rating: \(rating)")
+                            dismiss()
+                        }
                     }
                     .padding(.bottom, 30)
                     .padding(.top, 5)
                 }
                 
-
+                
                 .frame(maxHeight: .infinity, alignment: .top)
                 .onAppear {
                     viewHeight = geo.size.height
@@ -71,56 +78,49 @@ struct AddReviewView: View {
                 //updates the view if fraction size changes
                 .onChange(of: geo.size.height) { newValue in
                     viewHeight = newValue
+                    
+                }
+                    
+                    //button "add review"
 
-              
                 
-                //button "add review"
-                CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
-                   if rating == 0 {
-                      print("Rating is 0, i.e. no star chosen.")
-                      showAlert = true
-                   } else {
-                      // Call functions, e.g. to save rating to Firestore.
-                      print("Chosen rating: \(rating)")
-                      dismiss()
-                   }
+                    .padding(.top, 50)
+                    .alert(isPresented: $showAlert) {
+                        Alert(
+                            title: Text("No rating"),
+                            message: Text("Please choose a star for your rating."),
+                            dismissButton: .cancel(Text("OK")))
+                        
+                    }
                 }
-                .padding(.top, 50)
-                .alert(isPresented: $showAlert) {
-                   Alert(
-                     title: Text("No rating"),
-                     message: Text("Please choose a star for your rating."),
-                     dismissButton: .cancel(Text("OK")))
-
-                }
-            }
+            
             
         }
     }
-}
-
-struct StarRatingView: View {
-    @Binding var rating: Int
     
-    var body: some View {
-        HStack {
-            // For each number 1-5:
-            ForEach(1...5, id: \.self) { index in
-                Image(systemName: index <= rating ? "star.fill" : "star")
-                // Gradient colour instead of one colour.
-                    .foregroundStyle( index <= rating ?
-                                      AnyShapeStyle(LinearGradient(colors: [Color(.lightYellowStar), Color(.darkYellowStar)], startPoint: .top, endPoint: .bottom)) :
-                                        AnyShapeStyle(.gray))
-                    .font(.system(size: 30)) // Size of stars.
-                    .offset(y: index <= rating ? -10 : 0) // Move stars up on y-axis.
-                    .shadow(color: .black.opacity(0.3), radius: 3, x: -2, y: 5) // Shadow around image for more 3D effect.
-                    .scaleEffect(index == rating ? 1.3 : 1.0) // Upon click, enlarge star slightly.
-                    .animation(.spring(), value: rating) // Upon click, animate when star get larger.
-                // When a star is clicked, set its index to our rating variable.
-                    .onTapGesture {
-                        rating = index
-                        print("Rating: \(rating)")
-                    }
+    struct StarRatingView: View {
+        @Binding var rating: Int
+        
+        var body: some View {
+            HStack {
+                // For each number 1-5:
+                ForEach(1...5, id: \.self) { index in
+                    Image(systemName: index <= rating ? "star.fill" : "star")
+                    // Gradient colour instead of one colour.
+                        .foregroundStyle( index <= rating ?
+                                          AnyShapeStyle(LinearGradient(colors: [Color(.lightYellowStar), Color(.darkYellowStar)], startPoint: .top, endPoint: .bottom)) :
+                                            AnyShapeStyle(.gray))
+                        .font(.system(size: 30)) // Size of stars.
+                        .offset(y: index <= rating ? -10 : 0) // Move stars up on y-axis.
+                        .shadow(color: .black.opacity(0.3), radius: 3, x: -2, y: 5) // Shadow around image for more 3D effect.
+                        .scaleEffect(index == rating ? 1.3 : 1.0) // Upon click, enlarge star slightly.
+                        .animation(.spring(), value: rating) // Upon click, animate when star get larger.
+                    // When a star is clicked, set its index to our rating variable.
+                        .onTapGesture {
+                            rating = index
+                            print("Rating: \(rating)")
+                        }
+                }
             }
         }
     }
