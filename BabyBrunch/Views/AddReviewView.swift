@@ -11,13 +11,13 @@ struct AddReviewView: View {
     @State private var reviewText = ""
     @State var rating = 0
     @State private var viewHeight: CGFloat = 0
-  
+    
     //Tar med oss våran pin från detailView
     let pin: Pin
     private let mapVM = MapViewModel()
-@Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) var dismiss
     @State var showAlert = false
-
+    
     var body: some View {
         ZStack {
             Color("lavenderBlush")
@@ -49,22 +49,22 @@ struct AddReviewView: View {
                             
                         }
                         //0.6 and 1 fraction is for some reason not centered without it
-                       // .frame(maxWidth: .infinity, alignment: .center)
+                        // .frame(maxWidth: .infinity, alignment: .center)
                     }
-                        
+                    
                     //button "add review"
                     CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
-                       if rating == 0 {
-                          print("Rating is 0, i.e. no star chosen.")
-                          showAlert = true
-                       } else {
-                           mapVM.addRating(to: pin, rating: rating) { success in
-                               if success {
-                                   print("Added rating: \(rating)")
-                                   dismiss()
-                               }
-                           }
-                       }
+                        if rating == 0 {
+                            print("Rating is 0, i.e. no star chosen.")
+                            showAlert = true
+                        } else {
+                            mapVM.addRating(to: pin, rating: rating) { success in
+                                if success {
+                                    print("Added rating: \(rating)")
+                                    dismiss()
+                                }
+                            }
+                        }
                     }
                     .padding(.bottom, 30)
                     .padding(.top, 5)
@@ -81,14 +81,14 @@ struct AddReviewView: View {
                     
                 }
                 
-                  //  .padding(.top, 50)
-                    .alert(isPresented: $showAlert) {
-                        Alert(
-                            title: Text("No rating"),
-                            message: Text("Please choose a star for your rating."),
-                            dismissButton: .cancel(Text("OK")))
-                    }
+                //  .padding(.top, 50)
+                .alert(isPresented: $showAlert) {
+                    Alert(
+                        title: Text("No rating"),
+                        message: Text("Please choose a star for your rating."),
+                        dismissButton: .cancel(Text("OK")))
                 }
+            }
         }
     }
     
