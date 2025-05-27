@@ -6,36 +6,35 @@
 //
 
 import SwiftUI
-
 struct CardView: View {
     let review : Review
     var body: some View {
         VStack(alignment: .leading) {
-            Text("\(review.rating)")
-//             Image(review.imageName)
-//                .resizable()
-//                .scaledToFill()
-//                .frame(height: 200)
-//                .clipped()
-//                .cornerRadius(15)
-
-            Text(review.userName)
-                .font(.headline)
-                .padding(.top, 5)
-
+            HStack{
+                
+               
+                Text(review.userName)
+                    .font(.headline)
+                    .padding(.top, 5)
+                
+                Text("\(review.rating)")
+          
+                    
+            }
             Text(review.review)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-                .lineLimit(3)
+                .lineLimit(2)
         }
-        .frame(width: 300)
+        .frame(width: UIScreen.main.bounds.width * 0.8, height: 100, alignment: .leading)
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color(.thistle))
         .cornerRadius(20)
         .shadow(radius: 5)
     }
+    
 }
 
 //#Preview {
-//    CardView()
+//    CardView(review : review)
 //}
