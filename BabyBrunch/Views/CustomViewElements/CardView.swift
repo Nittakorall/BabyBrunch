@@ -8,31 +8,47 @@
 import SwiftUI
 struct CardView: View {
     let review : Review
+   
     var body: some View {
         VStack(alignment: .leading) {
             HStack{
-                
-               
                 Text(review.userName)
                     .font(.headline)
                     .padding(.top, 5)
                 
-                Text("\(review.rating)")
-          
-                    
+                ReviewStarsView(rating: review.rating)
+               
+             
             }
             Text(review.review)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .lineLimit(2)
         }
-        .frame(width: UIScreen.main.bounds.width * 0.8, height: 100, alignment: .leading)
-        .padding()
+        .padding(5)
+        .frame(width: UIScreen.main.bounds.width * 0.8, height: 100, alignment: .topLeading)
         .background(Color(.thistle))
-        .cornerRadius(20)
-        .shadow(radius: 5)
+        .cornerRadius(10)
     }
     
+}
+
+struct ReviewStarsView: View {
+    var rating : Double
+    var body: some View {
+        //better be moved to a subview
+        if rating < 2.0 {
+            Text("⭐️ \(String(format: "%.1f", rating))")
+        } else if rating < 3.0 {
+            Text("⭐️⭐️ \(String(format: "%.1f", rating))")
+        } else if rating < 4.0 {
+            Text("⭐️⭐️⭐️ \(String(format: "%.1f", rating))")
+        } else if rating < 5.0 {
+            Text("⭐️⭐️⭐️⭐️ \(String(format: "%.1f", rating))")
+        } else if rating == 5.0 {
+            Text("⭐️⭐️⭐️⭐️⭐️ \(String(format: "%.1f", rating))")
+        }
+    }
 }
 
 //#Preview {
