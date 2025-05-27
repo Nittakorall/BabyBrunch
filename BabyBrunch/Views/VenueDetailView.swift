@@ -10,7 +10,7 @@ import SwiftUI
 struct VenueDetailView: View {
     
     let pin: Pin
-    var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
+   // var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
     
     @State var addReviewSheet = false
     
@@ -57,7 +57,7 @@ struct VenueDetailView: View {
                     .cornerRadius(12)
                     .padding()
                     
-                    ReviewListView(reviews : reviews)
+                    CafeCarouselView()
                     
                     
                     //  Spacer()
@@ -112,23 +112,22 @@ struct StarsView: View {
     }
 }
 
-struct ReviewListView: View {
-    var reviews : [String]
+
+struct CafeCarouselView: View {
+    let reviews: [Review] = [
+        Review(userName: "Ella", rating: 3, review: "fy aldrig igen"),
+       Review(userName: "Bob", rating: 4.5, review: "good enough"),
+       Review(userName: "Patricia", rating: 5, review: "awesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesome")
+    ]
+
     var body: some View {
-        List() {
-            ForEach(reviews, id: \.self) { review in
-                VStack{
-                    HStack{
-                        Text(review)
-                        Spacer()
-                        Text("4.6")
-                        
-                    }
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                ForEach(reviews) { review in
+                   CardView(review: review)
                 }
             }
-            .listRowBackground(Color("lavenderBlush"))
+            .padding(.horizontal, 20)
         }
-        .scrollContentBackground(.hidden)
-        
     }
 }
