@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
-struct ReviewData : Codable {
+struct ReviewData : Codable, Identifiable {
+   @DocumentID var id : String?
    var text : String
    var rating : Int
 }

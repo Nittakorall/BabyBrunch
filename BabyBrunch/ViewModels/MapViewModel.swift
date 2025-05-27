@@ -11,6 +11,7 @@ import MapKit
 
 class MapViewModel : ObservableObject {
    @Published var venuePins : [String: MKPointAnnotation] = [:]
+   @Published var pinReviews : [ReviewData] = []
    let db = Firestore.firestore()
    
    /*
@@ -182,6 +183,43 @@ class MapViewModel : ObservableObject {
                print("Updated reviews field.")
                completion(true)
             }
+         }
+      }
+   }
+   
+   /*
+    * Called in VenueDetailView onAppear to load the reviews for the clicked pin.
+    * Listens to changes in this pin, so when a new review is added, the UI is updated.
+    */
+   func listenToPinReviews(pin: Pin) {
+      guard let pinId = pin.id else {
+          print("No pin id")
+          return
+      }
+      
+      // Set up snapshotlistener for the clicked pin.
+      let ref = db.collection("pins").document(pinId)
+      ref.addSnapshotListener { snap, err in
+         
+         if let error = err {
+            print("Error listening for review updates: \(error.localizedDescription)")
+            return
+         }
+         // Get data from reviews field as dict.
+         guard let data = snap?.data(), let reviews = data["reviews"] as? [[String: Any]] else {
+            print("No reviews found or bad format")
+            return
+         }
+         // Convert dicts to ReviewData objects and add to temporary list.
+         let tempList = reviews.compactMap { dict -> ReviewData? in
+             guard let text = dict["text"] as? String, let rating = dict["rating"] as? Int else {
+                 return nil
+             }
+             return ReviewData(text: text, rating: rating)
+         }
+         // On main thread, set value from templist to published list used in scrollview in VenueDetailView.
+         DispatchQueue.main.async {
+            self.pinReviews = tempList
          }
       }
    }
