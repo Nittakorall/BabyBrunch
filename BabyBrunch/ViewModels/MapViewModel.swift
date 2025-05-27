@@ -135,9 +135,55 @@ class MapViewModel : ObservableObject {
                 }
             }
         }
-        
-        
     }
    
+   /*
+    * Similar function to addRating.
+    * Difference being the review-array containing a ReviewData-object, needing to be mapped for Firestore.
+    */
+   func addReview(pin: Pin, review: String, rating: Int, completion: @escaping (Bool) -> Void) {
+      guard let pinId = pin.id else {
+          print("No pin id")
+          completion(false)
+          return
+      }
+      
+      // List to hold the fetched reviews from the pin reviews field.
+      var existingReviews : [ReviewData] = []
+      // Create a new review object from the user's input.
+      let newReview = ReviewData(text: review, rating: rating)
+      
+      // Fetch the pin document data.
+      let ref = db.collection("pins").document(pinId)
+      ref.getDocument { doc, err in
+         if let error = err {
+            print("Could not fetch pin for review: \(error.localizedDescription)")
+            completion(false)
+            return
+         }
+
+         // Go through each review dictionary in the array and convert it to a ReviewData object that is added to list existingReviews.
+         if let data = doc?.data(),
+            let reviews = data["reviews"] as? [[String:Any]] {
+            existingReviews = reviews.compactMap { dict in
+               guard let text = dict["text"] as? String, let rating = dict["rating"] as? Int else {return nil}
+               return ReviewData(text: text, rating: rating)
+            }
+         }
+         // Add the newly created review to the list.
+         existingReviews.append(newReview)
+         
+         // Upload the updated review list, map each ReviewData to a dictionary.
+         ref.updateData(["reviews" : existingReviews.map { ["text": $0.text, "rating": $0.rating] }]) { err in
+            if let error = err {
+               print("Error updating reviews field: \(error.localizedDescription)")
+               completion(false)
+            } else {
+               print("Updated reviews field.")
+               completion(true)
+            }
+         }
+      }
+   }
    
 }
