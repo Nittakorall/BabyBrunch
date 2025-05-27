@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct AddReviewView: View {
     @State private var reviewText = ""
@@ -14,6 +15,7 @@ struct AddReviewView: View {
     
     //Tar med oss våran pin från detailView
     let pin: Pin
+   let mapViewRef: MKMapView?
     private let mapVM = MapViewModel()
     @Environment(\.dismiss) var dismiss
     @State var showAlert = false
@@ -58,21 +60,42 @@ struct AddReviewView: View {
                             print("Rating is 0, i.e. no star chosen.")
                             showAlert = true
                         } else {
-                            mapVM.addRating(to: pin, rating: rating) { success in
-                                if success {
-                                   print("Added rating: \(rating)")
-                                   // Only call mapVm.addReview if mapVM.addRating is successful AND reviewText variable is not empty.
-                                   // Else, just dismiss the sheet.
-                                   if !reviewText.isEmpty {
-                                      mapVM.addReview(pin: pin, review: reviewText, rating: rating) { success in
-                                         print("Added review: \(reviewText)")
-                                         dismiss()
-                                      }
-                                   } else {
-                                      dismiss()
-                                   }
-                                }
-                            }
+                           // Nil check mapViewRef.
+                           if let mapView = mapViewRef {
+                              mapVM.addRating(to: pin, rating: rating) { success, newAverage in
+                                 if success, let newAverage = newAverage {
+                                    print("newAverage inside if let success, let newAverage: \(newAverage)")
+                                    print("Added rating: \(rating)")
+                                    
+                                    // Check if annotation exists on mapView by comparing pin id.
+                                    // If it exists, cast MKAnnotation to a PinAnnotation and create a new variable storing the data.
+                                    if let oldAnnotation = mapView.annotations.first(where: {
+                                       guard let pinAnnotation = $0 as? PinAnnotation else { return false }
+                                       return pinAnnotation.pin?.id == pin.id
+                                    }) as? PinAnnotation, let oldPin = oldAnnotation.pin {
+                                    
+                                       let newAnnotation = PinAnnotation(pin: oldPin) // Create a new annotation with the same data as the old pin (using custom init in PinAnnotation).
+                                       newAnnotation.subtitle = String(format: "⭐️: %.1f", newAverage) // Update subtitle with new averageRating received from callback in mapVM.addRating above.
+                                       
+                                       DispatchQueue.main.async {
+                                          mapView.removeAnnotation(oldAnnotation) // Remove the old pin from the map.
+                                          mapView.addAnnotation(newAnnotation) // Add the new pin to the map.
+                                       }
+                                    } else {
+                                       print("No existing annotation found to update.")
+                                    }
+
+                                    if !reviewText.isEmpty {
+                                       mapVM.addReview(pin: pin, review: reviewText, rating: rating) { success in
+                                          print("Added review: \(reviewText)")
+                                          dismiss()
+                                       }
+                                    } else {
+                                       dismiss()
+                                    }
+                                 }
+                              }
+                           }
                         }
                     }
                     .padding(.bottom, 30)
