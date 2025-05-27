@@ -10,7 +10,7 @@ import SwiftUI
 struct VenueDetailView: View {
     
     let pin: Pin
-   // var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
+    // var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
     
     @State var addReviewSheet = false
     
@@ -47,13 +47,13 @@ struct VenueDetailView: View {
                     VStack{
                         HStack{
                             Text("Your rating:")
-                            Text("\u{2B50} \u{2B50} \u{2B50} \u{2B50}")
-                                
+                            StarsView(rating : pin.averageRating)
+                            
                         }
                         Text("Your wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful review")
                     }
                     .padding()
-                    .background(Color(.thistle)) 
+                    .background(Color(.thistle))
                     .cornerRadius(12)
                     .padding()
                     
@@ -116,15 +116,15 @@ struct StarsView: View {
 struct CafeCarouselView: View {
     let reviews: [Review] = [
         Review(userName: "Ella", rating: 3, review: "fy aldrig igen"),
-       Review(userName: "Bob", rating: 4.5, review: "good enough"),
-       Review(userName: "Patricia", rating: 5, review: "awesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesome")
+        Review(userName: "Bob", rating: 4.5, review: "good enough"),
+        Review(userName: "Patricia", rating: 5, review: "awesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesomeawesome")
     ]
-
+    
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
                 ForEach(reviews) { review in
-                   CardView(review: review)
+                    CardView(review: review)
                 }
             }
             .padding(.horizontal, 20)

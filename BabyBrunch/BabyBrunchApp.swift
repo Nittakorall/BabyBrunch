@@ -31,8 +31,7 @@ struct BabyBrunchApp: App {
                     .preferredColorScheme(isDarkMode ? .dark : .light)
             }
             else{
-                
-        LoginView()
+                LoginView()
                     .environmentObject(authViewModel)
                     .preferredColorScheme(isDarkMode ? .dark : .light)
             }

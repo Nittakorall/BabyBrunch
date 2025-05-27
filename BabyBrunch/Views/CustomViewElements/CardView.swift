@@ -8,7 +8,7 @@
 import SwiftUI
 struct CardView: View {
     let review : Review
-   
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack{
@@ -17,8 +17,8 @@ struct CardView: View {
                     .padding(.top, 5)
                 
                 ReviewStarsView(rating: review.rating)
-               
-             
+                
+                
             }
             Text(review.review)
                 .font(.subheadline)
