@@ -10,8 +10,10 @@ import MapKit
 import CoreLocation
 
 struct MapView: View {
+    @EnvironmentObject private var authVM: AuthViewModel
     @State private var mapViewRef: MKMapView? = nil
     @State private var selectedVenue : MKMapItem? = nil
+    
     let mapVM = MapViewModel()
     
     @State private var showAlert = false
@@ -42,19 +44,35 @@ struct MapView: View {
             .onAppear() {
                 vm.checkIfLocationServicesEnabled()
             }
+            
+            //listens for authvmerrors
+            .onChange(of: authVM.authError) { newError in
+                if let error = newError {
+                    showAlert = true
+                    alertTitle = "Guest Access Denied"
+                    alertMessage = error.localizedDescription
+                }
+            }
             //öppnar en sheet av venuedetails och skickar med den klickade pinnen
             .sheet(item: $selectedPin) { pin in
                     VenueDetailView(pin: pin)
                 }
             .alert(isPresented: $showAlert) {
-                Alert(
-                    title: Text(alertTitle),
-                    message: Text(alertMessage),
-                    primaryButton: .default(Text("Yes"), action: {
-                        savePOItoPin()
-                    }),
-                    secondaryButton: .cancel(Text("Cancel"))
-                )
+                if alertTitle == "Guest Access Denied" {
+                    return Alert (
+                        title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK"))
+                    )
+                } else {
+                    return Alert(
+                        title: Text(alertTitle),
+                        message: Text(alertMessage),
+                        primaryButton: .default(Text("Yes"), action: {
+                            savePOItoPin()
+                        }),
+                        secondaryButton: .cancel(Text("Cancel"))
+                        
+                    )
+                }
             }
            CustomButton(label: "Where am I?", backgroundColor: "oldRose", width: 150) {
               vm.mapShouldBeUpdated = true
@@ -73,6 +91,10 @@ struct MapView: View {
      * If successful, call function to create an annotation to be places on the mapView.
      */
     func savePOItoPin () {
+        guard authVM.currentUser?.isSignedUp == true else {
+            authVM.authError = .guestNotAllowed //triggers the alert string found in AuthErrorHandler
+            return
+        }
         if let venue = selectedVenue, let _ = mapViewRef {
             if let name = venue.placemark.name,
                let streetAddress = venue.placemark.thoroughfare,

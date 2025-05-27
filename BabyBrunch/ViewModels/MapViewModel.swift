@@ -69,7 +69,7 @@ class MapViewModel : ObservableObject {
             return
          }
          if snapshot.isEmpty {
-            print("No snap documents exist, venuePins is npw empty.")
+            print("No snap documents exist, venuePins is now empty.")
             completion(true)
             return
          }
@@ -93,9 +93,9 @@ class MapViewModel : ObservableObject {
          completion(true)
       }
    }
-   
-    //Funktion för att kunna lägga till en rating på en pin till firestore
-    //Tar in den pin som ska läggas till i och den rating som ska läggas till
+    
+    //Function to add a rating to a pin to firestore
+    //Takes in the pin that is being added along with the rating
     func addRating(to pin: Pin, rating: Int, completion: @escaping (Bool) -> Void) {
         guard let pinId = pin.id else {
             print("No pin id")
@@ -103,7 +103,7 @@ class MapViewModel : ObservableObject {
             return
         }
         
-        //Hämtar hela pin dokumentet
+        //Fetches the whole pin document
         let ref = db.collection("pins").document(pinId)
         
         ref.getDocument { snapshot, error in
@@ -113,7 +113,7 @@ class MapViewModel : ObservableObject {
                 return
             }
             
-            //Ur dokumentet hämtas ratings arrayen
+            //from that document it gets the array
             guard let data = snapshot?.data(),
                   var existingRatings = data["ratings"] as? [Int] else {
                 print("Failed reading array")
@@ -121,10 +121,10 @@ class MapViewModel : ObservableObject {
                 return
             }
             
-            //lägger till ratingen i arrayen som hämtats
+            //adds the rating to the array
             existingRatings.append(rating)
             
-            //uppdaterar firestore med den nya uppdaterade arrayeb
+            //updates firestore with the updated array
             ref.updateData(["ratings": existingRatings]) { error in
                 if let error = error {
                     print("Failed to update: \(error.localizedDescription)")
