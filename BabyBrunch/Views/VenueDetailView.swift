@@ -8,127 +8,141 @@
 import SwiftUI
 
 struct VenueDetailView: View {
-    
-    let pin: Pin
-    var reviews = ["A W E S O M E", "best cafe ever my baby looooved it!", "Nah too expensive blablablablablablablablablablablablabla"]
-    
-    @State var addReviewSheet = false
-    
-    var body: some View {
-        ZStack{
-            // Background color
-            Color("lavenderBlush")
-                .edgesIgnoringSafeArea(.all) // lets ignore safe area and place Image up there
-            
-            // VStack for venueImage
-            VStack{
-                Image("venue")
-                    .resizable()
-                    .aspectRatio(contentMode: .fill) // fills available width
-                    .frame(width: UIScreen.main.bounds.width, height: 250) // changes height
-                    .padding(.bottom, 20)
-                
-                
-                //Vstack for vanue information
-                VStack{
-                    StarsView(rating : pin.averageRating)
-                    Text(pin.name)
-                        .foregroundColor(Color(.oldRose))
-                        .font(.custom("Beau Rivage", size: 40)) // Don't know how to add custom fonts, I'll fix later
-                    
-                    Text("Address")
-                        .foregroundColor(Color(.oldRose))
-                        .fontDesign(.rounded)
-                    Text(pin.phoneNumber)
-                        .foregroundColor(Color(.oldRose))
-                        .fontDesign(.rounded)
-                    Text("email@example.com")
-                        .foregroundColor(Color(.oldRose))
-                    VStack{
-                        HStack{
-                            Text("Your rating:")
-                            Text("\u{2B50} \u{2B50} \u{2B50} \u{2B50}")
-                                
+   
+   let pin: Pin
+   @StateObject var mapVM = MapViewModel()
+   
+   @State var addReviewSheet = false
+   
+   var body: some View {
+      ZStack {
+         Color("lavenderBlush")
+            .edgesIgnoringSafeArea(.all)
+         
+         // VStack to hold ScrollView for all content but the Rate Venue button, which is locked at the bottom.
+         VStack(spacing: 0) {
+            // ScrollView to not mess up UI if restaurants' info differ in size/scope.
+            ScrollView(.vertical, showsIndicators: true) {
+               VStack {
+                  Image("venue")
+                     .resizable()
+                     .aspectRatio(contentMode: .fill)
+                     .frame(width: UIScreen.main.bounds.width, height: 250)
+                     .padding(.bottom, 20)
+                  
+                  VenueInformationView(pin: pin)
+                  
+                  Text("Reviews")
+                     .foregroundColor(Color(.oldRose))
+                     .font(.system(size: 20))
+                     .padding(.top, 10)
+                     .padding(.bottom, 5)
+                  
+                  ScrollView(.horizontal) {
+                     LazyHStack(spacing: 7) {
+                        ForEach($mapVM.pinReviews, id: \.text) { $review in
+                           ReviewView(review: review)
                         }
-                        Text("Your wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful reviewYour wonderful review")
-                    }
-                    .padding()
-                    .background(Color(.thistle)) 
-                    .cornerRadius(12)
-                    .padding()
-                    
-                    ReviewListView(reviews : reviews)
-                    
-                    
-                    //  Spacer()
-                    Button("Rate venue") {
-                        addReviewSheet = true
-                    }
-                    .foregroundColor(.white)
-                    .frame(width: 250, height: 10)
-                    .padding()
-                    .background(Color("oldRose"))
-                    .cornerRadius(10)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.black, lineWidth: 1)
-                        
-                    )
-                    .padding(.bottom, 40)
-                }
+                     }
+                  }
+               }
+               .padding(.bottom, 20)
             }
-            .frame(maxHeight: .infinity, alignment: .top)
-            .ignoresSafeArea()
-        }
-        .sheet(isPresented: $addReviewSheet) {
-            AddReviewView(pin: pin)
-                .presentationDetents([.fraction(0.3), .fraction(0.6), .large])
-        }
-    }
-    
+            
+            CustomButton(label: "Rate Venue", backgroundColor: "oldRose", width: 250) {
+               addReviewSheet = true
+            }
+            .padding(.bottom, 20)
+         }
+      }
+      .onAppear {
+         mapVM.listenToPinReviews(pin: pin)
+      }
+      .sheet(isPresented: $addReviewSheet) {
+         AddReviewView(pin: pin)
+            .presentationDetents([.fraction(0.3), .fraction(0.6), .large])
+      }
+   }
 }
 
 //#Preview {
 //    VenueDetailView()
 //}
 
-struct StarsView: View {
-    var rating : Double
-    var body: some View {
-        VStack{
-            //better be moved so separate subview later
-            if rating < 2.0 {
-                Text("\u{2B50}")
-            } else if rating < 3.0 {
-                Text("\u{2B50} \u{2B50}")
-            } else if rating < 4.0 {
-                Text("\u{2B50} \u{2B50} \u{2B50}")
-            } else if rating < 5.0 {
-                Text("\u{2B50} \u{2B50} \u{2B50} \u{2B50}")
-            } else if rating == 5.0 {
-                Text("\u{2B50} \u{2B50} \u{2B50} \u{2B50} \u{2B50}")
-            }
-        }
-    }
+
+
+struct VenueInformationView : View {
+   let pin : Pin
+   
+   var body : some View {
+      VStack{
+         StarsView(rating : pin.averageRating)
+         Text(pin.name)
+            .foregroundColor(Color(.oldRose))
+            .font(.custom("Beau Rivage", size: 40)) // Don't know how to add custom fonts, I'll fix later
+         Text("\(pin.streetAddress)\(pin.streetNo)")
+            .foregroundColor(Color(.oldRose))
+            .fontDesign(.rounded)
+         Text(pin.phoneNumber)
+            .foregroundColor(Color(.oldRose))
+            .fontDesign(.rounded)
+         Text(pin.website)
+            .foregroundColor(Color(.oldRose))
+      }
+   }
 }
 
-struct ReviewListView: View {
-    var reviews : [String]
-    var body: some View {
-        List() {
-            ForEach(reviews, id: \.self) { review in
-                VStack{
-                    HStack{
-                        Text(review)
-                        Spacer()
-                        Text("4.6")
-                        
-                    }
-                }
-            }
-            .listRowBackground(Color("lavenderBlush"))
-        }
-        .scrollContentBackground(.hidden)
-        
-    }
+struct StarsView: View {
+   var rating : Double
+   var body: some View {
+      VStack{
+         //better be moved so separate subview later
+         if rating < 2.0 {
+            Text("\u{2B50}")
+         } else if rating < 3.0 {
+            Text("\u{2B50} \u{2B50}")
+         } else if rating < 4.0 {
+            Text("\u{2B50} \u{2B50} \u{2B50}")
+         } else if rating < 5.0 {
+            Text("\u{2B50} \u{2B50} \u{2B50} \u{2B50}")
+         } else if rating == 5.0 {
+            Text("\u{2B50} \u{2B50} \u{2B50} \u{2B50} \u{2B50}")
+         }
+      }
+   }
 }
+
+struct ReviewView : View {
+   let review : ReviewData
+   
+   var body : some View {
+      ScrollView(.vertical) {
+         VStack {
+            HStack {
+               Text("Review's rating: ")
+                  .foregroundColor(Color(.lavenderBlush))
+               StarsView(rating: Double(review.rating))
+            }
+            .bold()
+            .padding(.bottom, 7)
+            .frame(maxWidth: .infinity, alignment: .center)
+            
+            Text(review.text)
+               .fixedSize(horizontal: false, vertical: true)
+               .font(.system(size: 12))
+               .foregroundColor(Color(.lavenderBlush))
+            //               .lineLimit(5) // If we want to limit how many rows that are displayed in review card.
+            //               .truncationMode(.tail) // To show ... if text is to long.
+         }
+         .frame(maxWidth: .infinity, alignment: .topLeading)
+         .padding()
+         .background(Color(.thistle))
+         .cornerRadius(30)
+         .padding(.leading, 30)
+      }
+      .frame(width: 370, height: 280)
+      .clipped()
+   }
+}
+
+
