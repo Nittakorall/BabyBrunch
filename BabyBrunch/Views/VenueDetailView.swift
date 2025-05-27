@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct VenueDetailView: View {
    
    let pin: Pin
+   let mapViewRef: MKMapView?
    @StateObject var mapVM = MapViewModel()
    
    @State var addReviewSheet = false
@@ -59,7 +61,7 @@ struct VenueDetailView: View {
          mapVM.listenToPinReviews(pin: pin)
       }
       .sheet(isPresented: $addReviewSheet) {
-         AddReviewView(pin: pin)
+         AddReviewView(pin: pin, mapViewRef: mapViewRef)
             .presentationDetents([.fraction(0.3), .fraction(0.6), .large])
       }
    }

@@ -95,48 +95,52 @@ class MapViewModel : ObservableObject {
       }
    }
     
-    //Function to add a rating to a pin to firestore
-    //Takes in the pin that is being added along with the rating
-    func addRating(to pin: Pin, rating: Int, completion: @escaping (Bool) -> Void) {
-        guard let pinId = pin.id else {
-            print("No pin id")
-            completion(false)
+   //Function to add a rating to a pin to firestore
+   //Takes in the pin that is being added along with the rating
+   // Returns the new ratingAverage to update UI.
+   func addRating(to pin: Pin, rating: Int, completion: @escaping (Bool, Double?) -> Void) {
+      guard let pinId = pin.id else {
+         print("No pin id")
+         completion(false, nil)
+         return
+      }
+      
+      //Fetches the whole pin document
+      let ref = db.collection("pins").document(pinId)
+      
+      ref.getDocument { snapshot, error in
+         if let error = error {
+            print("Error getting pin: \(error.localizedDescription)")
+            completion(false, nil)
             return
-        }
-        
-        //Fetches the whole pin document
-        let ref = db.collection("pins").document(pinId)
-        
-        ref.getDocument { snapshot, error in
+         }
+         
+         //from that document it gets the array
+         guard let data = snapshot?.data(),
+               var existingRatings = data["ratings"] as? [Int] else {
+            print("Failed reading array")
+            completion(false, nil)
+            return
+         }
+         
+         //adds the rating to the array
+         existingRatings.append(rating)
+         // Calculate new rating average to use in venuePins list and UI for annotation subtitle on map.
+         let total = existingRatings.reduce(0, +)
+         let newAverageRating = Double(total) / Double(existingRatings.count)
+         
+         //updates firestore with the updated array
+         ref.updateData(["ratings": existingRatings]) { error in
             if let error = error {
-                print("Error getting pin: \(error.localizedDescription)")
-                completion(false)
-                return
+               print("Failed to update: \(error.localizedDescription)")
+               completion(false, nil)
+            } else {
+               print("Rating added!")
+               completion(true, newAverageRating)
             }
-            
-            //from that document it gets the array
-            guard let data = snapshot?.data(),
-                  var existingRatings = data["ratings"] as? [Int] else {
-                print("Failed reading array")
-                completion(false)
-                return
-            }
-            
-            //adds the rating to the array
-            existingRatings.append(rating)
-            
-            //updates firestore with the updated array
-            ref.updateData(["ratings": existingRatings]) { error in
-                if let error = error {
-                    print("Failed to update: \(error.localizedDescription)")
-                    completion(false)
-                } else {
-                    print("Rating added!")
-                    completion(true)
-                }
-            }
-        }
-    }
+         }
+      }
+   }
    
    /*
     * Similar function to addRating.

@@ -55,7 +55,7 @@ struct MapView: View {
             }
             //öppnar en sheet av venuedetails och skickar med den klickade pinnen
             .sheet(item: $selectedPin) { pin in
-                    VenueDetailView(pin: pin)
+               VenueDetailView(pin: pin, mapViewRef: mapViewRef)
                 }
             .alert(isPresented: $showAlert) {
                 if alertTitle == "Guest Access Denied" {
