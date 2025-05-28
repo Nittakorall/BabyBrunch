@@ -63,7 +63,7 @@ struct VenueDetailView: View {
         }
         .sheet(isPresented: $addReviewSheet) {
             AddReviewView(pin: pin, mapViewRef: mapViewRef)
-                .presentationDetents([.fraction(0.3), .fraction(0.6), .large])
+                .presentationDetents([.fraction(0.3), .large])
         }
     }
 }
