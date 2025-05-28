@@ -79,7 +79,7 @@ struct MapView: View {
             }
                             
             
-            //öppnar en sheet av venuedetails och skickar med den klickade pinnen
+            //opens a sheet of venuedetails and sends the clickable pin along
             .sheet(item: $selectedPin) { pin in
                VenueDetailView(pin: pin, mapViewRef: mapViewRef)
                 }
