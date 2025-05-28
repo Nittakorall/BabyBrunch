@@ -10,6 +10,7 @@ import MapKit
 
 struct AddReviewView: View {
     @State private var reviewText = ""
+    @State private var userName = ""
     @State var rating = 0
     @State private var viewHeight: CGFloat = 0
     
@@ -27,9 +28,15 @@ struct AddReviewView: View {
             
             GeometryReader { geo in
                 VStack {
+                    if viewHeight < 400 {
+                        Text("Pull to open")
+                            .foregroundColor(Color(.oldRose))
+                            .padding(.top, 7)
+                    }
+                        
                     CustomTitle(title: "Choose a star rating:")
                     //-15 padding so that title doesn't take all space in 0.3
-                        .padding(.vertical, -15)
+                        .padding(.vertical, -20)
                     
                     
                     StarRatingView(rating: $rating)
@@ -41,6 +48,17 @@ struct AddReviewView: View {
                         //add review field
                         VStack{
                             CustomTitle(title : "Add your review:")
+                        
+                            
+                        Text("What's your name?")
+                                    .foregroundColor(Color(.oldRose))
+                                TextEditor(text: $userName)
+                                    .frame(height: 50)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(Color(.thistle), lineWidth: 2)
+                                    )
+                                    .padding(.horizontal, 20)
                             
                             TextEditor(text: $reviewText)
                                 .overlay(
@@ -86,7 +104,7 @@ struct AddReviewView: View {
                                     }
 
                                     if !reviewText.isEmpty {
-                                       mapVM.addReview(pin: pin, review: reviewText, rating: rating) { success in
+                                        mapVM.addReview(pin: pin, review: reviewText, rating: rating, userName: userName) { success in
                                           print("Added review: \(reviewText)")
                                           dismiss()
                                        }

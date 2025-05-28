@@ -63,7 +63,7 @@ struct VenueDetailView: View {
         }
         .sheet(isPresented: $addReviewSheet) {
             AddReviewView(pin: pin, mapViewRef: mapViewRef)
-                .presentationDetents([.fraction(0.3), .fraction(0.6), .large])
+                .presentationDetents([.fraction(0.3), .large])
         }
     }
 }
@@ -121,10 +121,19 @@ struct ReviewView : View {
     var body : some View {
         VStack(alignment: .leading){
             HStack {
-                Text("Batman")
-                    .font(.headline)
-                    .padding(.top, 5)
-                    .foregroundColor(Color(.raisinBlack))
+                if review.userName == "" {
+                    Text("Anonymous")
+                        .font(.headline)
+                        .padding(.top, 5)
+                        .foregroundColor(Color(.raisinBlack))
+                }
+                else {
+                    Text(review.userName)
+                        .font(.headline)
+                        .padding(.top, 5)
+                        .foregroundColor(Color(.raisinBlack))
+                }
+             
                 
                 StarsView(rating: Double(review.rating))
             }
