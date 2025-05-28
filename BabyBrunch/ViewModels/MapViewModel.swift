@@ -157,7 +157,7 @@ class MapViewModel : ObservableObject {
     * Similar function to addRating.
     * Difference being the review-array containing a ReviewData-object, needing to be mapped for Firestore.
     */
-   func addReview(pin: Pin, review: String, rating: Int, completion: @escaping (Bool) -> Void) {
+    func addReview(pin: Pin, review: String, rating: Int, userName : String, completion: @escaping (Bool) -> Void) {
       guard let pinId = pin.id else {
           print("No pin id")
           completion(false)
@@ -167,7 +167,7 @@ class MapViewModel : ObservableObject {
       // List to hold the fetched reviews from the pin reviews field.
       var existingReviews : [ReviewData] = []
       // Create a new review object from the user's input.
-      let newReview = ReviewData(text: review, rating: rating)
+       let newReview = ReviewData(text: review, rating: rating, userName: userName)
       
       // Fetch the pin document data.
       let ref = db.collection("pins").document(pinId)
@@ -182,15 +182,15 @@ class MapViewModel : ObservableObject {
          if let data = doc?.data(),
             let reviews = data["reviews"] as? [[String:Any]] {
             existingReviews = reviews.compactMap { dict in
-               guard let text = dict["text"] as? String, let rating = dict["rating"] as? Int else {return nil}
-               return ReviewData(text: text, rating: rating)
+                guard let text = dict["text"] as? String, let rating = dict["rating"] as? Int, let userName = dict["userName"] as? String else {return nil}
+                return ReviewData(text: text, rating: rating, userName: userName)
             }
          }
          // Add the newly created review to the list.
          existingReviews.append(newReview)
          
          // Upload the updated review list, map each ReviewData to a dictionary.
-         ref.updateData(["reviews" : existingReviews.map { ["text": $0.text, "rating": $0.rating] }]) { err in
+          ref.updateData(["reviews" : existingReviews.map { ["text": $0.text, "rating": $0.rating, "userName": $0.userName] }]) { err in
             if let error = err {
                print("Error updating reviews field: \(error.localizedDescription)")
                completion(false)
@@ -227,10 +227,10 @@ class MapViewModel : ObservableObject {
          }
          // Convert dicts to ReviewData objects and add to temporary list.
          let tempList = reviews.compactMap { dict -> ReviewData? in
-             guard let text = dict["text"] as? String, let rating = dict["rating"] as? Int else {
+             guard let text = dict["text"] as? String, let rating = dict["rating"] as? Int, let userName = dict["userName"] as? String else {
                  return nil
              }
-             return ReviewData(text: text, rating: rating)
+             return ReviewData(text: text, rating: rating, userName: userName)
          }
          // On main thread, set value from templist to published list used in scrollview in VenueDetailView.
          DispatchQueue.main.async {

@@ -104,7 +104,7 @@ struct AddReviewView: View {
                                     }
 
                                     if !reviewText.isEmpty {
-                                       mapVM.addReview(pin: pin, review: reviewText, rating: rating) { success in
+                                        mapVM.addReview(pin: pin, review: reviewText, rating: rating, userName: userName) { success in
                                           print("Added review: \(reviewText)")
                                           dismiss()
                                        }

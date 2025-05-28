@@ -121,10 +121,19 @@ struct ReviewView : View {
     var body : some View {
         VStack(alignment: .leading){
             HStack {
-                Text("Batman")
-                    .font(.headline)
-                    .padding(.top, 5)
-                    .foregroundColor(Color(.raisinBlack))
+                if review.userName == "" {
+                    Text("Anonymous")
+                        .font(.headline)
+                        .padding(.top, 5)
+                        .foregroundColor(Color(.raisinBlack))
+                }
+                else {
+                    Text(review.userName)
+                        .font(.headline)
+                        .padding(.top, 5)
+                        .foregroundColor(Color(.raisinBlack))
+                }
+             
                 
                 StarsView(rating: Double(review.rating))
             }
