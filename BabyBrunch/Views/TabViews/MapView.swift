@@ -48,32 +48,42 @@ struct MapView: View {
             //listens for authvmerrors
             .onChange(of: authVM.authError) { newError in
                 if let error = newError {
-                    showAlert = true
                     alertTitle = "Guest Access Denied"
                     alertMessage = error.localizedDescription
+                    showAlert = true
                 }
             }
-            //öppnar en sheet av venuedetails och skickar med den klickade pinnen
-            .sheet(item: $selectedPin) { pin in
-               VenueDetailView(pin: pin, mapViewRef: mapViewRef)
-                }
             .alert(isPresented: $showAlert) {
                 if alertTitle == "Guest Access Denied" {
-                    return Alert (
-                        title: Text(alertTitle), message: Text(alertMessage), dismissButton: .default(Text("OK"))
+                    return Alert(
+                        title: Text(alertTitle),
+                        message: Text(alertMessage),
+                        dismissButton: .default(Text("OK"),
+                        action: {
+                            // clears the error to make the map clickable agin
+                            authVM.authError = nil
+                                                })
                     )
+                    
                 } else {
                     return Alert(
                         title: Text(alertTitle),
                         message: Text(alertMessage),
-                        primaryButton: .default(Text("Yes"), action: {
+                        primaryButton: .default(Text("Yes"),
+                        action: {
                             savePOItoPin()
                         }),
                         secondaryButton: .cancel(Text("Cancel"))
-                        
                     )
                 }
             }
+                            
+            
+            //öppnar en sheet av venuedetails och skickar med den klickade pinnen
+            .sheet(item: $selectedPin) { pin in
+               VenueDetailView(pin: pin, mapViewRef: mapViewRef)
+                }
+            
            CustomButton(label: "Where am I?", backgroundColor: "oldRose", width: 150) {
               vm.mapShouldBeUpdated = true
               vm.checkIfLocationServicesEnabled()
