@@ -114,9 +114,10 @@ struct MapView: View {
                     longitude: longitude
                 )
                 print(newPin)
-                mapVM.savePinToFirestore(pin: newPin) { success in
-                    if success {
-                        createAnnotationForMapView(pin: newPin)
+                mapVM.savePinToFirestore(pin: newPin) { savedPin in
+                    if let updatedPin = savedPin {
+                        //creates the new pin with the id from firestore
+                        createAnnotationForMapView(pin: updatedPin)
                     }
                 }
             }

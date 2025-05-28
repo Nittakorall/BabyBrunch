@@ -19,7 +19,7 @@ class MapViewModel : ObservableObject {
     * If no, create a new pin.
     * If yes, do nothing.
     */
-   func savePinToFirestore(pin: Pin, completion: @escaping (Bool) -> Void) {
+   func savePinToFirestore(pin: Pin, completion: @escaping (Pin?) -> Void) {
       let ref = db.collection("pins")
       let query = ref
          .whereField("name", isEqualTo: pin.name)
@@ -29,20 +29,31 @@ class MapViewModel : ObservableObject {
       query.getDocuments { snap, err in
          if let error = err {
             print("Error getting pin documents: \(error.localizedDescription)")
-            completion(false)
+            completion(nil)
          } else {
             if snap!.isEmpty {
                do {
-                  try ref.addDocument(from: pin)
+                   
+                   //Adds document to firestore
+                   var pinData = pin
+                   let docRef = try ref.addDocument(from: pinData)
+                   
+                   //updates document with the firestore-id
+                   docRef.updateData(["id": docRef.documentID])
+                   
+                   //saves the firestore-id to local list
+                   pinData.id = docRef.documentID
+                   
                   print("This pin is new, saved pin to Firestore.")
-                  completion(true)
+                   //Send the updated pin in the callback if successfull
+                  completion(pinData)
                } catch {
                   print("Failed to save new pin to Firestore: \(error.localizedDescription)")
-                  completion(false)
+                  completion(nil)
                }
             } else {
                print("This pin already exists on Firestore.")
-               completion(false)
+               completion(nil)
             }
          }
       }
