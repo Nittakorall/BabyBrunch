@@ -128,7 +128,7 @@ struct ReviewView : View {
                         .foregroundColor(Color(.raisinBlack))
                 }
                 else {
-                    Text(review.userName)
+                    Text(review.userName ?? "Anonymous")
                         .font(.headline)
                         .padding(.top, 5)
                         .foregroundColor(Color(.raisinBlack))

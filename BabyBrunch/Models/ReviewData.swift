@@ -12,5 +12,5 @@ struct ReviewData : Codable, Identifiable {
    @DocumentID var id : String?
    var text : String
    var rating : Int
-    var userName : String
+    var userName : String?
 }

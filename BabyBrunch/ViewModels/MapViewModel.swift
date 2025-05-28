@@ -190,7 +190,7 @@ class MapViewModel : ObservableObject {
          existingReviews.append(newReview)
          
          // Upload the updated review list, map each ReviewData to a dictionary.
-          ref.updateData(["reviews" : existingReviews.map { ["text": $0.text, "rating": $0.rating, "userName": $0.userName] }]) { err in
+          ref.updateData(["reviews" : existingReviews.map { ["text": $0.text, "rating": $0.rating, "userName": $0.userName ?? "Anonymous"] }]) { err in
             if let error = err {
                print("Error updating reviews field: \(error.localizedDescription)")
                completion(false)
