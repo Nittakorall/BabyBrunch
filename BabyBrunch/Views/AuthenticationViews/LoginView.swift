@@ -9,8 +9,8 @@ import SwiftUI
 import FirebaseAuth
 
 struct LoginView: View {
-   @State private var email: String = ""
-   @State private var password: String = ""
+   @State private var email: String = "gruppen@gruppen.se"
+   @State private var password: String = "Gruppen"
    @State private var isChecked = false
    @State private var error_: String?
    @EnvironmentObject private var authVM: AuthViewModel
