@@ -238,5 +238,29 @@ class MapViewModel : ObservableObject {
          }
       }
    }
+    
+    //Function to fetch a pin from firestore to use for example when fetching a new averagerating when adding a review.
+    func fetchPin(withId id: String, completion: @escaping (Pin?) -> Void) {
+        let ref = db.collection("pins").document(id)
+        ref.getDocument { snapshot, error in
+            if let error = error {
+                print("Error fetching pin! \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            do {
+                if let snapshot = snapshot, snapshot.exists {
+                    let pin = try snapshot.data(as: Pin.self)
+                    completion(pin)
+                } else {
+                    completion(nil)
+                }
+            } catch {
+                print("Error decoding pin: \(error.localizedDescription)")
+                completion(nil)
+            }
+        }
+    }
    
 }

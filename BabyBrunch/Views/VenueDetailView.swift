@@ -10,7 +10,7 @@ import MapKit
 
 struct VenueDetailView: View {
     
-    let pin: Pin
+    @State var pin: Pin
     let mapViewRef: MKMapView?
     @StateObject var mapVM = MapViewModel()
     
@@ -59,10 +59,18 @@ struct VenueDetailView: View {
             }
         }
         .onAppear {
+            //Takes current selected pinId and fetch the new data from that pin on firestore to get a correct average rating
+            if let id = pin.id {
+                mapVM.fetchPin(withId: id) { updatedPin in
+                    if let updatedPin = updatedPin {
+                        self.pin = updatedPin
+                    }
+                }
+            }
             mapVM.listenToPinReviews(pin: pin)
         }
         .sheet(isPresented: $addReviewSheet) {
-            AddReviewView(pin: pin, mapViewRef: mapViewRef)
+            AddReviewView(pin: $pin, mapViewRef: mapViewRef)
                 .presentationDetents([.fraction(0.3), .large])
         }
     }
