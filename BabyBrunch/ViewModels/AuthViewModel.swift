@@ -12,11 +12,12 @@ import FirebaseAuth
 @MainActor
 public class AuthViewModel: ObservableObject {
     @Published var currentUser: User? = nil
+    // Reflects the sign‑up status of the *currentUser* for quick access in views.
+    @Published var isSignedUp: Bool = false
     @Published var errorMessage: String? = nil
     @Published var isLoggedIn = false
     @Published var authError: AuthErrorHandler? = nil // not in use atm but leaving just in case
     
-    private var isSignedUp = false
     private let db = Firestore.firestore()
     private let auth = Auth.auth()
     
@@ -53,6 +54,7 @@ public class AuthViewModel: ObservableObject {
                 return
             }
             self.currentUser = User(id: user.uid, isSignedUp: false)
+            self.isSignedUp = false
             self.isLoggedIn = true
         }
     }
@@ -70,6 +72,7 @@ public class AuthViewModel: ObservableObject {
                 let newUser = User(id: user.uid, email: email, isSignedUp: true)
                 self.saveUser(newUser)
                 self.currentUser = newUser
+                self.isSignedUp = true
                 onSuccess(true)
             }
         }
@@ -107,6 +110,7 @@ public class AuthViewModel: ObservableObject {
                 do {
                     let user = try document.data(as: User.self)
                     self.currentUser = user
+                    self.isSignedUp = user.isSignedUp
                 } catch {
                     print(error)
                 }
@@ -121,6 +125,7 @@ public class AuthViewModel: ObservableObject {
             try Auth.auth().signOut()
             self.isLoggedIn = false
             self.currentUser = nil
+            self.isSignedUp = false // resets the flag so that the user can log in as guest after login out
         } catch {
             self.handleErrors(error)
         }
