@@ -15,7 +15,7 @@ struct AddReviewView: View {
     @State private var viewHeight: CGFloat = 0
     
     //Tar med oss våran pin från detailView
-    let pin: Pin
+    @Binding var pin: Pin
    let mapViewRef: MKMapView?
     private let mapVM = MapViewModel()
     @Environment(\.dismiss) var dismiss
@@ -82,6 +82,8 @@ struct AddReviewView: View {
                            if let mapView = mapViewRef {
                               mapVM.addRating(to: pin, rating: rating) { success, newAverage in
                                  if success, let newAverage = newAverage {
+                                     //add rating to local-list to show new average directly in detailview
+                                     pin.ratings.append(rating)
                                     print("newAverage inside if let success, let newAverage: \(newAverage)")
                                     print("Added rating: \(rating)")
                                     
