@@ -23,4 +23,5 @@ struct Pin : Codable, Identifiable {
       let total = ratings.reduce(0, +)
       return Double(total) / Double(ratings.count)
    }
+   var reviews : [ReviewData]? = []
 }

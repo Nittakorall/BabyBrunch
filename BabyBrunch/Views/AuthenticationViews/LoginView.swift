@@ -9,8 +9,8 @@ import SwiftUI
 import FirebaseAuth
 
 struct LoginView: View {
-   @State private var email: String = ""
-   @State private var password: String = ""
+   @State private var email: String = "gruppen@gruppen.se"
+   @State private var password: String = "Gruppen"
    @State private var isChecked = false
    @State private var error_: String?
    @EnvironmentObject private var authVM: AuthViewModel
@@ -31,7 +31,6 @@ struct LoginView: View {
                   Text("Email")
                   //Email input field
                   CustomTextField(input: $email, hint: "Email", type: .normal)
-                  
                   Text("Password")
                   //password input field
                   CustomTextField(input: $password, hint: "Password", type: .password)
@@ -41,7 +40,7 @@ struct LoginView: View {
                   }.tint(Color(.thistle))
 
                   // Sign in button.
-                  CustomButton(label: "SignIn", backgroundColor: "oldRose", width: 250) {
+                  CustomButton(label: "Sign In", backgroundColor: "oldRose", width: 250) {
                      // guard code block can be removed if we only want errors to be handled server side. This one displays an error if the email field is empty (without it it will display "Please enter a functional email address" instead)
                      guard !email.isEmpty else {
                         authVM.authError = .emailEmpty
@@ -66,6 +65,7 @@ struct LoginView: View {
                      .stroke(Color.black, lineWidth: 1))
             }
             .frame(maxHeight: .infinity, alignment: .top)
+            .foregroundColor(.colorText)
             
             //MARK: sign in as guest button
             CustomButton(label: "Sign In as Guest", backgroundColor: "thistle", width: 250) {

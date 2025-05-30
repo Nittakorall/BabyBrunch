@@ -32,7 +32,7 @@ struct MapPinView: View {
                 .padding(.bottom,40)
                 
         }
-        //.background(Color.blue) för att få triangeln att peka där man tryckt istället för att hela symbolen ligger över.
+        //.background(Color.blue) to make the triangle point to the tap location instead of the whole symbol covering it.
     }
 }
 

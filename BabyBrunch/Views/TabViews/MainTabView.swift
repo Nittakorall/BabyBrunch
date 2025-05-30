@@ -10,15 +10,16 @@ import SwiftUI
 struct MainTabView: View {
    //shows which tab shoud opens by default, uses tags
    @State private var selectedTab = 2
-   
+   @StateObject private var locVM : LocationViewModel
    
    init() {
+       _locVM = StateObject(wrappedValue: LocationViewModel())
       UITabBar.appearance().backgroundColor = UIColor(Color(.lavenderBlush))
    }
    
    var body: some View {
       TabView(selection: $selectedTab) {
-         ProfileView()
+         ProfileView(locVM: locVM)
             .tabItem {
                Image(systemName: "person.crop.circle.fill")
             }

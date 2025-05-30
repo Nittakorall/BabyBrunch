@@ -10,8 +10,10 @@ import MapKit
 import CoreLocation
 
 struct MapView: View {
+    @EnvironmentObject private var authVM: AuthViewModel
     @State private var mapViewRef: MKMapView? = nil
     @State private var selectedVenue : MKMapItem? = nil
+    
     let mapVM = MapViewModel()
     
     @State private var showAlert = false
@@ -42,20 +44,46 @@ struct MapView: View {
             .onAppear() {
                 vm.checkIfLocationServicesEnabled()
             }
-            //öppnar en sheet av venuedetails och skickar med den klickade pinnen
-            .sheet(item: $selectedPin) { pin in
-                    VenueDetailView(pin: pin)
+            
+            //listens for authvmerrors
+            .onChange(of: authVM.authError) { newError in
+                if let error = newError {
+                    alertTitle = "Guest Access Denied"
+                    alertMessage = error.localizedDescription
+                    showAlert = true
                 }
-            .alert(isPresented: $showAlert) {
-                Alert(
-                    title: Text(alertTitle),
-                    message: Text(alertMessage),
-                    primaryButton: .default(Text("Yes"), action: {
-                        savePOItoPin()
-                    }),
-                    secondaryButton: .cancel(Text("Cancel"))
-                )
             }
+            .alert(isPresented: $showAlert) {
+                if alertTitle == "Guest Access Denied" {
+                    return Alert(
+                        title: Text(alertTitle),
+                        message: Text(alertMessage),
+                        dismissButton: .default(Text("OK"),
+                        action: {
+                            // clears the error to make the map clickable agin
+                            authVM.authError = nil
+                                                })
+                    )
+                    
+                } else {
+                    return Alert(
+                        title: Text(alertTitle),
+                        message: Text(alertMessage),
+                        primaryButton: .default(Text("Yes"),
+                        action: {
+                            savePOItoPin()
+                        }),
+                        secondaryButton: .cancel(Text("Cancel"))
+                    )
+                }
+            }
+                            
+            
+            //opens a sheet of venuedetails and sends the clickable pin along
+            .sheet(item: $selectedPin) { pin in
+               VenueDetailView(pin: pin, mapViewRef: mapViewRef)
+                }
+            
            CustomButton(label: "Where am I?", backgroundColor: "oldRose", width: 150) {
               vm.mapShouldBeUpdated = true
               vm.checkIfLocationServicesEnabled()
@@ -73,6 +101,10 @@ struct MapView: View {
      * If successful, call function to create an annotation to be places on the mapView.
      */
     func savePOItoPin () {
+        guard authVM.currentUser?.isSignedUp == true else {
+            authVM.authError = .guestNotAllowed //triggers the alert string found in AuthErrorHandler
+            return
+        }
         if let venue = selectedVenue, let _ = mapViewRef {
             if let name = venue.placemark.name,
                let streetAddress = venue.placemark.thoroughfare,
@@ -92,9 +124,10 @@ struct MapView: View {
                     longitude: longitude
                 )
                 print(newPin)
-                mapVM.savePinToFirestore(pin: newPin) { success in
-                    if success {
-                        createAnnotationForMapView(pin: newPin)
+                mapVM.savePinToFirestore(pin: newPin) { savedPin in
+                    if let updatedPin = savedPin {
+                        //creates the new pin with the id from firestore
+                        createAnnotationForMapView(pin: updatedPin)
                     }
                 }
             }
