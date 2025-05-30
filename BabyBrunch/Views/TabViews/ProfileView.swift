@@ -28,18 +28,19 @@ struct ProfileView: View {
                     .padding(.horizontal, 50)
                     .padding(.bottom, 20)
                 
-                CustomButton(label: "Work in Progress", backgroundColor: "oldRose", width: 200) {
+                CustomButton(label: "Settings", backgroundColor: "oldRose", width: 200) {
                     showAlert = true
                 }.padding(.bottom, 20)
-                    .disabled(true) //Get rid of this row and change label when code is working
                     .alert("Enable Location", isPresented: $showAlert){
                         Button("OK"){
-                            locVM.locationManager?.requestWhenInUseAuthorization()
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                                UIApplication.shared.open(url)
+                                            }
                             print("Enabled")
                         }
                         Button("Cancel", role: .cancel){}
                     } message: {
-                        Text("Please enable")
+                        Text("Press ok to get to settings -> Click on app -> Enable location")
                     }
                 
                 
