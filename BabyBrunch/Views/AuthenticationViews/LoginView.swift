@@ -40,7 +40,7 @@ struct LoginView: View {
                   }.tint(Color(.thistle))
 
                   // Sign in button.
-                  CustomButton(label: "SignIn", backgroundColor: "oldRose", width: 250) {
+                  CustomButton(label: "Sign In", backgroundColor: "oldRose", width: 250) {
                      // guard code block can be removed if we only want errors to be handled server side. This one displays an error if the email field is empty (without it it will display "Please enter a functional email address" instead)
                      guard !email.isEmpty else {
                         authVM.authError = .emailEmpty
