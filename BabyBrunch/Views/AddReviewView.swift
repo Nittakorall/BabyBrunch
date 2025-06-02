@@ -19,7 +19,7 @@ struct AddReviewView: View {
    let mapViewRef: MKMapView?
     private let mapVM = MapViewModel()
     @Environment(\.dismiss) var dismiss
-    @State var showAlert = false
+    @State var showAlert : ReviewAlerts?
     
     var body: some View {
         ZStack {
@@ -76,11 +76,11 @@ struct AddReviewView: View {
                     CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
                         if rating == 0 {
                             print("Rating is 0, i.e. no star chosen.")
-                            showAlert = true
+                            showAlert = .noRating
                         } else {
                            // Nil check mapViewRef.
                            if let mapView = mapViewRef {
-                              mapVM.addRating(to: pin, rating: rating) { success, newAverage in
+                                   mapVM.addRating(to: pin, rating: rating, review: reviewText, userName: userName) { success, newAverage in
                                  if success, let newAverage = newAverage {
                                      //add rating to local-list to show new average directly in detailview
                                      pin.ratings.append(rating)
@@ -105,15 +105,24 @@ struct AddReviewView: View {
                                        print("No existing annotation found to update.")
                                     }
 
-                                    if !reviewText.isEmpty {
-                                        mapVM.addReview(pin: pin, review: reviewText, rating: rating, userName: userName) { success in
-                                          print("Added review: \(reviewText)")
-                                          dismiss()
-                                       }
-                                    } else {
-                                       dismiss()
-                                    }
+//                                    if !reviewText.isEmpty {
+//                                        mapVM.addReview(pin: pin, review: reviewText, rating: rating, userName: userName) { success in
+//                                            if success {
+//                                                print("Added review: \(reviewText)")
+//                                                dismiss()
+//                                            } else {
+//                                                print("No success")
+//                                            }
+//                                        } 
+//                                    } else {
+//                                       dismiss()
+//                                    }
+                                     dismiss()
                                  }
+                              } reviewExists: { exists in
+                                  if exists {
+                                      showAlert = .alreadyReviewed
+                                  }
                               }
                            }
                         }
@@ -132,13 +141,18 @@ struct AddReviewView: View {
                     viewHeight = newValue
                     
                 }
-                
-                //  .padding(.top, 50)
-                .alert(isPresented: $showAlert) {
-                    Alert(
-                        title: Text("No rating"),
-                        message: Text("Please choose a star for your rating."),
-                        dismissButton: .cancel(Text("OK")))
+                .alert(item: $showAlert) { reviewAlert in
+                    switch reviewAlert {
+                    case .noRating:
+                        return Alert(
+                            title: Text("No rating"),
+                            message: Text("Please choose a star for your rating."),
+                            dismissButton: .cancel(Text("OK")))
+                    case .alreadyReviewed:
+                        return Alert(
+                            title: Text("You have already left a review for this venue."),
+                            dismissButton: .cancel(Text("OK")))
+                    }
                 }
             }
         }
@@ -168,6 +182,17 @@ struct AddReviewView: View {
                         }
                 }
             }
+        }
+    }
+}
+
+enum ReviewAlerts : Identifiable {
+    case noRating, alreadyReviewed
+    
+    var id: Int {
+        switch self {
+        case .noRating: return 0
+        case .alreadyReviewed: return 1
         }
     }
 }
