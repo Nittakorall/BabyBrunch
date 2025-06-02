@@ -11,7 +11,7 @@ import FirebaseAuth
 struct LoginView: View {
    @State private var email: String = "gruppen@gruppen.se"
    @State private var password: String = "Gruppen"
-   @State private var isChecked = false
+   @State private var keepLoggedIn = false
    @State private var error_: String?
    @EnvironmentObject private var authVM: AuthViewModel
    @State private var openSignUpView = false
@@ -35,7 +35,7 @@ struct LoginView: View {
                   //password input field
                   CustomTextField(input: $password, hint: "Password", type: .password)
                   
-                  Toggle(isOn: $isChecked) {
+                  Toggle(isOn: $keepLoggedIn) {
                      Text("Keep me signed in")
                   }.tint(Color(.thistle))
 
@@ -46,7 +46,13 @@ struct LoginView: View {
                         authVM.authError = .emailEmpty
                         return
                      }
-                     authVM.signIn(email: email, password: password)
+                      authVM.signIn(email: email, password: password){ success in
+                          if success{
+                              if keepLoggedIn{
+                                  UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                              }
+                          }
+                      }
                   }
                   //forgot password button
                   ForgotPasswordButton(action: {
