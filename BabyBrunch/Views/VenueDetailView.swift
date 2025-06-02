@@ -67,6 +67,28 @@ struct VenueDetailView: View {
                 }
                 .padding(.bottom, 20)
             }
+            
+            VStack {
+                HStack {
+                    Spacer()
+                    Button {
+                        //calls the toggle favorite function 
+                        if let pinId = pin.id {
+                            authVM.toggleFavorite(pinId: pinId) { success in
+                                print(success ? "Toggled favorite" : "Failed")
+                            }
+                        }
+                    } label: {
+                        //Shows button as a filled in or outlined heart depending on if the pin is marked favorite or not
+                        Image(systemName: authVM.currentUser?.favorites.contains(pin.id ?? "") == true ? "heart.fill" : "heart")
+                            .foregroundStyle(.red)
+                            .padding()
+                            .font(.title)
+                    }
+                }
+                Spacer()
+            }
+            
         }
         .onAppear {
             //Takes current selected pinId and fetch the new data from that pin on firestore to get a correct average rating
