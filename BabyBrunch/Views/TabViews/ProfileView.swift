@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import ConfettiSwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject private var authVM: AuthViewModel
@@ -14,9 +13,6 @@ struct ProfileView: View {
     @AppStorage("isDarkMode") private var isDarkMode = false
     @ObservedObject var locVM : LocationViewModel
     @State private var showAlert = false
-    
-    //confetti trigger
-    @State private var confetti: Int = 0
     
     var body: some View {
         ZStack{
@@ -47,19 +43,10 @@ struct ProfileView: View {
                         Text("Press ok to get to settings -> Click on app -> Enable location")
                     }
                 
-                // Confettk Button
-                CustomButton(label: "Confetti!", backgroundColor: "oldRose", width: 200) {
-                    confetti += 1
-                }
-                .padding(.bottom, 20)
-                .confettiCannon(trigger: $confetti)
-                
                 Spacer()
                 CustomButton(label: "Sign Out", backgroundColor: "oldRose", width: 200) {
                     authVM.signOut()
                 }.padding(.bottom, 20)
-                .confettiCannon(trigger: $confetti)
-
                 
                 CustomButton(label: "Delete", backgroundColor: "raisinBlack", width: 200) {
                     showDeletedAccountSheet = true
