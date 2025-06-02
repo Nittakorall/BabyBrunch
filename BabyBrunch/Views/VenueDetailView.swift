@@ -13,8 +13,11 @@ struct VenueDetailView: View {
     @State var pin: Pin
     let mapViewRef: MKMapView?
     @StateObject var mapVM = MapViewModel()
+    @EnvironmentObject private var authVM: AuthViewModel
     
     @State var addReviewSheet = false
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
     var body: some View {
         ZStack {
@@ -24,36 +27,40 @@ struct VenueDetailView: View {
             // VStack to hold ScrollView for all content but the Rate Venue button, which is locked at the bottom.
             VStack(spacing: 0) {
                 // ScrollView to not mess up UI if restaurants' info differ in size/scope.
-                 ScrollView(.vertical, showsIndicators: true) {
-                VStack {
-                    Image("venue")
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: UIScreen.main.bounds.width, height: 250)
-                        .padding(.bottom, 20)
-                    
-                    VenueInformationView(pin: pin)
-                    
-                    Text("Reviews")
-                        .foregroundColor(Color(.oldRose))
-                        .font(.system(size: 20))
-                        .padding(.top, 10)
-                        .padding(.bottom, 5)
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        LazyHStack(spacing: 20) {
-                            ForEach($mapVM.pinReviews, id: \.text) { $review in
-                                ReviewView(review: review)
+                ScrollView(.vertical, showsIndicators: true) {
+                    VStack {
+                        Image("venue")
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: UIScreen.main.bounds.width, height: 250)
+                            .padding(.bottom, 20)
+                        
+                        VenueInformationView(pin: pin)
+                        
+                        Text("Reviews")
+                            .foregroundColor(Color(.oldRose))
+                            .font(.system(size: 20))
+                            .padding(.top, 10)
+                            .padding(.bottom, 5)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            LazyHStack(spacing: 20) {
+                                ForEach($mapVM.pinReviews, id: \.text) { $review in
+                                    ReviewView(review: review)
+                                }
                             }
                         }
+                        .padding(.horizontal, 20)
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
                 }
-                .padding(.bottom, 20)
-                  }
                 
                 CustomButton(label: "Rate Venue", backgroundColor: "oldRose", width: 250) {
-                    addReviewSheet = true
+                    if !authVM.isSignedUp {
+                        authVM.authError = .guestNotAllowed
+                    } else {
+                        addReviewSheet = true
+                    }
                 }
                 .padding(.bottom, 20)
             }
@@ -73,6 +80,21 @@ struct VenueDetailView: View {
             AddReviewView(pin: $pin, mapViewRef: mapViewRef)
                 .presentationDetents([.fraction(0.3), .large])
         }
+        // Show guest alert when authError changes
+        .onChange(of: authVM.authError) { newError in
+            if let error = newError {
+                alertMessage = error.localizedDescription
+                showAlert = true
+            }
+        }
+        .alert("Guest Access Denied",
+               isPresented: $showAlert,
+               actions: {
+                   Button("OK") {
+                       authVM.authError = nil   // reset so alert can show next time
+                   }
+               },
+               message: { Text(alertMessage) })
     }
 }
 
@@ -141,7 +163,7 @@ struct ReviewView : View {
                         .padding(.top, 5)
                         .foregroundColor(Color(.raisinBlack))
                 }
-             
+                
                 
                 StarsView(rating: Double(review.rating))
             }
@@ -151,10 +173,10 @@ struct ReviewView : View {
             Text(review.text)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-               // .lineLimit(5) // If we want to limit how many rows that are displayed in review card.
-               // .truncationMode(.tail) // To show ... if text is to long.
+            // .lineLimit(5) // If we want to limit how many rows that are displayed in review card.
+            // .truncationMode(.tail) // To show ... if text is to long.
         }
-
+        
         .padding(.leading, 20)
         .frame(width: UIScreen.main.bounds.width * 0.8, height: 150, alignment: .topLeading)
         .background(Color(.thistle))
@@ -165,7 +187,7 @@ struct ReviewView : View {
 struct StarsDynamicFillView: View {
     var rating: Double
     private let maxRating = 5 // How many stars are rated/displayed.
-
+    
     var body: some View {
         HStack(spacing: 4) {
             ForEach(0..<maxRating, id: \.self) { index in
@@ -174,22 +196,22 @@ struct StarsDynamicFillView: View {
             }
         }
     }
-
+    
     private func starView(for index: Int) -> some View {
-       // Calculate fill level for star, use the rating (2,3) and for each star subtract the index of the star.
-       // Since fillevel can be more than 1 and less than 0, it's limited to 0.0 and 1.0.
-       // If rating is 2,3, then stars 1 and 2 will have fill level 1.0 -> 100% filled. The 3rd star will be at 0,3 -> 30% filled. 4th and 5th star at 0 -> 0% filled.
+        // Calculate fill level for star, use the rating (2,3) and for each star subtract the index of the star.
+        // Since fillevel can be more than 1 and less than 0, it's limited to 0.0 and 1.0.
+        // If rating is 2,3, then stars 1 and 2 will have fill level 1.0 -> 100% filled. The 3rd star will be at 0,3 -> 30% filled. 4th and 5th star at 0 -> 0% filled.
         let fillLevel = max(0.0, min(1.0, rating - Double(index)))
-
-       // ZStack to have different layers depending on fill level.
+        
+        // ZStack to have different layers depending on fill level.
         return ZStack {
             // Empty gray star.
             Image(systemName: "star")
                 .resizable() // To fit inside frame.
                 .scaledToFit() // To fit inside frame.
                 .foregroundColor(.gray)
-
-           // To fill the star according to its fill level, only if fill level is larger than 0.
+            
+            // To fill the star according to its fill level, only if fill level is larger than 0.
             if fillLevel > 0 {
                 // Fylld stjärna, men bara till den procent som behövs
                 Image(systemName: "star.fill")
@@ -197,11 +219,11 @@ struct StarsDynamicFillView: View {
                     .scaledToFit() // To fit inside frame.
                     .foregroundStyle(LinearGradient(colors: [Color(.lightYellowStar), Color(.darkYellowStar)], startPoint: .top, endPoint: .bottom)) // Gradient colour (instead of just plain colour).
                     .shadow(color: .black.opacity(0.3), radius: 1, x: -1, y: 1) // Shadow for 3D effect.
-               
-               // To only reveal colour according to fillevel.
+                
+                // To only reveal colour according to fillevel.
                     .mask(
-                     // Get the size of the star and paint a rectangle on top of it.
-                     // Mask only colours the portion of the rectangle above the star, not the negative space around the star.
+                        // Get the size of the star and paint a rectangle on top of it.
+                        // Mask only colours the portion of the rectangle above the star, not the negative space around the star.
                         GeometryReader { geometry in
                             Rectangle()
                                 .size(width: geometry.size.width * fillLevel,
