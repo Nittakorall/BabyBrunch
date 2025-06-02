@@ -182,6 +182,36 @@ public class AuthViewModel: ObservableObject {
         self.authError = mapped
         print("ErrorHandler:", mapped.localizedDescription)
     }
+    
+    
+    func toggleFavorite(pinId: String, completion: @escaping (Bool) -> Void) {
+        guard let uid = currentUser?.id else { return }
+        let userRef = db.collection("users").document(uid)
+        
+        userRef.getDocument { snapshot, error in
+            guard var user = try? snapshot?.data(as: User.self) else {
+                completion(false)
+                return
+            }
+            
+            var updatedFavorites = user.favorites
+            if updatedFavorites.contains(pinId) {
+                updatedFavorites.removeAll { $0 == pinId }
+            } else {
+                updatedFavorites.append(pinId)
+            }
+            
+            userRef.updateData(["favorites": updatedFavorites]) { error in
+                if let error = error {
+                    print("Error updating favorites: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    self.currentUser?.favorites = updatedFavorites
+                    completion(true)
+                }
+            }
+        }
+    }
 
 }
 
