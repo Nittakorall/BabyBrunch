@@ -12,24 +12,9 @@ struct SplashScreen: View {
     @State private var isAnimating = false
     @Binding var isActive: Bool
     
-    var player: AVAudioPlayer? = nil
+    @ObservedObject var soundVM = SoundViewModel()
+    //var player: AVAudioPlayer? = nil
 
-    
-    //no idea why I had to add isActive: Binding<Bool> and   self._isActive = isActive, that was chatGPTs solution, don't ask
-    init(isActive: Binding<Bool>) {
-        self._isActive = isActive
-            if let soundURL = Bundle.main.url(forResource: "SplashScreenSound", withExtension: "wav") {
-                do {
-                    player = try AVAudioPlayer(contentsOf: soundURL)
-                    player?.prepareToPlay()
-                } catch {
-                    print("Couldn't play the sound")
-                }
-            } else {
-                print("Can't find the sound")
-            }
-        }
-    
     var body: some View {
         ZStack {
             Color("lavenderBlush")
@@ -49,7 +34,7 @@ struct SplashScreen: View {
          //   player?.play()
             // shows 2 minutes then proceed to another views
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                player?.play()
+                soundVM.player?.play()
                 withAnimation {
                     isActive = true
                 }
