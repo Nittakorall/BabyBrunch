@@ -46,9 +46,10 @@ struct SplashScreen: View {
         }
         .onAppear {
             isAnimating = true
-            player?.play()
+         //   player?.play()
             // shows 2 minutes then proceed to another views
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                player?.play()
                 withAnimation {
                     isActive = true
                 }
