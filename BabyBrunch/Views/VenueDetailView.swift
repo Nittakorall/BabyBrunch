@@ -19,6 +19,9 @@ struct VenueDetailView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     
+    @State private var showAlert = false
+    @State private var url: URL?
+    
     var body: some View {
         ZStack {
             Color("lavenderBlush")
@@ -119,8 +122,7 @@ struct VenueInformationView : View {
             Text(pin.phoneNumber)
                 .foregroundColor(Color(.oldRose))
                 .fontDesign(.rounded)
-            Text(pin.website)
-                .foregroundColor(Color(.oldRose))
+            LinkView(pin: pin)
         }
     }
 }
@@ -183,6 +185,34 @@ struct ReviewView : View {
         .cornerRadius(10)
     }
 }
+
+struct LinkView : View {
+    let pin : Pin
+    @State var showAlert = false
+    
+    
+    var body : some View {
+        if let url = URL(string: pin.website) {
+            Button {
+                showAlert = true
+            } label: {
+                Text(pin.website)
+                    .foregroundColor(Color(.oldRose))
+                    .underline()
+            }
+            .alert("Do you want to open this link?", isPresented: $showAlert) {
+                Button("Yes") {
+                    UIApplication.shared.open(url)
+                }
+                Button("No", role: .cancel) {}
+            }
+        } else {
+            Text(pin.website)
+                .foregroundColor(Color(.oldRose))
+        }
+    }
+}
+
 
 struct StarsDynamicFillView: View {
     var rating: Double
