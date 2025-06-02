@@ -16,6 +16,9 @@ struct VenueDetailView: View {
     
     @State var addReviewSheet = false
     
+    @State private var showAlert = false
+    @State private var url: URL?
+    
     var body: some View {
         ZStack {
             Color("lavenderBlush")
@@ -160,14 +163,27 @@ struct ReviewView : View {
         .cornerRadius(10)
     }
 }
+
 struct LinkView : View {
     let pin : Pin
+    @State var showAlert = false
+    
+    
     var body : some View {
         if let url = URL(string: pin.website) {
-            Link(destination: url) {
+            Button {
+                showAlert = true
+            } label: {
+                
                 Text(pin.website)
                     .foregroundColor(Color(.oldRose))
                     .underline()
+            }
+            .alert("Do you want to open this link?", isPresented: $showAlert) {
+                Button("Yes") {
+                    UIApplication.shared.open(url)
+                }
+                Button("No", role: .cancel) {}
             }
         } else {
             Text(pin.website)
