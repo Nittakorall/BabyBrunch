@@ -16,6 +16,7 @@
 		4E20AF302DD4BB4700184744 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4E20AF2F2DD4BB4700184744 /* FirebaseAuth */; };
 		4E20AF322DD4BB4700184744 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E20AF312DD4BB4700184744 /* FirebaseFirestore */; };
 		9337D2092DDB1E6400E79926 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9337D2082DDB1E6400E79926 /* GoogleService-Info.plist */; };
+		B32E72632DED9EE800BFAD1F /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B32E72622DED9EE800BFAD1F /* ConfettiSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32E72632DED9EE800BFAD1F /* ConfettiSwiftUI in Frameworks */,
 				4E20AF302DD4BB4700184744 /* FirebaseAuth in Frameworks */,
 				4E20AF322DD4BB4700184744 /* FirebaseFirestore in Frameworks */,
 			);
@@ -167,6 +169,7 @@
 			packageProductDependencies = (
 				4E20AF2F2DD4BB4700184744 /* FirebaseAuth */,
 				4E20AF312DD4BB4700184744 /* FirebaseFirestore */,
+				B32E72622DED9EE800BFAD1F /* ConfettiSwiftUI */,
 			);
 			productName = BabyBrunch;
 			productReference = 4E20AF012DD4B96200184744 /* BabyBrunch.app */;
@@ -242,6 +245,7 @@
 			mainGroup = 4E20AEF82DD4B96200184744;
 			packageReferences = (
 				4E20AF2E2DD4BB4700184744 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B32E72612DED9E8900BFAD1F /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = 4E20AF022DD4B96200184744 /* Products */;
 			projectDirPath = "";
@@ -619,6 +623,14 @@
 				minimumVersion = 10.3.0;
 			};
 		};
+		B32E72612DED9E8900BFAD1F /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -631,6 +643,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E20AF2E2DD4BB4700184744 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		B32E72622DED9EE800BFAD1F /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B32E72612DED9E8900BFAD1F /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
