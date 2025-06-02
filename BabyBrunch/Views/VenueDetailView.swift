@@ -174,7 +174,6 @@ struct LinkView : View {
             Button {
                 showAlert = true
             } label: {
-                
                 Text(pin.website)
                     .foregroundColor(Color(.oldRose))
                     .underline()
