@@ -101,6 +101,14 @@ public class AuthViewModel: ObservableObject {
         }
     }
     
+    init() {
+        loadLoginState()
+    }
+    
+    func loadLoginState() {
+        let isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+        self.isLoggedIn = isLoggedIn
+    }
     
     //Function that runs after you have logged in to collect all the info from the userId in fireStore, e.g. isSignedUp och favorites
     func fetchUserInfo(uid: String) {
@@ -126,6 +134,7 @@ public class AuthViewModel: ObservableObject {
             self.isLoggedIn = false
             self.currentUser = nil
             self.isSignedUp = false // resets the flag so that the user can log in as guest after login out
+            UserDefaults.standard.set(false, forKey: "isLoggedIn")
         } catch {
             self.handleErrors(error)
         }
