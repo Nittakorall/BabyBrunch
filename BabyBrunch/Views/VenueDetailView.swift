@@ -19,7 +19,7 @@ struct VenueDetailView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     
-    @State private var showAlert = false
+    @State private var showUrlAlert = false
     @State private var url: URL?
     
     var body: some View {
@@ -188,19 +188,19 @@ struct ReviewView : View {
 
 struct LinkView : View {
     let pin : Pin
-    @State var showAlert = false
+    @State var showUrlAlert = false
     
     
     var body : some View {
         if let url = URL(string: pin.website) {
             Button {
-                showAlert = true
+                showUrlAlert = true
             } label: {
                 Text(pin.website)
                     .foregroundColor(Color(.oldRose))
                     .underline()
             }
-            .alert("Do you want to open this link?", isPresented: $showAlert) {
+            .alert("Do you want to open this link?", isPresented: $showUrlAlert) {
                 Button("Yes") {
                     UIApplication.shared.open(url)
                 }
