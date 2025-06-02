@@ -10,7 +10,9 @@ import SwiftUI
 
 struct FavouritesView: View {
    
-   let testList = ["BabyCafe", "AnotherBabyCafe", "CafeBaby"]
+    @EnvironmentObject var authVM: AuthViewModel
+    @StateObject var favVM = FavoritesViewModel()
+    @State private var selectedPin: Pin? = nil
    
    var body: some View {
       ZStack{
@@ -19,28 +21,32 @@ struct FavouritesView: View {
          
          VStack{
             CustomTitle(title: "My Favourites")
-            List() {
-               
-               ForEach(testList, id: \.self) { testItem in
-                  VStack{
-                     HStack{
-                        Text(testItem)
-                        Spacer()
-                        Text("4.6")
-                     }
-                  }
-                  .padding(.vertical, 20)
-               }
-               .listRowBackground(Color("lavenderBlush"))
-            }
-            .padding(.vertical, 20)
-            .scrollContentBackground(.hidden)
+             
+             //List of all pins from users favorites
+             List(favVM.favoritePins) { pin in
+                 Button {
+                     selectedPin = pin //Sets selectedPin to clicked pin to open a sheet
+                 } label: {
+                     Text(pin.name)
+                 }
+             }
+             .scrollContentBackground(.hidden) // removes ugly background of the list
          }
          .frame(maxHeight: .infinity, alignment: .top)
+      }
+      .onAppear{
+          //Get all users favorites when loading view
+          if let favIds = authVM.currentUser?.favorites {
+              favVM.fetchFavorites(from: favIds)
+          }
+      }
+       //shows sheet of clicked item
+      .sheet(item: $selectedPin) { pin in
+          VenueDetailView(pin: pin, mapViewRef: nil)
       }
    }
 }
 
-#Preview {
-   FavouritesView()
-}
+//#Preview {
+//   FavouritesView()
+//}
