@@ -9,35 +9,35 @@ import SwiftUI
 
 struct SplashScreen: View {
     @State private var isAnimating = false
-       @Binding var isActive: Bool
+    @Binding var isActive: Bool
     
     
     var body: some View {
         ZStack {
             Color("lavenderBlush")
                 .edgesIgnoringSafeArea(.all)
-                   
-                   VStack {
-                       CustomTitle(title: "BABYBrunch")
-                           .scaleEffect(isAnimating ? 1.0 : 0.5)
-                           .opacity(isAnimating ? 1.0 : 0.0)
-                           .animation(.easeOut(duration: 1.0).delay(0.5), value: isAnimating)
-                      //     .padding(.top, 20)
-                   }
-                   .frame(maxHeight: .infinity, alignment: .top)
-               }
-               .onAppear {
-                   isAnimating = true
-                   
-                   // Vänta 2 sekunder innan vi växlar till huvudvyn
-                   DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                       withAnimation {
-                           isActive = true
-                       }
-                   }
-               }
-           }
-       }
+            
+            VStack {
+                CustomTitle(title: "BABYBrunch")
+                    .scaleEffect(isAnimating ? 1.0 : 0.5)
+                    .opacity(isAnimating ? 1.0 : 0.0)
+                    .animation(.easeOut(duration: 1.0).delay(0.5), value: isAnimating)
+              
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
+        }
+        .onAppear {
+            isAnimating = true
+            
+            // shows 2 minutes then proceed to another views
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation {
+                    isActive = true
+                }
+            }
+        }
+    }
+}
 
 //#Preview {
 //    SplashScreen(isActive: true)

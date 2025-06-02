@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var isActive = false
-    
     var body: some View {
         ZStack {
             if isActive {
