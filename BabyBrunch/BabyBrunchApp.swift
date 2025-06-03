@@ -22,6 +22,7 @@ struct BabyBrunchApp: App {
     @StateObject var authViewModel = AuthViewModel()
     @AppStorage("isDarkMode") private var isDarkMode = false
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @State private var isActive = false
     
     var body: some Scene {
         WindowGroup {
@@ -31,10 +32,14 @@ struct BabyBrunchApp: App {
                     .preferredColorScheme(isDarkMode ? .dark : .light)
             }
             else{
-            ContentView()
-      //  LoginView()
-                    .environmentObject(authViewModel)
-                    .preferredColorScheme(isDarkMode ? .dark : .light)
+                if isActive {
+                    LoginView()
+                        .environmentObject(authViewModel)
+                        .preferredColorScheme(isDarkMode ? .dark : .light)
+                } else {
+                    SplashScreen(isActive: $isActive)
+                }
+            
             }
         }
     }
