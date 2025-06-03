@@ -11,7 +11,7 @@ import AVFoundation
 struct SplashScreen: View {
     @State private var isAnimating = false
     @Binding var isActive: Bool
-    @ObservedObject var soundVM: SoundViewModel
+    @ObservedObject var soundVM = SoundViewModel()
     
 
     var body: some View {
@@ -33,7 +33,7 @@ struct SplashScreen: View {
          //   player?.play()
             // shows 2 minutes then proceed to another views
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                soundVM.player?.play()
+                soundVM.playSound(resourceName: "SplashScreenSound", resourceFormat: "wav")
                 withAnimation {
                     isActive = true
                 }

@@ -14,7 +14,7 @@ struct AddReviewView: View {
     @State private var userName = ""
     @State var rating = 0
     @State private var viewHeight: CGFloat = 0
-    @ObservedObject var soundVM = SoundViewModel(resourceName: "StarSound", resourceFormat: "wav")
+    @ObservedObject var soundVM = SoundViewModel()
     //Tar med oss våran pin från detailView
     @Binding var pin: Pin
     let mapViewRef: MKMapView?
@@ -85,6 +85,7 @@ struct AddReviewView: View {
                                     if success, let newAverage = newAverage {
                                         //add rating to local-list to show new average directly in detailview
                                         pin.ratings.append(rating)
+                                        soundVM.playSound(resourceName: "AddReviewSound", resourceFormat: "wav")
                                         print("newAverage inside if let success, let newAverage: \(newAverage)")
                                         print("Added rating: \(rating)")
                                         
@@ -179,8 +180,7 @@ struct AddReviewView: View {
                     // When a star is clicked, set its index to our rating variable.
                         .onTapGesture {
                             // @ObservedObject var soundVM = SoundViewModel(resourceName: "StarSound", resourceFormat: "wav")
-                            vm.player?.currentTime = 0.0
-                            vm.player?.play()
+                            vm.playSound(resourceName: "StarSound", resourceFormat: "wav")
                             rating = index
                             print("Rating: \(rating)")
                         }
