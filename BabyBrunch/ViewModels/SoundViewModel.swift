@@ -13,11 +13,9 @@ public class SoundViewModel: ObservableObject {
     @Published var player: AVAudioPlayer? = nil
     
     
-    
- 
-    init() {
+    init(resourceName: String, resourceFormat: String) {
        
-            if let soundURL = Bundle.main.url(forResource: "SplashScreenSound", withExtension: "wav") {
+            if let soundURL = Bundle.main.url(forResource: resourceName, withExtension: resourceFormat) {
                 do {
                     player = try AVAudioPlayer(contentsOf: soundURL)
                     player?.prepareToPlay()

@@ -11,9 +11,8 @@ import AVFoundation
 struct SplashScreen: View {
     @State private var isAnimating = false
     @Binding var isActive: Bool
+    @ObservedObject var soundVM: SoundViewModel
     
-    @ObservedObject var soundVM = SoundViewModel()
-    //var player: AVAudioPlayer? = nil
 
     var body: some View {
         ZStack {

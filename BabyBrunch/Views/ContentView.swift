@@ -11,11 +11,11 @@ struct ContentView: View {
     @State private var isActive = false
     var body: some View {
         ZStack {
-            if isActive {
-                LoginView()
-            } else {
-                SplashScreen(isActive: $isActive)
-            }
+//            if isActive {
+//                LoginView()
+//            } else {
+//                SplashScreen(isActive: $isActive, soundVM: SoundViewModel(resourceName: "SplashScreenSound", resourceFormat: "wav"))
+//            }
         }
     }
 }
