@@ -17,6 +17,7 @@
 		4E20AF322DD4BB4700184744 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E20AF312DD4BB4700184744 /* FirebaseFirestore */; };
 		9337D2092DDB1E6400E79926 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9337D2082DDB1E6400E79926 /* GoogleService-Info.plist */; };
 		934E07D42DEDD6150085FB9D /* SplashScreenSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 934E07D32DEDD6150085FB9D /* SplashScreenSound.wav */; };
+		934E088E2DEEEB6F0085FB9D /* StarSound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 934E088D2DEEEB6F0085FB9D /* StarSound.wav */; };
 		B32E72632DED9EE800BFAD1F /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B32E72622DED9EE800BFAD1F /* ConfettiSwiftUI */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		4E20AF212DD4B96400184744 /* BabyBrunchUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		9337D2082DDB1E6400E79926 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		934E07D32DEDD6150085FB9D /* SplashScreenSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = SplashScreenSound.wav; sourceTree = "<group>"; };
+		934E088D2DEEEB6F0085FB9D /* StarSound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = StarSound.wav; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -110,6 +112,7 @@
 			isa = PBXGroup;
 			children = (
 				934E07D32DEDD6150085FB9D /* SplashScreenSound.wav */,
+				934E088D2DEEEB6F0085FB9D /* StarSound.wav */,
 				B3760F0E2DDE67B300FCEFAF /* ErrorHandling */,
 				DE3E5C462DDB142000DA0FB4 /* Views */,
 				DE3E5C452DDB141700DA0FB4 /* ViewModels */,
@@ -267,6 +270,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */,
+				934E088E2DEEEB6F0085FB9D /* StarSound.wav in Resources */,
 				934E07D42DEDD6150085FB9D /* SplashScreenSound.wav in Resources */,
 				9337D2092DDB1E6400E79926 /* GoogleService-Info.plist in Resources */,
 				4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */,

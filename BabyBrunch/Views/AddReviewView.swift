@@ -7,13 +7,14 @@
 
 import SwiftUI
 import MapKit
+import AVFoundation
 
 struct AddReviewView: View {
     @State private var reviewText = ""
     @State private var userName = ""
     @State var rating = 0
     @State private var viewHeight: CGFloat = 0
-    
+    @ObservedObject var soundVM = SoundViewModel(resourceName: "StarSound", resourceFormat: "wav")
     //Tar med oss våran pin från detailView
     @Binding var pin: Pin
    let mapViewRef: MKMapView?
@@ -39,7 +40,7 @@ struct AddReviewView: View {
                         .padding(.vertical, -20)
                     
                     
-                    StarRatingView(rating: $rating)
+                    StarRatingView(rating: $rating, vm : soundVM)
                         .padding(.bottom, 10)
                     //if fraction of the view is more than 0.3, review field will be shown
                     
@@ -160,7 +161,7 @@ struct AddReviewView: View {
     
     struct StarRatingView: View {
         @Binding var rating: Int
-        
+        @ObservedObject var vm : SoundViewModel
         var body: some View {
             HStack {
                 // For each number 1-5:
@@ -177,6 +178,8 @@ struct AddReviewView: View {
                         .animation(.spring(), value: rating) // Upon click, animate when star get larger.
                     // When a star is clicked, set its index to our rating variable.
                         .onTapGesture {
+                           // @ObservedObject var soundVM = SoundViewModel(resourceName: "StarSound", resourceFormat: "wav")
+                            vm.player?.play()
                             rating = index
                             print("Rating: \(rating)")
                         }
