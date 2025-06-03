@@ -13,6 +13,9 @@ struct FavouritesView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @StateObject var favVM = FavoritesViewModel()
     @State private var selectedPin: Pin? = nil
+    
+    @State private var isPublic = false
+    @State private var publicListName = ""
    
    var body: some View {
       ZStack{
@@ -20,6 +23,21 @@ struct FavouritesView: View {
             .ignoresSafeArea()
          
          VStack{
+             Toggle("Publish list", isOn: $isPublic)
+                 .padding()
+             
+             if isPublic {
+                 TextField("List name", text: $publicListName)
+                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                     .padding()
+                 
+                 CustomButton(label: "Publish List", backgroundColor: "oldRose", width: 200) {
+                     if !publicListName.isEmpty, let favs = authVM.currentUser?.favorites {
+                         favVM.publishFavorites(listName: publicListName, pinIDs: favs)
+                     }
+                 }
+             }
+             
             CustomTitle(title: "My Favourites")
              
              //List of all pins from users favorites

@@ -40,4 +40,37 @@ class FavoritesViewModel: ObservableObject {
             print("All favorites was loaded!")
         }
     }
+    
+    func publishFavorites(listName: String, pinIDs: [String]) {
+        let ref = db.collection("publicLists").document(listName)
+        
+        ref.getDocument { snapshot, error in
+            if let error = error {
+                print("Error checking list name: \(error.localizedDescription)")
+                return
+            }
+            
+            //Checks if the document name already exists
+            if let snapshot = snapshot, snapshot.exists {
+                print("List name already exists")
+                //kan läggas till en errortext som kan användas vid alert etc här
+            } else {
+                //If document name don't exist create a new document with name and array of pins
+                let data: [String: Any] = [
+                    "name": listName,
+                    "pins": pinIDs,
+                ]
+                
+                //save the created document to firestore
+                ref.setData(data) { error in
+                    if let error = error {
+                        print("Failed to publish list \(error.localizedDescription)")
+                    } else {
+                        print("List \(listName) successfully published!")
+                    }
+                }
+            }
+            
+        }
+    }
 }

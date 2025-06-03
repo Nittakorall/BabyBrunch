@@ -28,7 +28,7 @@ struct CustomTextField: View {
                 Image(systemName: isSecure ? "eye.slash" : "eye")
                    .foregroundColor(Color(.raisinBlack))
              }
-          } else {
+          } else if type == .email {
              TextField(hint, text: $input)
                 .keyboardType(.emailAddress)
                 .textContentType(.emailAddress)
@@ -38,6 +38,15 @@ struct CustomTextField: View {
                       .foregroundColor(Color(.raisinBlack))
                 }
              }
+          } else {
+              TextField(hint, text: $input)
+
+              if !input.isEmpty {
+                 Button(action: { input = ""}) {
+                    Image(systemName: "xmark.circle.fill")
+                       .foregroundColor(Color(.raisinBlack))
+                 }
+              }
           }
        }
        .padding()
@@ -53,7 +62,7 @@ struct CustomTextField: View {
 }
 
 enum TextFieldType {
-   case normal, password
+   case normal, password, email
 }
 
 
