@@ -30,7 +30,7 @@ struct LoginView: View {
                   
                   Text("Email")
                   //Email input field
-                  CustomTextField(input: $email, hint: "Email", type: .normal)
+                   CustomTextField(input: $email, hint: "Email", type: .email)
                   Text("Password")
                   //password input field
                   CustomTextField(input: $password, hint: "Password", type: .password)

@@ -36,6 +36,11 @@ struct MainTabView: View {
                Image(systemName: "heart")
             }
             .tag(3)
+          PublicFavouritesView()
+             .tabItem {
+                Image(systemName: "globe")
+             }
+             .tag(4)
       }.accentColor(Color(.oldRose))
    }
 }
