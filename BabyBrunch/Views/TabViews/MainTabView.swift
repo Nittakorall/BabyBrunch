@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct MainTabView: View {
    //shows which tab shoud opens by default, uses tags
    @State private var selectedTab = 2
    @StateObject private var locVM : LocationViewModel
+    @State private var mapViewRef: MKMapView? = nil
    
    init() {
        _locVM = StateObject(wrappedValue: LocationViewModel())
@@ -25,18 +27,18 @@ struct MainTabView: View {
             }
             .tag(1)
          
-         MapView()
+          MapView(mapViewRef: $mapViewRef)
             .tabItem {
                Image(systemName: "map.fill")
             }
             .tag(2)
          
-         FavouritesView()
+          FavouritesView(mapViewRef: $mapViewRef)
             .tabItem {
                Image(systemName: "heart")
             }
             .tag(3)
-          PublicFavouritesView()
+          PublicFavouritesView(mapViewRef: $mapViewRef)
              .tabItem {
                 Image(systemName: "globe")
              }
