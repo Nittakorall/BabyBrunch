@@ -8,9 +8,10 @@
 import Foundation
 import FirebaseFirestore
 
-struct ReviewData : Codable, Identifiable {
-   @DocumentID var id : String?
-   var text : String
-   var rating : Int
+struct ReviewData : Codable, Identifiable, Hashable {
+    @DocumentID var id : String?
+    var text : String
+    var rating : Int
+    var userId : String
     var userName : String?
 }
