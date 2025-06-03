@@ -37,7 +37,7 @@ struct BabyBrunchApp: App {
                         .environmentObject(authViewModel)
                         .preferredColorScheme(isDarkMode ? .dark : .light)
                 } else {
-                    SplashScreen(isActive: $isActive)
+                    SplashScreen(isActive: $isActive, soundVM: SoundViewModel(resourceName: "SplashScreenSound", resourceFormat: "wav"))
                 }
             
             }
