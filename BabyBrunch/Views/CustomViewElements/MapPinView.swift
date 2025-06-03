@@ -32,7 +32,6 @@ struct MapPinView: View {
                 .padding(.bottom,40)
                 
         }
-        //.background(Color.blue) to make the triangle point to the tap location instead of the whole symbol covering it.
     }
 }
 
