@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct PublicFavouritesView: View {
     @State private var searchTerm = ""
     @StateObject var favVM = FavoritesViewModel()
     @State var showEmptySearchAlert = false
+    @Binding var mapViewRef: MKMapView?
 
     var body: some View {
         NavigationStack {
@@ -46,7 +48,7 @@ struct PublicFavouritesView: View {
                 }
 //                List(testList, id: \.self) { item in
                 List(favVM.publicList, id: \.self) { item in
-                    NavigationLink(destination: PublicListDetailView(item: item)) {
+                    NavigationLink(destination: PublicListDetailView(item: item, mapViewRef: $mapViewRef)) {
                         PublicListItem(item: item)
                     }
                 }.scrollContentBackground(.hidden)
@@ -55,9 +57,9 @@ struct PublicFavouritesView: View {
     }
 }
 
-#Preview {
-    PublicFavouritesView()
-}
+//#Preview {
+//    PublicFavouritesView()
+//}
 
 struct PublicListItem : View {
     let item : PublicListData
@@ -71,12 +73,13 @@ struct PublicListItem : View {
 
 struct PublicListDetailView : View {
     let item : PublicListData
+    @Binding var mapViewRef: MKMapView?
     
     var body : some View {
         VStack {
             CustomTitle(title: item.name)
             List(item.pins, id: \.self) { pin in
-                DetailView(pin: pin)
+                DetailView(pin: pin, mapViewRef: $mapViewRef)
             }.scrollContentBackground(.hidden)
         }.background(Color(.lavenderBlush))
     }
@@ -84,6 +87,7 @@ struct PublicListDetailView : View {
 
 struct DetailView : View {
     let pin : Pin
+    @Binding var mapViewRef: MKMapView?
     @State private var selectedPin: Pin? = nil
     var body : some View {
         HStack {
@@ -94,7 +98,7 @@ struct DetailView : View {
             }
         }
         .sheet(item: $selectedPin) { pin in
-            VenueDetailView(pin: pin, mapViewRef: nil)
+            VenueDetailView(pin: pin, mapViewRef: mapViewRef)
         }
     }
 }
