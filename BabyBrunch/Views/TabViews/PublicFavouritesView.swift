@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct PublicFavouritesView: View {
     @State private var searchTerm = ""
+    @Binding var mapViewRef: MKMapView?
     var testList = [
         PublicList(name: "Test 1", pins: ["pin1", "pin2", "pin3", "pin4"]),
         PublicList(name: "Test 2", pins: ["pin1", "pin2", "pin3", "pin4"]),

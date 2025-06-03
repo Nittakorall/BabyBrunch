@@ -11,7 +11,7 @@ import CoreLocation
 
 struct MapView: View {
     @EnvironmentObject private var authVM: AuthViewModel
-    @State private var mapViewRef: MKMapView? = nil
+    @Binding var mapViewRef: MKMapView?
     @State private var selectedVenue : MKMapItem? = nil
     
     let mapVM = MapViewModel()
