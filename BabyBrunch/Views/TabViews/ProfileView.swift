@@ -48,9 +48,15 @@ struct ProfileView: View {
                     authVM.signOut()
                 }.padding(.bottom, 20)
                 
-                CustomButton(label: "Delete", backgroundColor: "raisinBlack", width: 200) {
-                    showDeletedAccountSheet = true
-                }.padding(.bottom, 50)
+                // Show Delete button only for registered users (not guests)
+                if authVM.currentUser?.isSignedUp == true {
+                    CustomButton(label: "Delete",
+                                 backgroundColor: "raisinBlack",
+                                 width: 200) {
+                        showDeletedAccountSheet = true
+                    }
+                    .padding(.bottom, 50)
+                }
                 
             }
             .sheet(isPresented: $showDeletedAccountSheet, content: {
