@@ -23,6 +23,8 @@ struct VenueDetailView: View {
     @State private var showUrlAlert = false
     @State private var url: URL?
     
+
+    
     var body: some View {
         ZStack {
             Color("lavenderBlush")
@@ -73,10 +75,14 @@ struct VenueDetailView: View {
                 HStack {
                     Spacer()
                     Button {
-                        //calls the toggle favorite function 
+                        //calls the toggle favorite function
                         if let pinId = pin.id {
+                            if !authVM.isSignedUp {
+                                authVM.authError = .guestNotAllowed}
+                            
                             authVM.toggleFavorite(pinId: pinId) { success in
                                 print(success ? "Toggled favorite" : "Failed")
+                                
                             }
                         }
                     } label: {
@@ -119,10 +125,10 @@ struct VenueDetailView: View {
         .alert("Guest Access Denied",
                isPresented: $showAlert,
                actions: {
-                   Button("OK") {
-                       authVM.authError = nil   // reset so alert can show next time
-                   }
-               },
+            Button("OK") {
+                authVM.authError = nil   // reset so alert can show next time
+            }
+        },
                message: { Text(alertMessage) })
     }
 }
