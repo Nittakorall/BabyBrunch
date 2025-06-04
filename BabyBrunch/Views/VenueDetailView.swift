@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import FirebaseAuth
 
 struct VenueDetailView: View {
     
@@ -62,8 +63,10 @@ struct VenueDetailView: View {
                 }
                 
                 CustomButton(label: "Rate Venue", backgroundColor: "oldRose", width: 250) {
-                    if !authVM.isSignedUp {
-                        authVM.authError = .guestNotAllowed
+                    if Auth.auth().currentUser?.isAnonymous == true || authVM.currentUser?.isSignedUp == false {
+                        DispatchQueue.main.async {
+                            self.authVM.authError = .guestNotAllowed
+                        }
                     } else {
                         addReviewSheet = true
                     }
@@ -77,9 +80,12 @@ struct VenueDetailView: View {
                     Button {
                         //calls the toggle favorite function
                         if let pinId = pin.id {
-                            if !authVM.isSignedUp {
-                                authVM.authError = .guestNotAllowed}
-                            
+                            if Auth.auth().currentUser?.isAnonymous == true || authVM.currentUser?.isSignedUp == false {
+                                DispatchQueue.main.async {
+                                    self.authVM.authError = .guestNotAllowed
+                                }
+                                return
+                            }
                             authVM.toggleFavorite(pinId: pinId) { success in
                                 print(success ? "Toggled favorite" : "Failed")
                                 
@@ -113,6 +119,8 @@ struct VenueDetailView: View {
                 .presentationDetents([.fraction(0.3), .large])
         }
         // Show guest alert when authError changes
+        
+        //TODO: bugfixing, removed it to be able to ckech some stuff, whis might be important piece of code!!!
         .onChange(of: authVM.authError) { newError in
             if let error = newError {
                 alertMessage = error.localizedDescription

@@ -49,8 +49,15 @@ struct MainTabView: View {
                     .tag(4)
             }
         }.accentColor(Color(.oldRose))
+            .onAppear(){
+                if authVM.currentUser?.isSignedUp == true  {
+                    print("Kseniia, currentUser signed up")
+                } else {
+                    print("Kseniia, currentUser not signed up")
+                }
+            }
     }
-    
+        
 }
 #Preview {
     MainTabView()

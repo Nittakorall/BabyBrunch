@@ -55,6 +55,8 @@ public class AuthViewModel: ObservableObject {
             }
             self.currentUser = User(id: user.uid, isSignedUp: false)
             self.isSignedUp = false
+      //      UserDefaults.standard.set(false, forKey: "isSignedUp") //Kseniia + chatGPT
+            UserDefaults.standard.set(user.uid, forKey: "currentUserID")
             self.isLoggedIn = true
         }
     }
@@ -73,6 +75,8 @@ public class AuthViewModel: ObservableObject {
                 self.saveUser(newUser)
                 self.currentUser = newUser
                 self.isSignedUp = true
+          //  UserDefaults.standard.set(true, forKey: "isSignedUp") //Kseniia + chatGPT
+            UserDefaults.standard.set(user.uid, forKey: "currentUserID")
                 onSuccess(true)
             }
         }
@@ -95,7 +99,9 @@ public class AuthViewModel: ObservableObject {
                 completion(false)
                 return
             }
+           // self.isSignedUp = true //checking, Kseniia
             self.isLoggedIn = true
+            UserDefaults.standard.set(user.uid, forKey: "currentUserID")
             self.fetchUserInfo(uid: user.uid)
             completion(true)
         }
@@ -103,11 +109,16 @@ public class AuthViewModel: ObservableObject {
     
     init() {
         loadLoginState()
+        if isLoggedIn, let uid = UserDefaults.standard.string(forKey: "currentUserID") {
+            fetchUserInfo(uid: uid)
+        }
     }
     
     func loadLoginState() {
         let isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
         self.isLoggedIn = isLoggedIn
+        isSignedUp = UserDefaults.standard.bool(forKey: "isSignedUp")
+        self.isSignedUp = isSignedUp
     }
     
     //Function that runs after you have logged in to collect all the info from the userId in fireStore, e.g. isSignedUp och favorites
@@ -119,6 +130,7 @@ public class AuthViewModel: ObservableObject {
                     let user = try document.data(as: User.self)
                     self.currentUser = user
                     self.isSignedUp = user.isSignedUp
+                    UserDefaults.standard.set(user.isSignedUp, forKey: "isSignedUp") // Kseniia + chatGPT
                 } catch {
                     print(error)
                 }
@@ -135,6 +147,8 @@ public class AuthViewModel: ObservableObject {
             self.currentUser = nil
             self.isSignedUp = false // resets the flag so that the user can log in as guest after login out
             UserDefaults.standard.set(false, forKey: "isLoggedIn")
+         //   UserDefaults.standard.set(false, forKey: "isSignedUp")
+            UserDefaults.standard.removeObject(forKey: "currentUserID")
         } catch {
             self.handleErrors(error)
         }
