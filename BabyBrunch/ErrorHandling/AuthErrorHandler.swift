@@ -1,4 +1,4 @@
-// Does error handling
+// Does error handling when it comes to login in, registering, and guest account access
 
 import FirebaseAuth
 import Foundation

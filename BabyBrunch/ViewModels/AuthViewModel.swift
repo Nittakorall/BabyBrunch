@@ -142,10 +142,11 @@ public class AuthViewModel: ObservableObject {
     
     func signOut() {
         do {
-            try Auth.auth().signOut()
+            try auth.signOut()
             self.isLoggedIn = false
             self.currentUser = nil
             self.isSignedUp = false // resets the flag so that the user can log in as guest after login out
+            authError = nil        // kill any pending alert (to prevent "must sign in..." alert after signing out as guest
             UserDefaults.standard.set(false, forKey: "isLoggedIn")
          //   UserDefaults.standard.set(false, forKey: "isSignedUp")
             UserDefaults.standard.removeObject(forKey: "currentUserID")
@@ -156,7 +157,7 @@ public class AuthViewModel: ObservableObject {
     
 //    func deleteUser(password: String, completion: @escaping (Result<Void, Error>) -> Void) {
     func deleteUser(password: String, completion: @escaping (Bool) -> Void) {
-        guard let user = Auth.auth().currentUser else {
+        guard let user = auth.currentUser else {
 //            completion(.failure(NSError(domain: "AuthError", code: 401, userInfo: [NSLocalizedDescriptionKey: "Ingen användare är inloggad."])))
             return
         }
