@@ -18,6 +18,7 @@ struct VenueDetailView: View {
     @State var addReviewSheet = false
     @State private var showAlert = false
     @State private var alertMessage = ""
+    var onDismiss: (() -> Void)? = nil
     
     @State private var showUrlAlert = false
     @State private var url: URL?
@@ -111,6 +112,9 @@ struct VenueDetailView: View {
                 alertMessage = error.localizedDescription
                 showAlert = true
             }
+        }
+        .onDisappear {
+            onDismiss?()
         }
         .alert("Guest Access Denied",
                isPresented: $showAlert,

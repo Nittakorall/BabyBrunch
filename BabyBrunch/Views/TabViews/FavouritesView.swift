@@ -61,7 +61,11 @@ struct FavouritesView: View {
           }
       }
        //shows sheet of clicked item
-      .sheet(item: $selectedPin) { pin in
+      .sheet(item: $selectedPin, onDismiss: {
+          if let favIds = authVM.currentUser?.favorites {
+              favVM.fetchFavorites(from: favIds)
+          }
+      }) { pin in
           VenueDetailView(pin: pin, mapViewRef: mapViewRef)
       }
    }
