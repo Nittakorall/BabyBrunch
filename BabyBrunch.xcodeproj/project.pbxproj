@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10A5A74A2DF06F120045EE72 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10A5A7492DF06F0D0045EE72 /* Secrets.plist */; };
+		10A5A74C2DF076690045EE72 /* Secrets.example.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10A5A74B2DF0765C0045EE72 /* Secrets.example.plist */; };
 		4E20AF052DD4B96200184744 /* BabyBrunchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */; };
 		4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF082DD4B96400184744 /* Assets.xcassets */; };
 		4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF0B2DD4B96400184744 /* Preview Assets.xcassets */; };
@@ -37,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		10A5A7492DF06F0D0045EE72 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
+		10A5A74B2DF0765C0045EE72 /* Secrets.example.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.example.plist; sourceTree = "<group>"; };
 		4E20AF012DD4B96200184744 /* BabyBrunch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BabyBrunch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchApp.swift; sourceTree = "<group>"; };
 		4E20AF082DD4B96400184744 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -108,6 +112,8 @@
 		4E20AF032DD4B96200184744 /* BabyBrunch */ = {
 			isa = PBXGroup;
 			children = (
+				10A5A74B2DF0765C0045EE72 /* Secrets.example.plist */,
+				10A5A7492DF06F0D0045EE72 /* Secrets.plist */,
 				934E08912DEF204A0085FB9D /* Sounds */,
 				B3760F0E2DDE67B300FCEFAF /* ErrorHandling */,
 				DE3E5C462DDB142000DA0FB4 /* Views */,
@@ -266,6 +272,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				10A5A74C2DF076690045EE72 /* Secrets.example.plist in Resources */,
+				10A5A74A2DF06F120045EE72 /* Secrets.plist in Resources */,
 				4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */,
 				9337D2092DDB1E6400E79926 /* GoogleService-Info.plist in Resources */,
 				4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */,

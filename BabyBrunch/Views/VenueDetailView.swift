@@ -148,7 +148,7 @@ struct VenueInformationView : View {
             Text(pin.name)
                 .foregroundColor(Color(.oldRose))
                 .font(.custom("Beau Rivage", size: 40)) // Don't know how to add custom fonts, I'll fix later
-            Text("\(pin.streetAddress)\(pin.streetNo)")
+            Text("\(pin.streetAddress) \(pin.streetNo)")
                 .foregroundColor(Color(.oldRose))
                 .fontDesign(.rounded)
             Text(pin.phoneNumber)
