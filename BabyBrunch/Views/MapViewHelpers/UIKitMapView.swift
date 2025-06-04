@@ -22,7 +22,7 @@ struct UIKitMapView : UIViewRepresentable {
     @Binding var region: MKCoordinateRegion
     
     @Binding var selectedPin: Pin?
-    
+    @ObservedObject var searchLocationVM: SearchLocationViewModel
     
     
     func makeCoordinator() -> Coordinator {
@@ -107,6 +107,19 @@ struct UIKitMapView : UIViewRepresentable {
             // Updates the map if the user's location changes
             uiView.setRegion(vm.realRegion, animated: false)
         } // This is required for UIKitMapView to fulfill the requirements of the UIViewRepresentable protocol.
+        
+        
+        if let coordinates = searchLocationVM.coordinates {
+            let newRegion = MKCoordinateRegion(
+                center: CLLocationCoordinate2D(latitude: coordinates.lat, longitude: coordinates.lon),
+                span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+            )
+            uiView.setRegion(newRegion, animated: true)
+            DispatchQueue.main.async {
+                searchLocationVM.coordinates = nil
+            }
+            
+        }
     }
 }
 

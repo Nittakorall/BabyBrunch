@@ -25,6 +25,8 @@ struct MapView: View {
     @State private var showPinSheet = false
     
     @StateObject private var vm = LocationViewModel()
+    @StateObject private var searchLocationVM = SearchLocationViewModel()
+    @State var searchLocation = ""
     
     var body : some View {
         ZStack{
@@ -36,7 +38,8 @@ struct MapView: View {
                 selectedVenue: $selectedVenue,
                 vm : vm,
                 region: $vm.realRegion,
-                selectedPin: $selectedPin)
+                selectedPin: $selectedPin,
+                searchLocationVM: searchLocationVM)
             .ignoresSafeArea()
             .accentColor(Color(.thistle))
             
@@ -83,11 +86,36 @@ struct MapView: View {
             .sheet(item: $selectedPin) { pin in
                VenueDetailView(pin: pin, mapViewRef: mapViewRef)
                 }
-            
-           CustomButton(label: "Where am I?", backgroundColor: "oldRose", width: 150) {
-              vm.mapShouldBeUpdated = true
-              vm.checkIfLocationServicesEnabled()
-           }.padding(.bottom, 600)
+            VStack {
+                CustomButton(label: "Where am I?", backgroundColor: "oldRose", width: 150) {
+                    vm.mapShouldBeUpdated = true
+                    vm.checkIfLocationServicesEnabled()
+                }.padding(.bottom, 10)
+                HStack {
+                    CustomTextField(input: $searchLocation, hint: "Type city", type: .normal)
+                        .padding(.leading, 30)
+                    Button(action: {
+                        if searchLocation.isEmpty {
+                            print("Search term is empty.")
+                            //                        showEmptySearchAlert = true
+                        } else {
+                            Task {
+                                await searchLocationVM.fetchCoordinates(for: searchLocation)
+                                vm.mapShouldBeUpdated = false
+                            }
+                        }
+                    }){
+                        Image(systemName: "magnifyingglass")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(Color(.oldRose))
+                    }
+                    .padding(.trailing, 20)
+                    .padding(.leading, 5)
+                }
+                Spacer()
+            }
         }
     }
     
