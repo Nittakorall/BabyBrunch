@@ -43,7 +43,11 @@ class FavoritesViewModel: ObservableObject {
     }
     
     func publishFavorites(listName: String, pinIDs: [String]) {
-        let ref = db.collection("publicLists").document(listName)
+        let charactersToRemove: [Character] = [" ", ".", ",", "'", "´", "\"", "!", "?", "/", "\\", "¨", "^", "<", ">", "=", ":", ";", "|", "@", "#", "$", "%", "&", "(", ")", "[", "]", "{", "}", "*", "+", "~", "`"]
+        let normalisedName = listName.lowercased().filter { !charactersToRemove.contains($0) }
+        
+        let ref = db.collection("publicLists").document(normalisedName)
+        
         
         ref.getDocument { snapshot, error in
             if let error = error {
@@ -57,11 +61,13 @@ class FavoritesViewModel: ObservableObject {
                 //kan läggas till en errortext som kan användas vid alert etc här
             } else {
                 //If document name don't exist create a new document with name and array of pins
+                
                 let data: [String: Any] = [
                     "name": listName,
+                    "normalisedName": normalisedName,
                     "pins": pinIDs,
                 ]
-                
+                print("Listname: \(listName), nornalisedName: \(normalisedName)")
                 //save the created document to firestore
                 ref.setData(data) { error in
                     if let error = error {
@@ -73,54 +79,47 @@ class FavoritesViewModel: ObservableObject {
             }
             
         }
+        
     }
     
+    /*
+     * Function to fetch a public list with user search input.
+     * Normalise the search term by removing a list of characters.
+     * Add found list to published list publicList, if no list matching normalised search term then empty the list.
+     */
     func fetchPublicListFromSearch(for searchTerm: String) {
-        let ref = db.collection("publicLists")
-        let query = ref.whereField("name", isEqualTo: searchTerm) // What to search for in collection.
-        var tempList : [PublicListData] = [] // To hold results from query.
-        let group = DispatchGroup() //Create a dispatchGroup to run multiple tasks at the same time
+        let charactersToRemove: [Character] = [" ", ".", ",", "'", "´", "\"", "!", "?", "/", "\\", "¨", "^", "<", ">", "=", ":", ";", "|", "@", "#", "$", "%", "&", "(", ")", "[", "]", "{", "}", "*", "+", "~", "`"]
+        let normalisedSearchTerm = searchTerm.lowercased().filter { !charactersToRemove.contains($0) }
+        let ref = db.collection("publicLists").document(normalisedSearchTerm)
         
-        query.getDocuments { snap, err in
+        ref.getDocument { snap, err in
             if let error = err {
-                print("Could not get public list: \(error.localizedDescription)")
+                print("Could not get public list document: \(error.localizedDescription)")
+                return
+            }
+            guard let snapshot = snap, snapshot.exists else {
+                print("No public list found with ID: \(normalisedSearchTerm)")
+                self.publicList.removeAll()
                 return
             }
             
-            guard let snapshot = snap else {
-                print("hej hej")
-                return
-            }
-            
-            if snapshot.isEmpty {
-                print("Snapshot is empty, but not nil. No document matching search term found.")
-            } else {
-                print("Snapshot found document for search term.")
-
-                // Loop over each document matching the search term in the snapshot.
-                for doc in snapshot.documents {
-                    do {
-                        // Parse Firestore doc data as RawPublicListData and store in variable.
-                        // Use RawPublicListData to easily get all data in the document.
-                        let rawListData = try doc.data(as: RawPublicListData.self)
-                        //Starts a tasks within the group
-                        group.enter()
-                        // Call function to convert the parsed Firestore data (RawPublicListData) to a PublicListData by fetching each pin using the pinIDs in the array.
-                        // If successful, callback with a PublicListData containing all the pins.
-                        self.convertRawPublicList(rawList: rawListData) { publicListData in
-                            if let publicList = publicListData {
-                                tempList.append(publicList) // Add to temporary list.
-                            }
-                            group.leave() //Ends task within group when task is finished
+            do {
+                // Parse Firestore doc data as RawPublicListData and store in variable.
+                // Use RawPublicListData to easily get all data in the document.
+                let rawListData = try snapshot.data(as: RawPublicListData.self)
+                
+                // Call function to convert the parsed Firestore data (RawPublicListData) to a PublicListData by fetching each pin using the pinIDs in the array.
+                // If successful, callback with a PublicListData containing all the pins.
+                self.convertRawPublicList(rawList: rawListData) { publicListData in
+                    if let publicList = publicListData {
+                        //                        tempList.append(publicList) // Add to temporary list.
+                        DispatchQueue.main.async {
+                            self.publicList = [publicList]
                         }
-                    } catch {
-                        print("Could not parse snapshot documents: \(error.localizedDescription)")
                     }
                 }
-                // When all group calls are made (and finished), run the code on the main thread.
-                group.notify(queue: .main) {
-                    self.publicList = tempList
-                }
+            } catch {
+                print("Could not parse snapshot documents: \(error.localizedDescription)")
             }
         }
     }
@@ -149,7 +148,7 @@ class FavoritesViewModel: ObservableObject {
                     } catch {
                         print("Could not decode pin: \(error)")
                     }
-
+                    
                 } else {
                     print("Pin with ID \(id) not found.")
                 }
@@ -161,5 +160,6 @@ class FavoritesViewModel: ObservableObject {
             completion(publicList)
         }
     }
-
+    
 }
+
