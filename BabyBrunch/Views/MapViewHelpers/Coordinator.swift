@@ -71,15 +71,16 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         if annotationView == nil{
             annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
             annotationView?.canShowCallout = true
+            annotationView?.calloutOffset = CGPoint(x: 0, y: 25) //move callout up and down
             let pinView = MapPinView()
             let controller = UIHostingController(rootView: pinView)
-            controller.view.frame = CGRect(x: 0, y: 0, width: 40, height: 70)
+            controller.view.frame = CGRect(x: 0, y: 0, width: 40, height: 70) //size on the callout
             controller.view.backgroundColor = .clear
             let renderer = UIGraphicsImageRenderer(size: controller.view.bounds.size)
             let image = renderer.image { context in
                 controller.view.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)}
             annotationView?.image = image
-            annotationView?.centerOffset = CGPoint(x: 0, y: -35)
+            annotationView?.centerOffset = CGPoint(x: 0, y: -35) //-35 to make the point at the coordinate
             
             //Kallar på handleAnnotationTap vid klick på annotationviewen
             let tap = UITapGestureRecognizer(target: self, action: #selector(handleAnnotationTap(_:)))

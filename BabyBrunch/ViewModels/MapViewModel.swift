@@ -302,5 +302,4 @@ class MapViewModel : ObservableObject {
             }
         }
     }
-    
 }
