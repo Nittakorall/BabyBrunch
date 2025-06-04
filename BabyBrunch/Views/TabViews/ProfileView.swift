@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct ProfileView: View {
     @EnvironmentObject private var authVM: AuthViewModel
@@ -49,7 +50,7 @@ struct ProfileView: View {
                 }.padding(.bottom, 20)
                 
                 // Show Delete button only for registered users (not guests)
-                if authVM.currentUser?.isSignedUp == true {
+                if Auth.auth().currentUser?.isAnonymous == false || authVM.currentUser?.isSignedUp == true {
                     CustomButton(label: "Delete",
                                  backgroundColor: "raisinBlack",
                                  width: 200) {
