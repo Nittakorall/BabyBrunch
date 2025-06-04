@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import AVFoundation
+import ConfettiSwiftUI
 
 struct AddReviewView: View {
     @State private var reviewText = ""
@@ -15,12 +16,18 @@ struct AddReviewView: View {
     @State var rating = 0
     @State private var viewHeight: CGFloat = 0
     @ObservedObject var soundVM = SoundViewModel()
-    //Tar med oss våran pin från detailView
+    // Brings our pin from detailView
     @Binding var pin: Pin
     let mapViewRef: MKMapView?
     private let mapVM = MapViewModel()
     @Environment(\.dismiss) var dismiss
     @State var showAlert : ReviewAlerts?
+    
+    //confetti trigger
+    // ───────────────────────────────────────────
+    @State private var confetti: Int = 0
+    @State private var deletionInFlight = false
+    // ───────────────────────────────────────────
     
     var body: some View {
         ZStack {
@@ -75,9 +82,12 @@ struct AddReviewView: View {
                     
                     //button "add review"
                     CustomButton(label: "Add review", backgroundColor: "oldRose", width: 350) {
+                        guard !deletionInFlight else { return }    // already running
+                        deletionInFlight = true
                         if rating == 0 {
                             print("Rating is 0, i.e. no star chosen.")
                             showAlert = .noRating
+                            deletionInFlight = false
                         } else {
                             // Nil check mapViewRef.
                             if let mapView = mapViewRef {
@@ -85,6 +95,12 @@ struct AddReviewView: View {
                                     if success, let newAverage = newAverage {
                                         //add rating to local-list to show new average directly in detailview
                                         pin.ratings.append(rating)
+                                        confetti += 1                              // 🎉 launch confetti
+                                        // Keep the sheet open long enough for the confetti animation, then dismiss.
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                            deletionInFlight = false
+                                            dismiss()
+                                        }
                                         soundVM.playSound(resourceName: "AddReviewSound", resourceFormat: "wav")
                                         print("newAverage inside if let success, let newAverage: \(newAverage)")
                                         print("Added rating: \(rating)")
@@ -119,16 +135,18 @@ struct AddReviewView: View {
                                         //                                    } else {
                                         //                                       dismiss()
                                         //                                    }
-                                        dismiss()
                                     }
                                 } reviewExists: { exists in
                                     if exists {
+                                        deletionInFlight = false
                                         showAlert = .alreadyReviewed
                                     }
                                 }
                             }
                         }
                     }
+                    .disabled(deletionInFlight)                // prevent double‑taps
+                    .confettiCannon(trigger: $confetti, confettis: [.text("⭐"), .text("⭐"), .text("👶"),.text("⭐"),.text("⭐")], confettiSize: 20)       // 🎉
                     .padding(.bottom, 30)
                     .padding(.top, 5)
                     .frame(maxWidth: .infinity, alignment: .center)
