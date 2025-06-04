@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 
 struct FavouritesView: View {
@@ -13,6 +14,7 @@ struct FavouritesView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @StateObject var favVM = FavoritesViewModel()
     @State private var selectedPin: Pin? = nil
+    @Binding var mapViewRef: MKMapView?
     
     @State private var isPublic = false
     @State private var publicListName = ""
@@ -59,8 +61,12 @@ struct FavouritesView: View {
           }
       }
        //shows sheet of clicked item
-      .sheet(item: $selectedPin) { pin in
-          VenueDetailView(pin: pin, mapViewRef: nil)
+      .sheet(item: $selectedPin, onDismiss: {
+          if let favIds = authVM.currentUser?.favorites {
+              favVM.fetchFavorites(from: favIds)
+          }
+      }) { pin in
+          VenueDetailView(pin: pin, mapViewRef: mapViewRef)
       }
    }
 }

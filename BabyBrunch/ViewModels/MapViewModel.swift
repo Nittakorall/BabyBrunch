@@ -9,12 +9,14 @@ import Foundation
 import Firebase
 import MapKit
 import FirebaseAuth
+import SwiftUI
 
 class MapViewModel : ObservableObject {
     @Published var venuePins : [String: MKPointAnnotation] = [:]
     @Published var pinReviews : [ReviewData] = []
     private let db = Firestore.firestore()
     private let auth = Auth.auth()
+    @ObservedObject var soundVM = SoundViewModel()
     
     /*
      * Creates query to check if a doc in pin-collection exists with equal name, latitude and longitude.
@@ -47,6 +49,7 @@ class MapViewModel : ObservableObject {
                         pinData.id = docRef.documentID
                         
                         print("This pin is new, saved pin to Firestore.")
+                        self.soundVM.playSound(resourceName: "AddPinSound", resourceFormat: "wav")
                         //Send the updated pin in the callback if successfull
                         completion(pinData)
                     } catch {

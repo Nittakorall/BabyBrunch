@@ -37,7 +37,8 @@ struct BabyBrunchApp: App {
                         .environmentObject(authViewModel)
                         .preferredColorScheme(isDarkMode ? .dark : .light)
                 } else {
-                    SplashScreen(isActive: $isActive, soundVM: SoundViewModel(resourceName: "SplashScreenSound", resourceFormat: "wav"))
+                    //I don't get why it needs vm here but not in AddReviewView, Guess I should check that later
+                    SplashScreen(isActive: $isActive, soundVM: SoundViewModel())
                 }
             
             }
