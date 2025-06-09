@@ -14,9 +14,10 @@ import SwiftUI
 class MapViewModel : ObservableObject {
     @Published var venuePins : [String: MKPointAnnotation] = [:]
     @Published var pinReviews : [ReviewData] = []
+    @ObservedObject var soundVM = SoundViewModel()
     private let db = Firestore.firestore()
     private let auth = Auth.auth()
-    @ObservedObject var soundVM = SoundViewModel()
+    
     
     /*
      * Creates query to check if a doc in pin-collection exists with equal name, latitude and longitude.
@@ -205,12 +206,12 @@ class MapViewModel : ObservableObject {
         // Editable list to hold reviews sent into function, fetched from Firestore.
         var updatedReviews = existingReviews
         // Create a new review object from the user's input.
-        let newReview = ReviewData(text: review, rating: rating, userId: userId, userName: userName)
+        let newReview = ReviewData(text: review, rating: rating, userId: userId, userName: userName, pinId: pinId, pinName: pin.name)
         updatedReviews.append(newReview)
         
         let ref = db.collection("pins").document(pinId)
         // Update reviews field on Firestore.
-        ref.updateData(["reviews" : updatedReviews.map { ["text": $0.text, "rating": $0.rating, "userId": $0.userId, "userName": $0.userName ?? "Anonymous"] }]) { err in
+        ref.updateData(["reviews" : updatedReviews.map { ["text": $0.text, "rating": $0.rating, "userId": $0.userId, "userName": $0.userName ?? "Anonymous", "pinId": $0.pinId ?? "pinIdError", "pinName": $0.pinName ?? "pinNameError"] }]) { err in
             if let error = err {
                 print("Error updating reviews field: \(error.localizedDescription)")
                 completion(false)
@@ -233,7 +234,9 @@ class MapViewModel : ObservableObject {
                    let rating = dict["rating"] as? Int,
                    let userId = dict["userId"] as? String,
                    let userName = dict["userName"] as? String else {return nil}
-             return ReviewData(text: text, rating: rating, userId: userId, userName: userName)
+                    let pinId = dict["pinId"] as? String ?? ""
+                    let pinName = dict["pinName"] as? String ?? ""
+            return ReviewData(text: text, rating: rating, userId: userId, userName: userName, pinId: pinId, pinName: pinName)
          }
     }
     
@@ -270,7 +273,7 @@ class MapViewModel : ObservableObject {
                 else {
                     return nil
                 }
-                return ReviewData(text: text, rating: rating, userId: "", userName: userName)
+                return ReviewData(text: text, rating: rating, userId: "", userName: userName, pinId: "", pinName: "")
             }
             // On main thread, set value from templist to published list used in scrollview in VenueDetailView.
             DispatchQueue.main.async {
@@ -302,4 +305,149 @@ class MapViewModel : ObservableObject {
             }
         }
     }
+    
+    /*
+     * Fetch all reviews by the current user to be displayed in UserReviewsView.
+     */
+    func fetchReviewsByCurrentUser(completion: @escaping ([ReviewData]) -> Void) {
+        guard let currentUserId = auth.currentUser?.uid else {
+            completion([])
+            return
+        }
+        let ref = db.collection("pins")
+        ref.getDocuments { snap, err in
+            if let error = err {
+                print("Error fetching user reviews: \(error.localizedDescription)")
+                completion([])
+            }
+            guard let documents = snap?.documents else {
+                completion([])
+                return
+            }
+            var userReviews : [ReviewData] = []
+            
+            for document in documents {
+                if let pin = try? document.data(as: Pin.self), let reviews = pin.reviews {
+                    for review in reviews where review.userId == currentUserId {
+                        userReviews.append(review)
+                    }
+                }
+            }
+            completion(userReviews)
+        }
+    }
+    
+    /*
+     * Function to delete a review for a specific pin and the current user id.
+     * Bool callback to be used in UserReviewView to then call on removeRating below.
+     */
+    func deleteReview(pinId: String, completion: @escaping (Bool) -> Void) {
+        // Get currentUserId, if none then just return.
+        guard let userId = auth.currentUser?.uid else {return}
+        let ref = db.collection("pins").document(pinId)
+        
+        // Get the pin document using the pinId.
+        ref.getDocument { snap, err in
+            if let error = err {
+                print("Could not get pin to delete review: \(error.localizedDescription)")
+                completion(false)
+            }
+            // Guard check the data in the snapshot and the parsing of the reviews array within the data.
+            guard let data = snap?.data(), var reviews = data["reviews"] as? [[String: Any]] else {
+                print("No data found for pin to delete review.")
+                completion(false)
+                return
+            }
+            // Filter the reviews array to only get the ones not containing the current user id, i.e. filter away the one containing the current user id.
+            reviews = reviews.filter { $0["userId"] as? String != userId }
+            // Update document's reviews field with the filtered list, i.e. the review containing the current user id has been removed.
+            ref.updateData(["reviews": reviews]) { err in
+                if let error = err {
+                    print("Could not remove user review: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    print("Deleted user review from pin.")
+                    completion(true)
+                }
+            }
+        }
+    }
+    
+    /*
+     * Called upon in UserReviewsView, if function deleteReview above returns true.
+     * Callback returns a bool for success/fail, a double for the new rating average and the pin (to update map with annotation with correct average displayed).
+     */
+    func removeRating(from pinId: String, ratingToRemove: Int, completion: @escaping (Bool, Double?, Pin?) -> Void) {
+        let ref = db.collection("pins").document(pinId)
+        
+        ref.getDocument { snapshot, error in
+            if let error = error {
+                print("Error getting pin: \(error.localizedDescription)")
+                completion(false, nil, nil)
+                return
+            }
+            
+            guard let data = snapshot?.data(),
+                  var ratings = data["ratings"] as? [Int] else {
+                print("No data or ratings array")
+                completion(false, nil, nil)
+                return
+            }
+            
+            // Remove one instance of the rating, doesn't matter which just the first of a matching rating.
+            if let index = ratings.firstIndex(of: ratingToRemove) {
+                ratings.remove(at: index)
+            } else {
+                print("Rating not found in array")
+                completion(false, nil, nil)
+                return
+            }
+            
+            // Calcualte new average.
+            let newAverage = ratings.isEmpty ? 0.0 : Double(ratings.reduce(0, +)) / Double(ratings.count)
+            
+            // Update pin document on Firestore.
+            ref.updateData(["ratings": ratings]) { error in
+                if let error = error {
+                    print("Failed to update: \(error.localizedDescription)")
+                    completion(false, nil, nil)
+                } else {
+                    print("Rating removed successfully")
+                    // If update successful, call on fetchPin to be able to use in callback to update annotation on map to display new average.
+                    self.fetchPin(withId: pinId) { pin in
+                        completion(true, newAverage, pin)
+                    }
+                    
+                }
+            }
+        }
+    }
+    
+    /*
+     * Function to update pin average rating when a review/rating is created or deleted.
+     * Check if annotation exists on mapView by comparing pin id.
+     * If it exists, cast MKAnnotation to a PinAnnotation and create a new variable storing the data.
+     */
+    func updateAnnoatation(mapView: MKMapView, pin: Pin, newAverage: Double) {
+        // Check if mapView contains annotation with the pinId, which is then stored in oldAnnotation variable.
+        if let oldAnnotation = mapView.annotations.first(where: {
+            guard let pinAnnotation = $0 as? PinAnnotation else { return false }
+            return pinAnnotation.pin?.id == pin.id
+        }) as? PinAnnotation, let oldPin = oldAnnotation.pin { // Double check data type of the returned annotation, and check that we can store the pin inside the annotation in variable oldPin to be used to create a new annotation using the information from the "old pin".
+            
+            // Create a new annotation with the same data as the old pin (using custom init in PinAnnotation).
+            let newAnnotation = PinAnnotation(pin: oldPin)
+            // Update subtitle with new averageRating sent into this function.
+            newAnnotation.subtitle = String(format: "⭐️: %.1f", newAverage)
+            
+            // On the main thread, remove the old pin from the map and add the new pin instead.
+            DispatchQueue.main.async {
+                mapView.removeAnnotation(oldAnnotation)
+                mapView.addAnnotation(newAnnotation)
+            }
+        } else {
+            print("No existing annotation found to update.")
+        }
+    }
+
 }

@@ -42,11 +42,16 @@ struct MainTabView: View {
                         Image(systemName: "heart")
                     }
                     .tag(3)
+                UserReviewsView(mapViewRef: $mapViewRef)
+                    .tabItem {
+                        Image(systemName: "rectangle.and.pencil.and.ellipsis")
+                    }
+                    .tag(4)
                 PublicFavouritesView(mapViewRef: $mapViewRef)
                     .tabItem {
                         Image(systemName: "globe")
                     }
-                    .tag(4)
+                    .tag(5)
             }
         }.accentColor(Color(.oldRose))
             .onAppear(){
