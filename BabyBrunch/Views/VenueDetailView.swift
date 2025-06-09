@@ -164,8 +164,7 @@ struct VenueInformationView : View {
             Text(pin.phoneNumber)
                 .foregroundColor(Color(.oldRose))
                 .fontDesign(.rounded)
-            Text(pin.website)
-                .foregroundColor(Color(.oldRose))
+            LinkView(pin: pin)
         }
     }
 }

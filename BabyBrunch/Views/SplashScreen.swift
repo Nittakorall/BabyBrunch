@@ -11,8 +11,9 @@ import AVFoundation
 struct SplashScreen: View {
     @State private var isAnimating = false
     @Binding var isActive: Bool
-    @ObservedObject var soundVM = SoundViewModel()
-    
+    @EnvironmentObject var soundVM: SoundViewModel
+
+  //  @StateObject var authViewModel = AuthViewModel()
 
     var body: some View {
         ZStack {
@@ -35,7 +36,7 @@ struct SplashScreen: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                 soundVM.playSound(resourceName: "SplashScreenSound", resourceFormat: "wav")
                 withAnimation {
-                    isActive = true
+                   isActive = true
                 }
             }
         }
