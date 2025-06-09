@@ -14,4 +14,6 @@ struct ReviewData : Codable, Identifiable, Hashable {
     var rating : Int
     var userId : String
     var userName : String?
+    var pinId : String?
+    var pinName : String?
 }

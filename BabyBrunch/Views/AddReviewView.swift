@@ -105,36 +105,8 @@ struct AddReviewView: View {
                                         print("newAverage inside if let success, let newAverage: \(newAverage)")
                                         print("Added rating: \(rating)")
                                         
-                                        // Check if annotation exists on mapView by comparing pin id.
-                                        // If it exists, cast MKAnnotation to a PinAnnotation and create a new variable storing the data.
-                                        if let oldAnnotation = mapView.annotations.first(where: {
-                                            guard let pinAnnotation = $0 as? PinAnnotation else { return false }
-                                            return pinAnnotation.pin?.id == pin.id
-                                        }) as? PinAnnotation, let oldPin = oldAnnotation.pin {
-                                            
-                                            let newAnnotation = PinAnnotation(pin: oldPin) // Create a new annotation with the same data as the old pin (using custom init in PinAnnotation).
-                                            newAnnotation.subtitle = String(format: "⭐️: %.1f", newAverage) // Update subtitle with new averageRating received from callback in mapVM.addRating above.
-                                            
-                                            DispatchQueue.main.async {
-                                                mapView.removeAnnotation(oldAnnotation) // Remove the old pin from the map.
-                                                mapView.addAnnotation(newAnnotation) // Add the new pin to the map.
-                                            }
-                                        } else {
-                                            print("No existing annotation found to update.")
-                                        }
-                                        
-                                        //                                    if !reviewText.isEmpty {
-                                        //                                        mapVM.addReview(pin: pin, review: reviewText, rating: rating, userName: userName) { success in
-                                        //                                            if success {
-                                        //                                                print("Added review: \(reviewText)")
-                                        //                                                dismiss()
-                                        //                                            } else {
-                                        //                                                print("No success")
-                                        //                                            }
-                                        //                                        }
-                                        //                                    } else {
-                                        //                                       dismiss()
-                                        //                                    }
+                                        // Call function to update pin average rating on map.
+                                        mapVM.updateAnnoatation(mapView: mapView, pin: pin, newAverage: newAverage)
                                     }
                                 } reviewExists: { exists in
                                     if exists {
