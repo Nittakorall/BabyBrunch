@@ -42,12 +42,10 @@ struct MapView: View {
                 searchLocationVM: searchLocationVM)
             .ignoresSafeArea()
             .accentColor(Color(.thistle))
-            
             //checks if user needs to give permission
             .onAppear() {
                 vm.checkIfLocationServicesEnabled()
             }
-            
             //listens for authvmerrors
             .onChange(of: authVM.authError) { newError in
                 if let error = newError {
@@ -62,30 +60,27 @@ struct MapView: View {
                         title: Text(alertTitle),
                         message: Text(alertMessage),
                         dismissButton: .default(Text("OK"),
-                        action: {
-                            // clears the error to make the map clickable agin
-                            authVM.authError = nil
+                                                action: {
+                                                    // clears the error to make the map clickable agin
+                                                    authVM.authError = nil
                                                 })
                     )
-                    
                 } else {
                     return Alert(
                         title: Text(alertTitle),
                         message: Text(alertMessage),
                         primaryButton: .default(Text("Yes"),
-                        action: {
-                            savePOItoPin()
-                        }),
+                                                action: {
+                                                    savePOItoPin()
+                                                }),
                         secondaryButton: .cancel(Text("Cancel"))
                     )
                 }
             }
-                            
-            
             //opens a sheet of venuedetails and sends the clickable pin along
             .sheet(item: $selectedPin) { pin in
-               VenueDetailView(pin: pin, mapViewRef: mapViewRef)
-                }
+                VenueDetailView(pin: pin, mapViewRef: mapViewRef)
+            }
             VStack {
                 CustomButton(label: "Where am I?", backgroundColor: "oldRose", width: 150) {
                     vm.mapShouldBeUpdated = true

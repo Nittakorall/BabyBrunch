@@ -32,8 +32,7 @@ struct BabyBrunchApp: App {
                     .environmentObject(authViewModel)
                     .preferredColorScheme(isDarkMode ? .dark : .light)
                     .environmentObject(soundVM)
-            }
-            else{
+            } else {
                 if authViewModel.isActive {
                     LoginView()
                         .environmentObject(soundVM)
@@ -45,7 +44,6 @@ struct BabyBrunchApp: App {
                         .environmentObject(soundVM)
                         .environmentObject(authViewModel)
                 }
-            
             }
         }
     }

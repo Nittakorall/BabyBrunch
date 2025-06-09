@@ -11,11 +11,9 @@ import CoreLocation
 import SwiftUI
 
 class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
-    
     @Published var realRegion: MKCoordinateRegion
     var locationManager: CLLocationManager?
     var mapShouldBeUpdated = true
-    
     
     //we override init of NSObject
     override init() {
@@ -24,29 +22,20 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             center: CLLocationCoordinate2D(latitude: 59.3293, longitude: 18.0686),
             span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         )
-        
         super.init()
-       // checkIfLocationServicesEnabled()
     }
-    
-    
     
     //function that checks if location services are enabled on the phone
     func checkIfLocationServicesEnabled() {
-        
         if CLLocationManager.locationServicesEnabled() {
             locationManager = CLLocationManager()
             // we can add it if we need it later, it's use to choose how precicely we'll show users location
             //    locationManager?.desiredAccuracy = kCLLocationAccuracyBest
-            
             locationManager!.delegate = self
-            
         } else {
             //    showAlert = true
             //TODO: would be better with an alert here so that user turns on location
-            
         }
-        // print( "Location services are not enabled." )
     }
     
     
@@ -58,7 +47,6 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
         case .notDetermined:
             //   showAlert = true
             locationManager.requestWhenInUseAuthorization()
-            
             
         case .restricted:
             //     showAlert = true
@@ -95,9 +83,9 @@ class LocationViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
             )
             if self.mapShouldBeUpdated {
                 self.realRegion = MKCoordinateRegion(
-                        center: latestLocation.coordinate,
-                        span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-                    )
+                    center: latestLocation.coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+                )
             }
             self.locationManager?.stopUpdatingLocation()
         }

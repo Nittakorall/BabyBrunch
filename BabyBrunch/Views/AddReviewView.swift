@@ -46,17 +46,13 @@ struct AddReviewView: View {
                     //-15 padding so that title doesn't take all space in 0.3
                         .padding(.vertical, -20)
                     
-                    
                     StarRatingView(rating: $rating, vm : soundVM)
                         .padding(.bottom, 10)
                     //if fraction of the view is more than 0.3, review field will be shown
-                    
-                    
                     if viewHeight > 300 {
                         //add review field
                         VStack{
                             CustomTitle(title : "Add your review:")
-                            
                             
                             Text("What's your name?")
                                 .foregroundColor(Color(.oldRose))
@@ -74,7 +70,6 @@ struct AddReviewView: View {
                                         .stroke(Color(.thistle), lineWidth: 2)
                                 )
                                 .padding(.horizontal, 20)
-                            
                         }
                         //0.6 and 1 fraction is for some reason not centered without it
                         // .frame(maxWidth: .infinity, alignment: .center)
@@ -123,7 +118,6 @@ struct AddReviewView: View {
                     .padding(.top, 5)
                     .frame(maxWidth: .infinity, alignment: .center)
                 }
-                
                 .frame(maxHeight: .infinity, alignment: .top)
                 .onAppear {
                     viewHeight = geo.size.height

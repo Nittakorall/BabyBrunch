@@ -9,7 +9,6 @@ import SwiftUI
 import MapKit
 
 struct UserReviewsView: View {
-
     @State var userReviewList : [ReviewData] = []
     @StateObject var mapVM = MapViewModel()
     @Binding var mapViewRef : MKMapView?
@@ -17,14 +16,24 @@ struct UserReviewsView: View {
     var body: some View {
         ZStack {
             Color(.lavenderBlush)
+                .ignoresSafeArea()
             VStack {
-                CustomTitle(title: "Your reviews")
-                
+                Text( "Your reviews")
+                    .padding(.top, 50)
+                    .fontDesign(.rounded)
+                    .font(.title)
+                    .foregroundColor(Color(.oldRose))
+                Text("(Swipe a review to delete it.)")
+                    .font(.system(size: 10))
+                    .foregroundColor(Color(.oldRose))
                 List {
                     ForEach(userReviewList, id: \.pinName) { review in
                         UserReviews(review: review)
-                    }.onDelete(perform: deleteReview)
-                }.scrollContentBackground(.hidden)
+                    }
+                    .onDelete(perform: deleteReview)
+                    .listRowBackground(Color(.lavenderBlush))
+                }
+                .scrollContentBackground(.hidden)
             }
         }
         .onAppear {
@@ -59,7 +68,7 @@ struct UserReviewsView: View {
             }
         }
     }
-
+    
 }
 
 //#Preview {
@@ -72,21 +81,29 @@ struct UserReviews : View {
     var body : some View {
         VStack(alignment: .leading){
             HStack {
+                Text("For venue: ")
+                    .bold()
                 Text(review.pinName ?? "errorPinName")
-                    .font(.headline)
-                    .padding(.top, 5)
-                    .foregroundColor(Color(.raisinBlack))
-                
+            }
+            .padding(.top, 5)
+            .foregroundColor(Color(.raisinBlack))
+            .font(.system(size: 14))
+            
+            HStack {
+                Text("Your rating: ")
                 StarsView(rating: Double(review.rating))
             }
             .bold()
+            .font(.system(size: 12))
+            .foregroundColor(Color(.raisinBlack))
             .padding(.bottom, 7)
             
             Text(review.text)
-                .font(.subheadline)
+                .font(.system(size: 12))
                 .foregroundColor(.secondary)
         }
         .padding(.leading, 20)
+        .padding(.trailing, 20)
         .frame(width: UIScreen.main.bounds.width * 0.8, height: 150, alignment: .topLeading)
         .background(Color(.thistle))
         .cornerRadius(10)

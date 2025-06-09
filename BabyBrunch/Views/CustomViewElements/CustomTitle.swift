@@ -8,19 +8,18 @@
 import SwiftUI
 
 struct CustomTitle: View {
-   
-   let title : String
-   
+    let title : String
+    
     var body: some View {
-       Text(title)
-           .padding(.top, 50)
-           .padding(.bottom, 50)
-           .fontDesign(.rounded)
-           .font(.title)
-           .foregroundColor(Color(.oldRose))
+        Text(title)
+            .padding(.top, 50)
+            .padding(.bottom, 50)
+            .fontDesign(.rounded)
+            .font(.title)
+            .foregroundColor(Color(.oldRose))
     }
 }
 
 #Preview {
-   CustomTitle(title: "BABYBrunch")
+    CustomTitle(title: "BABYBrunch")
 }

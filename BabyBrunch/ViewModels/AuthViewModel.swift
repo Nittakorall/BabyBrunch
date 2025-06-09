@@ -17,12 +17,18 @@ public class AuthViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var isLoggedIn = false
     @Published var authError: AuthErrorHandler? = nil // not in use atm but leaving just in case
-//part of splash screen
+    //part of splash screen
     @Published var isActive = false
-    
     
     private let db = Firestore.firestore()
     private let auth = Auth.auth()
+    
+    init() {
+        loadLoginState()
+        if isLoggedIn, let uid = UserDefaults.standard.string(forKey: "currentUserID") {
+            fetchUserInfo(uid: uid)
+        }
+    }
     
     //Function to save a user that is then sent to firestore under 'users'. Each user gets their uid as id
     func saveUser(_ user: User) {
@@ -58,7 +64,7 @@ public class AuthViewModel: ObservableObject {
             }
             self.currentUser = User(id: user.uid, isSignedUp: false)
             self.isSignedUp = false
-      //      UserDefaults.standard.set(false, forKey: "isSignedUp") //Kseniia + chatGPT
+            
             UserDefaults.standard.set(user.uid, forKey: "currentUserID")
             self.isLoggedIn = true
         }
@@ -74,15 +80,15 @@ public class AuthViewModel: ObservableObject {
                 return
             }
             guard let user = result?.user else { onSuccess(false); return }
-                let newUser = User(id: user.uid, email: email, isSignedUp: true)
-                self.saveUser(newUser)
-                self.currentUser = newUser
-                self.isSignedUp = true
-          //  UserDefaults.standard.set(true, forKey: "isSignedUp") //Kseniia + chatGPT
+            let newUser = User(id: user.uid, email: email, isSignedUp: true)
+            self.saveUser(newUser)
+            self.currentUser = newUser
+            self.isSignedUp = true
+            
             UserDefaults.standard.set(user.uid, forKey: "currentUserID")
-                onSuccess(true)
-            }
+            onSuccess(true)
         }
+    }
     
     //Function to log in the user who has an account (and therefore has access to the entire app)
     //Calls on fetchUserInfo to get all data and also sets currentUser with the help of uid
@@ -102,19 +108,11 @@ public class AuthViewModel: ObservableObject {
                 completion(false)
                 return
             }
-           // self.isSignedUp = true //checking, Kseniia
             self.isLoggedIn = true
             self.isActive = true
             UserDefaults.standard.set(user.uid, forKey: "currentUserID")
             self.fetchUserInfo(uid: user.uid)
             completion(true)
-        }
-    }
-    
-    init() {
-        loadLoginState()
-        if isLoggedIn, let uid = UserDefaults.standard.string(forKey: "currentUserID") {
-            fetchUserInfo(uid: uid)
         }
     }
     
@@ -155,17 +153,16 @@ public class AuthViewModel: ObservableObject {
             self.isSignedUp = false // resets the flag so that the user can log in as guest after login out
             authError = nil        // kill any pending alert (to prevent "must sign in..." alert after signing out as guest
             UserDefaults.standard.set(false, forKey: "isLoggedIn")
-         //   UserDefaults.standard.set(false, forKey: "isSignedUp")
             UserDefaults.standard.removeObject(forKey: "currentUserID")
         } catch {
             self.handleErrors(error)
         }
     }
     
-//    func deleteUser(password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+
     func deleteUser(password: String, completion: @escaping (Bool) -> Void) {
         guard let user = auth.currentUser else {
-//            completion(.failure(NSError(domain: "AuthError", code: 401, userInfo: [NSLocalizedDescriptionKey: "Ingen användare är inloggad."])))
+            //            completion(.failure(NSError(domain: "AuthError", code: 401, userInfo: [NSLocalizedDescriptionKey: "Ingen användare är inloggad."])))
             return
         }
         if let email = user.email{
@@ -176,7 +173,7 @@ public class AuthViewModel: ObservableObject {
             // 1. Reautenticera användaren
             user.reauthenticate(with: credential) { result, error in
                 if let error = error {
-//                    completion(.failure(error))
+                    //                    completion(.failure(error))
                     completion(false)
                     return
                 }
@@ -187,19 +184,19 @@ public class AuthViewModel: ObservableObject {
                 // 2. Radera dokumentet i Firestore
                 db.collection("users").document(userID).delete { err in
                     if let err = err {
-//                        completion(.failure(err))
-                    completion(false)
+                        //                        completion(.failure(err))
+                        completion(false)
                         return
                     }
                     
                     // 3. Radera användaren från Firebase Authentication
                     user.delete { error in
                         if let error = error {
-//                            completion(.failure(error))
+                            //                            completion(.failure(error))
                             completion(false)
                         } else {
                             print("Användare och Firestore-dokument raderades.")
-//                            completion(.success(()))
+                            //                            completion(.success(()))
                             completion(true)
                         }
                     }
@@ -207,6 +204,7 @@ public class AuthViewModel: ObservableObject {
             }
         }
     }
+    
     private func handleErrors(_ error: Error) {
         let mapped = AuthErrorHandler.from(error)
         errorMessage = mapped.localizedDescription
@@ -220,7 +218,7 @@ public class AuthViewModel: ObservableObject {
         let userRef = db.collection("users").document(uid)
         
         userRef.getDocument { snapshot, error in
-            guard var user = try? snapshot?.data(as: User.self) else {
+            guard let user = try? snapshot?.data(as: User.self) else {
                 completion(false)
                 return
             }
@@ -243,6 +241,6 @@ public class AuthViewModel: ObservableObject {
             }
         }
     }
-
+    
 }
 

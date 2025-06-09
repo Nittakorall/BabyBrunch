@@ -46,7 +46,7 @@ struct UIKitMapView : UIViewRepresentable {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
         mapView.showsUserLocation = true
-//       mapView.pointOfInterestFilter = .includingAll // Shows all Points of Interest (POIs) on the map.
+        //       mapView.pointOfInterestFilter = .includingAll // Shows all Points of Interest (POIs) on the map.
         mapView.pointOfInterestFilter = MKPointOfInterestFilter(including: [.restaurant, .cafe]) // Shows only POIs that are restaurants or cafés.
         mapViewRef = mapView
         
@@ -71,10 +71,7 @@ struct UIKitMapView : UIViewRepresentable {
          ✅ Returns the map so it can be shown in your SwiftUI layout.
          */
         
-        
-        
         //We don't need region variable here because we get location data from locationVM, replaced region it with vm.realRegion
-        
         let defaultRegion = MKCoordinateRegion( // You create a new MKCoordinateRegion object. It's used by MKMapView to define which area to show.
             // center: CLLocationCoordinate2D(latitude: 59.8609, longitude: 17.6486), // Uppsala
             center: CLLocationCoordinate2D(latitude: 59.325, longitude: 18.05), // Stockholm
@@ -98,7 +95,6 @@ struct UIKitMapView : UIViewRepresentable {
                 print("Could not add annotations from Firestore to mapView in UIKitMapView.")
             }
         }
-        
         return mapView // You return the newly configured MKMapView object from makeUIView(context:) in UIViewRepresentable. This map will be shown in your SwiftUI view.
     }
     
@@ -107,7 +103,6 @@ struct UIKitMapView : UIViewRepresentable {
             // Updates the map if the user's location changes
             uiView.setRegion(vm.realRegion, animated: false)
         } // This is required for UIKitMapView to fulfill the requirements of the UIViewRepresentable protocol.
-        
         
         if let coordinates = searchLocationVM.coordinates {
             let newRegion = MKCoordinateRegion(
@@ -118,7 +113,6 @@ struct UIKitMapView : UIViewRepresentable {
             DispatchQueue.main.async {
                 searchLocationVM.coordinates = nil
             }
-            
         }
     }
 }
