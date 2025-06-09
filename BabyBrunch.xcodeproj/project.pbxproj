@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10A5A74A2DF06F120045EE72 /* Secrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10A5A7492DF06F0D0045EE72 /* Secrets.plist */; };
+		10A5A74C2DF076690045EE72 /* Secrets.example.plist in Resources */ = {isa = PBXBuildFile; fileRef = 10A5A74B2DF0765C0045EE72 /* Secrets.example.plist */; };
 		4E20AF052DD4B96200184744 /* BabyBrunchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */; };
 		4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF082DD4B96400184744 /* Assets.xcassets */; };
 		4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4E20AF0B2DD4B96400184744 /* Preview Assets.xcassets */; };
@@ -16,6 +18,7 @@
 		4E20AF302DD4BB4700184744 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 4E20AF2F2DD4BB4700184744 /* FirebaseAuth */; };
 		4E20AF322DD4BB4700184744 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 4E20AF312DD4BB4700184744 /* FirebaseFirestore */; };
 		9337D2092DDB1E6400E79926 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9337D2082DDB1E6400E79926 /* GoogleService-Info.plist */; };
+		B32E72632DED9EE800BFAD1F /* ConfettiSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B32E72622DED9EE800BFAD1F /* ConfettiSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +39,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		10A5A7492DF06F0D0045EE72 /* Secrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.plist; sourceTree = "<group>"; };
+		10A5A74B2DF0765C0045EE72 /* Secrets.example.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Secrets.example.plist; sourceTree = "<group>"; };
 		4E20AF012DD4B96200184744 /* BabyBrunch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BabyBrunch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E20AF042DD4B96200184744 /* BabyBrunchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BabyBrunchApp.swift; sourceTree = "<group>"; };
 		4E20AF082DD4B96400184744 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -49,6 +54,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		934E08912DEF204A0085FB9D /* Sounds */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Sounds; sourceTree = "<group>"; };
 		B3760F0E2DDE67B300FCEFAF /* ErrorHandling */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ErrorHandling; sourceTree = "<group>"; };
 		DE3E5C442DDB140C00DA0FB4 /* Models */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Models; sourceTree = "<group>"; };
 		DE3E5C452DDB141700DA0FB4 /* ViewModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewModels; sourceTree = "<group>"; };
@@ -60,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B32E72632DED9EE800BFAD1F /* ConfettiSwiftUI in Frameworks */,
 				4E20AF302DD4BB4700184744 /* FirebaseAuth in Frameworks */,
 				4E20AF322DD4BB4700184744 /* FirebaseFirestore in Frameworks */,
 			);
@@ -105,6 +112,9 @@
 		4E20AF032DD4B96200184744 /* BabyBrunch */ = {
 			isa = PBXGroup;
 			children = (
+				10A5A74B2DF0765C0045EE72 /* Secrets.example.plist */,
+				10A5A7492DF06F0D0045EE72 /* Secrets.plist */,
+				934E08912DEF204A0085FB9D /* Sounds */,
 				B3760F0E2DDE67B300FCEFAF /* ErrorHandling */,
 				DE3E5C462DDB142000DA0FB4 /* Views */,
 				DE3E5C452DDB141700DA0FB4 /* ViewModels */,
@@ -158,6 +168,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				934E08912DEF204A0085FB9D /* Sounds */,
 				B3760F0E2DDE67B300FCEFAF /* ErrorHandling */,
 				DE3E5C442DDB140C00DA0FB4 /* Models */,
 				DE3E5C452DDB141700DA0FB4 /* ViewModels */,
@@ -167,6 +178,7 @@
 			packageProductDependencies = (
 				4E20AF2F2DD4BB4700184744 /* FirebaseAuth */,
 				4E20AF312DD4BB4700184744 /* FirebaseFirestore */,
+				B32E72622DED9EE800BFAD1F /* ConfettiSwiftUI */,
 			);
 			productName = BabyBrunch;
 			productReference = 4E20AF012DD4B96200184744 /* BabyBrunch.app */;
@@ -242,6 +254,7 @@
 			mainGroup = 4E20AEF82DD4B96200184744;
 			packageReferences = (
 				4E20AF2E2DD4BB4700184744 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				B32E72612DED9E8900BFAD1F /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */,
 			);
 			productRefGroup = 4E20AF022DD4B96200184744 /* Products */;
 			projectDirPath = "";
@@ -259,6 +272,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				10A5A74C2DF076690045EE72 /* Secrets.example.plist in Resources */,
+				10A5A74A2DF06F120045EE72 /* Secrets.plist in Resources */,
 				4E20AF0C2DD4B96400184744 /* Preview Assets.xcassets in Resources */,
 				9337D2092DDB1E6400E79926 /* GoogleService-Info.plist in Resources */,
 				4E20AF092DD4B96400184744 /* Assets.xcassets in Resources */,
@@ -619,6 +634,14 @@
 				minimumVersion = 10.3.0;
 			};
 		};
+		B32E72612DED9E8900BFAD1F /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/simibac/ConfettiSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -631,6 +654,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 4E20AF2E2DD4BB4700184744 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		B32E72622DED9EE800BFAD1F /* ConfettiSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B32E72612DED9E8900BFAD1F /* XCRemoteSwiftPackageReference "ConfettiSwiftUI" */;
+			productName = ConfettiSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

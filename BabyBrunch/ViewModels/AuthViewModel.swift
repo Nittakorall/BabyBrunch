@@ -55,6 +55,8 @@ public class AuthViewModel: ObservableObject {
             }
             self.currentUser = User(id: user.uid, isSignedUp: false)
             self.isSignedUp = false
+      //      UserDefaults.standard.set(false, forKey: "isSignedUp") //Kseniia + chatGPT
+            UserDefaults.standard.set(user.uid, forKey: "currentUserID")
             self.isLoggedIn = true
         }
     }
@@ -73,6 +75,8 @@ public class AuthViewModel: ObservableObject {
                 self.saveUser(newUser)
                 self.currentUser = newUser
                 self.isSignedUp = true
+          //  UserDefaults.standard.set(true, forKey: "isSignedUp") //Kseniia + chatGPT
+            UserDefaults.standard.set(user.uid, forKey: "currentUserID")
                 onSuccess(true)
             }
         }
@@ -95,12 +99,27 @@ public class AuthViewModel: ObservableObject {
                 completion(false)
                 return
             }
+           // self.isSignedUp = true //checking, Kseniia
             self.isLoggedIn = true
+            UserDefaults.standard.set(user.uid, forKey: "currentUserID")
             self.fetchUserInfo(uid: user.uid)
             completion(true)
         }
     }
     
+    init() {
+        loadLoginState()
+        if isLoggedIn, let uid = UserDefaults.standard.string(forKey: "currentUserID") {
+            fetchUserInfo(uid: uid)
+        }
+    }
+    
+    func loadLoginState() {
+        let isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+        self.isLoggedIn = isLoggedIn
+        isSignedUp = UserDefaults.standard.bool(forKey: "isSignedUp")
+        self.isSignedUp = isSignedUp
+    }
     
     //Function that runs after you have logged in to collect all the info from the userId in fireStore, e.g. isSignedUp och favorites
     func fetchUserInfo(uid: String) {
@@ -111,6 +130,7 @@ public class AuthViewModel: ObservableObject {
                     let user = try document.data(as: User.self)
                     self.currentUser = user
                     self.isSignedUp = user.isSignedUp
+                    UserDefaults.standard.set(user.isSignedUp, forKey: "isSignedUp") // Kseniia + chatGPT
                 } catch {
                     print(error)
                 }
@@ -122,10 +142,14 @@ public class AuthViewModel: ObservableObject {
     
     func signOut() {
         do {
-            try Auth.auth().signOut()
+            try auth.signOut()
             self.isLoggedIn = false
             self.currentUser = nil
             self.isSignedUp = false // resets the flag so that the user can log in as guest after login out
+            authError = nil        // kill any pending alert (to prevent "must sign in..." alert after signing out as guest
+            UserDefaults.standard.set(false, forKey: "isLoggedIn")
+         //   UserDefaults.standard.set(false, forKey: "isSignedUp")
+            UserDefaults.standard.removeObject(forKey: "currentUserID")
         } catch {
             self.handleErrors(error)
         }
@@ -133,7 +157,7 @@ public class AuthViewModel: ObservableObject {
     
 //    func deleteUser(password: String, completion: @escaping (Result<Void, Error>) -> Void) {
     func deleteUser(password: String, completion: @escaping (Bool) -> Void) {
-        guard let user = Auth.auth().currentUser else {
+        guard let user = auth.currentUser else {
 //            completion(.failure(NSError(domain: "AuthError", code: 401, userInfo: [NSLocalizedDescriptionKey: "Ingen användare är inloggad."])))
             return
         }
@@ -181,6 +205,36 @@ public class AuthViewModel: ObservableObject {
         errorMessage = mapped.localizedDescription
         self.authError = mapped
         print("ErrorHandler:", mapped.localizedDescription)
+    }
+    
+    
+    func toggleFavorite(pinId: String, completion: @escaping (Bool) -> Void) {
+        guard let uid = currentUser?.id else { return }
+        let userRef = db.collection("users").document(uid)
+        
+        userRef.getDocument { snapshot, error in
+            guard var user = try? snapshot?.data(as: User.self) else {
+                completion(false)
+                return
+            }
+            
+            var updatedFavorites = user.favorites
+            if updatedFavorites.contains(pinId) {
+                updatedFavorites.removeAll { $0 == pinId }
+            } else {
+                updatedFavorites.append(pinId)
+            }
+            
+            userRef.updateData(["favorites": updatedFavorites]) { error in
+                if let error = error {
+                    print("Error updating favorites: \(error.localizedDescription)")
+                    completion(false)
+                } else {
+                    self.currentUser?.favorites = updatedFavorites
+                    completion(true)
+                }
+            }
+        }
     }
 
 }

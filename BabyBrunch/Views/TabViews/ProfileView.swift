@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct ProfileView: View {
     @EnvironmentObject private var authVM: AuthViewModel
@@ -43,15 +44,20 @@ struct ProfileView: View {
                         Text("Press ok to get to settings -> Click on app -> Enable location")
                     }
                 
-                
                 Spacer()
                 CustomButton(label: "Sign Out", backgroundColor: "oldRose", width: 200) {
                     authVM.signOut()
                 }.padding(.bottom, 20)
                 
-                CustomButton(label: "Delete", backgroundColor: "raisinBlack", width: 200) {
-                    showDeletedAccountSheet = true
-                }.padding(.bottom, 50)
+                // Show Delete button only for registered users (not guests)
+                if Auth.auth().currentUser?.isAnonymous == false || authVM.currentUser?.isSignedUp == true {
+                    CustomButton(label: "Delete",
+                                 backgroundColor: "raisinBlack",
+                                 width: 200) {
+                        showDeletedAccountSheet = true
+                    }
+                    .padding(.bottom, 50)
+                }
                 
             }
             .sheet(isPresented: $showDeletedAccountSheet, content: {

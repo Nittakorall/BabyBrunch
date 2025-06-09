@@ -27,7 +27,7 @@ struct SignUpView: View {
                Text("Email")
                
                //email input field
-               CustomTextField(input: $email, hint: "Email", type: .normal)
+                CustomTextField(input: $email, hint: "Email", type: .email)
                
                Text("Password")
                //password input field

@@ -8,10 +8,15 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var isActive = false
     var body: some View {
-        Image(systemName: "square.and.arrow.up")
-            .resizable()
-            .edgesIgnoringSafeArea(.all)
+        ZStack {
+//            if isActive {
+//                LoginView()
+//            } else {
+//                SplashScreen(isActive: $isActive, soundVM: SoundViewModel(resourceName: "SplashScreenSound", resourceFormat: "wav"))
+//            }
+        }
     }
 }
 

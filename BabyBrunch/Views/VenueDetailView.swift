@@ -7,14 +7,26 @@
 
 import SwiftUI
 import MapKit
+import FirebaseAuth
 
 struct VenueDetailView: View {
     
     @State var pin: Pin
     let mapViewRef: MKMapView?
     @StateObject var mapVM = MapViewModel()
+    @EnvironmentObject private var authVM: AuthViewModel
     
     @State var addReviewSheet = false
+
+    @State private var showAlert = false
+    @State private var alertMessage = ""
+    var onDismiss: (() -> Void)? = nil
+    
+    @State private var showUrlAlert = false
+    @State private var url: URL?
+    
+
+
     
     var body: some View {
         ZStack {
@@ -53,10 +65,45 @@ struct VenueDetailView: View {
                   }
                 
                 CustomButton(label: "Rate Venue", backgroundColor: "oldRose", width: 250) {
-                    addReviewSheet = true
+                    if Auth.auth().currentUser?.isAnonymous == true || authVM.currentUser?.isSignedUp == false {
+                        DispatchQueue.main.async {
+                            self.authVM.authError = .guestNotAllowed
+                        }
+                    } else {
+                        addReviewSheet = true
+                    }
                 }
                 .padding(.bottom, 20)
             }
+            
+            VStack {
+                HStack {
+                    Spacer()
+                    Button {
+                        //calls the toggle favorite function
+                        if let pinId = pin.id {
+                            if Auth.auth().currentUser?.isAnonymous == true || authVM.currentUser?.isSignedUp == false {
+                                DispatchQueue.main.async {
+                                    self.authVM.authError = .guestNotAllowed
+                                }
+                                return
+                            }
+                            authVM.toggleFavorite(pinId: pinId) { success in
+                                print(success ? "Toggled favorite" : "Failed")
+                                
+                            }
+                        }
+                    } label: {
+                        //Shows button as a filled in or outlined heart depending on if the pin is marked favorite or not
+                        Image(systemName: authVM.currentUser?.favorites.contains(pin.id ?? "") == true ? "heart.fill" : "heart")
+                            .foregroundStyle(.red)
+                            .padding()
+                            .font(.title)
+                    }
+                }
+                Spacer()
+            }
+            
         }
         .onAppear {
             //Takes current selected pinId and fetch the new data from that pin on firestore to get a correct average rating
@@ -73,6 +120,26 @@ struct VenueDetailView: View {
             AddReviewView(pin: $pin, mapViewRef: mapViewRef)
                 .presentationDetents([.fraction(0.3), .large])
         }
+        // Show guest alert when authError changes
+        
+        //TODO: bugfixing, removed it to be able to ckech some stuff, whis might be important piece of code!!!
+        .onChange(of: authVM.authError) { newError in
+            if let error = newError {
+                alertMessage = error.localizedDescription
+                showAlert = true
+            }
+        }
+        .onDisappear {
+            onDismiss?()
+        }
+        .alert("Guest Access Denied",
+               isPresented: $showAlert,
+               actions: {
+            Button("OK") {
+                authVM.authError = nil   // reset so alert can show next time
+            }
+        },
+               message: { Text(alertMessage) })
     }
 }
 
@@ -91,7 +158,7 @@ struct VenueInformationView : View {
             Text(pin.name)
                 .foregroundColor(Color(.oldRose))
                 .font(.custom("Beau Rivage", size: 40)) // Don't know how to add custom fonts, I'll fix later
-            Text("\(pin.streetAddress)\(pin.streetNo)")
+            Text("\(pin.streetAddress) \(pin.streetNo)")
                 .foregroundColor(Color(.oldRose))
                 .fontDesign(.rounded)
             Text(pin.phoneNumber)
@@ -161,6 +228,36 @@ struct ReviewView : View {
         .cornerRadius(10)
     }
 }
+
+
+struct LinkView : View {
+    let pin : Pin
+    @State var showUrlAlert = false
+    
+    
+    var body : some View {
+        if let url = URL(string: pin.website) {
+            Button {
+                showUrlAlert = true
+            } label: {
+                Text(pin.website)
+                    .foregroundColor(Color(.oldRose))
+                    .underline()
+            }
+            .alert("Do you want to open this link?", isPresented: $showUrlAlert) {
+                Button("Yes") {
+                    UIApplication.shared.open(url)
+                }
+                Button("No", role: .cancel) {}
+            }
+        } else {
+            Text(pin.website)
+                .foregroundColor(Color(.oldRose))
+        }
+    }
+}
+
+
 
 struct StarsDynamicFillView: View {
     var rating: Double

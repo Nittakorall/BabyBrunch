@@ -6,39 +6,59 @@
 //
 
 import SwiftUI
+import MapKit
+import FirebaseAuth
 
 struct MainTabView: View {
-   //shows which tab shoud opens by default, uses tags
-   @State private var selectedTab = 2
-   @StateObject private var locVM : LocationViewModel
-   
-   init() {
-       _locVM = StateObject(wrappedValue: LocationViewModel())
-      UITabBar.appearance().backgroundColor = UIColor(Color(.lavenderBlush))
-   }
-   
-   var body: some View {
-      TabView(selection: $selectedTab) {
-         ProfileView(locVM: locVM)
-            .tabItem {
-               Image(systemName: "person.crop.circle.fill")
+    //shows which tab shoud opens by default, uses tags
+    @State private var selectedTab = 2
+    @StateObject private var locVM : LocationViewModel
+    @State private var mapViewRef: MKMapView? = nil
+    @EnvironmentObject private var authVM: AuthViewModel
+    
+    
+    init() {
+        _locVM = StateObject(wrappedValue: LocationViewModel())
+        UITabBar.appearance().backgroundColor = UIColor(Color(.lavenderBlush))
+    }
+    
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            ProfileView(locVM: locVM)
+                .tabItem {
+                    Image(systemName: "person.crop.circle.fill")
+                }
+                .tag(1)
+            
+            MapView(mapViewRef: $mapViewRef)
+                .tabItem {
+                    Image(systemName: "map.fill")
+                }
+                .tag(2)
+            if Auth.auth().currentUser?.isAnonymous == false || authVM.currentUser?.isSignedUp == true {
+                
+                FavouritesView(mapViewRef: $mapViewRef)
+                    .tabItem {
+                        Image(systemName: "heart")
+                    }
+                    .tag(3)
+                PublicFavouritesView(mapViewRef: $mapViewRef)
+                    .tabItem {
+                        Image(systemName: "globe")
+                    }
+                    .tag(4)
             }
-            .tag(1)
-         
-         MapView()
-            .tabItem {
-               Image(systemName: "map.fill")
+        }.accentColor(Color(.oldRose))
+            .onAppear(){
+                if authVM.currentUser?.isSignedUp == true  {
+                    print("Kseniia, currentUser signed up")
+                } else {
+                    print("Kseniia, currentUser not signed up")
+                }
             }
-            .tag(2)
-         
-         FavouritesView()
-            .tabItem {
-               Image(systemName: "heart")
-            }
-            .tag(3)
-      }.accentColor(Color(.oldRose))
-   }
+    }
+        
 }
 #Preview {
-   MainTabView()
+    MainTabView()
 }
