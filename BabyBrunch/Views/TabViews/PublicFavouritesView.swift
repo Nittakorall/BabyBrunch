@@ -9,16 +9,15 @@ import SwiftUI
 import MapKit
 
 struct PublicFavouritesView: View {
-    @State private var searchTerm = ""
     @StateObject var favVM = FavoritesViewModel()
+    @State private var searchTerm = ""
     @State var showEmptySearchAlert = false
     @Binding var mapViewRef: MKMapView?
-
+    
     var body: some View {
         NavigationStack {
             VStack {
                 CustomTitle(title: "Public Lists")
-                
                 HStack {
                     CustomTextField(input: $searchTerm, hint: "Type list name to search", type: .normal)
                         .padding(.leading, 30)
@@ -46,7 +45,6 @@ struct PublicFavouritesView: View {
                         message: Text("Please type a search term."),
                         dismissButton: .cancel(Text("OK")))
                 }
-//                List(testList, id: \.self) { item in
                 List(favVM.publicList, id: \.self) { item in
                     NavigationLink(destination: PublicListDetailView(item: item, mapViewRef: $mapViewRef)) {
                         PublicListItem(item: item)

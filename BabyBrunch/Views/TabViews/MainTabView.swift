@@ -19,7 +19,14 @@ struct MainTabView: View {
     
     init() {
         _locVM = StateObject(wrappedValue: LocationViewModel())
-        UITabBar.appearance().backgroundColor = UIColor(Color(.lavenderBlush))
+        let appearance = UITabBarAppearance() // Create instance of UITabBarAppearance to enable custom modifications.
+        appearance.configureWithOpaqueBackground() // Make background opaque to enable setting own background.
+        appearance.backgroundColor = UIColor(Color(.lavenderBlush)) // Set background to lavenderBlush.
+        appearance.shadowColor = .clear // Remove the gray line above the tabview.
+        
+        // Set custom UITabBarAppearance for both standard and when list is scrolled below tab view.
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
     
     var body: some View {
@@ -62,8 +69,8 @@ struct MainTabView: View {
                 }
             }
     }
-        
 }
+
 #Preview {
     MainTabView()
 }

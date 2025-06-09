@@ -9,9 +9,9 @@ import Foundation
 import Firebase
 
 class FavoritesViewModel: ObservableObject {
-    //List of all pins from users favorites
-    @Published var favoritePins: [Pin] = []
-    @Published var publicList: [PublicListData] = []
+    
+    @Published var favoritePins: [Pin] = [] //List of all pins from users favorites
+    @Published var publicList: [PublicListData] = [] // List of a fetched public list.
     let db = Firestore.firestore()
     
     //Function for fetching all favorites pins from users favorites
@@ -45,9 +45,7 @@ class FavoritesViewModel: ObservableObject {
     func publishFavorites(listName: String, pinIDs: [String]) {
         let charactersToRemove: [Character] = [" ", ".", ",", "'", "´", "\"", "!", "?", "/", "\\", "¨", "^", "<", ">", "=", ":", ";", "|", "@", "#", "$", "%", "&", "(", ")", "[", "]", "{", "}", "*", "+", "~", "`"]
         let normalisedName = listName.lowercased().filter { !charactersToRemove.contains($0) }
-        
         let ref = db.collection("publicLists").document(normalisedName)
-        
         
         ref.getDocument { snapshot, error in
             if let error = error {
@@ -77,9 +75,7 @@ class FavoritesViewModel: ObservableObject {
                     }
                 }
             }
-            
         }
-        
     }
     
     /*
@@ -124,15 +120,22 @@ class FavoritesViewModel: ObservableObject {
         }
     }
     
+    /*
+     * Help function that takes in the parsed data in fetchPublicListFromSearch, which are parsed to model RawPublicListData.
+     * Then collects all async calls and converts the RawPublicListData to PublicListData instead.
+     * In callback, send back the PublicListData to be used to update UI.
+     */
     func convertRawPublicList(rawList: RawPublicListData, completion: @escaping (PublicListData?) -> Void) {
-        let pinIDs = rawList.pins
+        let pinIDs = rawList.pins // rawList.pins is only the pinId for the pins in the public list.
         let ref = db.collection("pins")
         
-        var pins: [Pin] = []
-        let group = DispatchGroup()
+        var pins: [Pin] = [] // List to hold the fetched pins from Firestore.
+        let group = DispatchGroup() // Used to collect all async calls.
         
+        // Iterate over each id in the rawList.pins we sent in.
         for id in pinIDs {
-            group.enter()
+            group.enter() // Start async calls.
+            // Find the pin using the current id in the iteration.
             ref.document(id).getDocument { doc, err in
                 defer { group.leave() } // Regardless of what happens below (success, fail, whatever), group.leave will run.
                 
@@ -143,8 +146,8 @@ class FavoritesViewModel: ObservableObject {
                 
                 if let doc = doc, doc.exists {
                     do {
-                        let pin = try doc.data(as: Pin.self)
-                        pins.append(pin)
+                        let pin = try doc.data(as: Pin.self) // Decode Firestore document as a Pin object.
+                        pins.append(pin) // Add the pin to the list.
                     } catch {
                         print("Could not decode pin: \(error)")
                     }
@@ -156,8 +159,8 @@ class FavoritesViewModel: ObservableObject {
         }
         // When all group calls are made (and finished), run the code on the main thread.
         group.notify(queue: .main) {
-            let publicList = PublicListData(name: rawList.name, pins: pins)
-            completion(publicList)
+            let publicList = PublicListData(name: rawList.name, pins: pins) // Create a list of PublicListData, that has the name of the public list and all the pins in that list.
+            completion(publicList) // Send the list through the callback.
         }
     }
     

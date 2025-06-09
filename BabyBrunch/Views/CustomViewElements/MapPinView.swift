@@ -30,13 +30,12 @@ struct MapPinView: View {
                 .foregroundColor(accentColor)
                 .offset(y:-2)
                 .padding(.bottom,40)
-                
         }
     }
 }
 
 struct MapPinView_Previews: PreviewProvider {
     static var previews: some View {
-            MapPinView()
+        MapPinView()
     }
 }

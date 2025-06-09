@@ -18,7 +18,6 @@ class MapViewModel : ObservableObject {
     private let db = Firestore.firestore()
     private let auth = Auth.auth()
     
-    
     /*
      * Creates query to check if a doc in pin-collection exists with equal name, latitude and longitude.
      * If no, create a new pin.
@@ -145,7 +144,7 @@ class MapViewModel : ObservableObject {
             var existingReviews : [ReviewData] = []
             // Use help function to go through each review dictionary in the array and convert it to a ReviewData object, return to list existingReviews.
             existingReviews = self.parseReviews(from: data)
-
+            
             // Check if a review with the userId exists.
             let alreadyLeftAReview = existingReviews.contains { $0.userId == userId }
             // If it returns true (i.e. userId exists), user reviewExists callback to trigger alert in UI. Exit the function.
@@ -155,7 +154,7 @@ class MapViewModel : ObservableObject {
                 reviewExists(true)
                 return
             }
-
+            
             // from the snapshot document, get the ratings array
             guard var existingRatings = data["ratings"] as? [Int] else {
                 print("Failed reading array")
@@ -184,12 +183,10 @@ class MapViewModel : ObservableObject {
                             print("Fail review.")
                         }
                     }
-                    
                 }
             }
         }
     }
-    
     
     /*
      * Called upon inside addRating function.
@@ -221,7 +218,7 @@ class MapViewModel : ObservableObject {
             }
         }
     }
-
+    
     /*
      * Function to lighten up code in addRating function.
      */
@@ -230,14 +227,14 @@ class MapViewModel : ObservableObject {
             return []
         }
         return reviews.compactMap { dict in
-             guard let text = dict["text"] as? String,
-                   let rating = dict["rating"] as? Int,
-                   let userId = dict["userId"] as? String,
-                   let userName = dict["userName"] as? String else {return nil}
-                    let pinId = dict["pinId"] as? String ?? ""
-                    let pinName = dict["pinName"] as? String ?? ""
+            guard let text = dict["text"] as? String,
+                  let rating = dict["rating"] as? Int,
+                  let userId = dict["userId"] as? String,
+                  let userName = dict["userName"] as? String else {return nil}
+            let pinId = dict["pinId"] as? String ?? ""
+            let pinName = dict["pinName"] as? String ?? ""
             return ReviewData(text: text, rating: rating, userId: userId, userName: userName, pinId: pinId, pinName: pinName)
-         }
+        }
     }
     
     /*
@@ -263,7 +260,7 @@ class MapViewModel : ObservableObject {
                 print("No reviews found or bad format")
                 return
             }
-
+            
             let tempList = reviews.compactMap { dict -> ReviewData? in
                 guard
                     let text = dict["text"] as? String,
@@ -324,15 +321,19 @@ class MapViewModel : ObservableObject {
                 completion([])
                 return
             }
+            // List to hold the user's reviews.
             var userReviews : [ReviewData] = []
-            
+            // Iterate over each document in the snapshot documents.
             for document in documents {
+                // Decode each document as a Pin object and store the pin's review field in reviews list.
                 if let pin = try? document.data(as: Pin.self), let reviews = pin.reviews {
+                    // For each review where the userId field is equal to the current user's id, add that review to the userReviewsList.
                     for review in reviews where review.userId == currentUserId {
                         userReviews.append(review)
                     }
                 }
             }
+            // Send the userReviews list through the callback.
             completion(userReviews)
         }
     }
@@ -386,14 +387,12 @@ class MapViewModel : ObservableObject {
                 completion(false, nil, nil)
                 return
             }
-            
             guard let data = snapshot?.data(),
                   var ratings = data["ratings"] as? [Int] else {
                 print("No data or ratings array")
                 completion(false, nil, nil)
                 return
             }
-            
             // Remove one instance of the rating, doesn't matter which just the first of a matching rating.
             if let index = ratings.firstIndex(of: ratingToRemove) {
                 ratings.remove(at: index)
@@ -402,10 +401,8 @@ class MapViewModel : ObservableObject {
                 completion(false, nil, nil)
                 return
             }
-            
             // Calcualte new average.
             let newAverage = ratings.isEmpty ? 0.0 : Double(ratings.reduce(0, +)) / Double(ratings.count)
-            
             // Update pin document on Firestore.
             ref.updateData(["ratings": ratings]) { error in
                 if let error = error {
@@ -417,7 +414,6 @@ class MapViewModel : ObservableObject {
                     self.fetchPin(withId: pinId) { pin in
                         completion(true, newAverage, pin)
                     }
-                    
                 }
             }
         }
@@ -449,5 +445,5 @@ class MapViewModel : ObservableObject {
             print("No existing annotation found to update.")
         }
     }
-
+    
 }

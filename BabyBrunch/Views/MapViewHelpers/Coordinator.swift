@@ -11,7 +11,7 @@ import MapKit
 import FirebaseAuth
 
 class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
-
+    
     var parent : UIKitMapView
     //Stores which pin was last tapped to detect double taps and open a detail view
     private var lastSelectedAnnotation: MKAnnotation?
@@ -101,8 +101,8 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
         
         let coordinate = mapView.convert(location, toCoordinateFrom: mapView) // mapView.convert(...): Översätter CGPoint-positionen (i pixlar) till en CLLocationCoordinate2D, alltså en latitud och longitud. toCoordinateFrom: mapView: Säger att konverteringen ska utgå från det koordinatsystemet som kartan har. ✅ Resultat: Du har nu en CLLocationCoordinate2D (ex: lat: 59.86, long: 17.64) – alltså den exakta geografiska platsen där användaren tryckte.
         let tappedCoordinate = coordinate
-      
-       //Stops search and prevents adding a new pin if user tapped on an existing pin
+        
+        //Stops search and prevents adding a new pin if user tapped on an existing pin
         if let tappedView = mapView.hitTest(location, with: nil),
            tappedView is MKAnnotationView {
             return
@@ -115,7 +115,7 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
             }
             return
         }
-       
+        
         let span = MKCoordinateSpan(latitudeDelta: 0.001, longitudeDelta: 0.001)
         let smallRegion = MKCoordinateRegion(center: tappedCoordinate, span: span)
         /*
@@ -144,7 +144,7 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
                 print("Sökfel: \(error.localizedDescription)")
                 return
             }
-                        
+            
             /*
              ✅ Finds the MKMapItem in items that is closest to where the user tapped on the map.
              ✅ Creates an annotation for that place.
@@ -154,25 +154,25 @@ class Coordinator: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
                 $0.placemark.coordinate.distance(to: coordinate) <
                     $1.placemark.coordinate.distance(to: coordinate)
             }) {
-              
-              //Check for if a pin with the same name within the given distance already exists. currently set at 30 meters around.
-             //If it already exists return out of the tapGesture again.
-             let pinAlreadyExists = mapView.annotations.contains(where: { annotation in
-                 guard let title = annotation.title ?? nil else { return false }
-                 
-                 let sameName = title == nearest.name
-                 let closeDistance = annotation.coordinate.distance(to: nearest.placemark.coordinate) < 30
-                 
-                 return sameName && closeDistance
-             })
-             
-             if pinAlreadyExists {
-                 print("Pin already exists")
-                 return
-             }
+                
+                //Check for if a pin with the same name within the given distance already exists. currently set at 30 meters around.
+                //If it already exists return out of the tapGesture again.
+                let pinAlreadyExists = mapView.annotations.contains(where: { annotation in
+                    guard let title = annotation.title ?? nil else { return false }
+                    
+                    let sameName = title == nearest.name
+                    let closeDistance = annotation.coordinate.distance(to: nearest.placemark.coordinate) < 30
+                    
+                    return sameName && closeDistance
+                })
+                
+                if pinAlreadyExists {
+                    print("Pin already exists")
+                    return
+                }
                 
                 DispatchQueue.main.async { // Du gör detta för att uppdatera UI:t på huvudtråden. Exempelvis: lägga till en pin på kartan.
-             //       self.vm.mapShouldBeUpdated = false
+                    //       self.vm.mapShouldBeUpdated = false
                     self.selectedVenue = nearest
                     self.alertTitle = nearest.placemark.name ?? "Unknown"
                     self.alertMessage = "Do you want to add a pin for \(nearest.placemark.name ?? "Unknown")?"
@@ -215,7 +215,7 @@ extension CLLocationCoordinate2D {
         // CLLocationCoordinate2D does not natively support distance calculation, but CLLocation does.
         let a = CLLocation(latitude: latitude, longitude: longitude) // 'self' (the coordinate this method is called on) becomes point A.
         let b = CLLocation(latitude: other.latitude, longitude: other.longitude) // 'other' becomes point B.
-
+        
         // Use CLLocation's method .distance(from:) to calculate the distance in meters between A and B.
         return a.distance(from: b)
     }

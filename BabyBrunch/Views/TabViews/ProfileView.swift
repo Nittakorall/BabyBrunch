@@ -21,7 +21,6 @@ struct ProfileView: View {
                 .ignoresSafeArea()
             VStack{
                 CustomTitle(title: "My Profile")
-                
                 Spacer()
                 Toggle("Dark Mode", isOn: $isDarkMode)
                     .foregroundColor(.colorText)
@@ -35,8 +34,8 @@ struct ProfileView: View {
                     .alert("Enable Location", isPresented: $showAlert){
                         Button("OK"){
                             if let url = URL(string: UIApplication.openSettingsURLString) {
-                                                UIApplication.shared.open(url)
-                                            }
+                                UIApplication.shared.open(url)
+                            }
                             print("Enabled")
                         }
                         Button("Cancel", role: .cancel){}
@@ -56,7 +55,7 @@ struct ProfileView: View {
                                  width: 200) {
                         showDeletedAccountSheet = true
                     }
-                    .padding(.bottom, 50)
+                                 .padding(.bottom, 50)
                 }
                 
             }
