@@ -23,6 +23,7 @@ struct BabyBrunchApp: App {
     @AppStorage("isDarkMode") private var isDarkMode = false
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     @State private var isActive = false
+    @StateObject var soundVM = SoundViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -30,15 +31,19 @@ struct BabyBrunchApp: App {
                 MainTabView()
                     .environmentObject(authViewModel)
                     .preferredColorScheme(isDarkMode ? .dark : .light)
+                    .environmentObject(soundVM)
             }
             else{
-                if isActive {
+                if authViewModel.isActive {
                     LoginView()
+                        .environmentObject(soundVM)
                         .environmentObject(authViewModel)
                         .preferredColorScheme(isDarkMode ? .dark : .light)
                 } else {
                     //I don't get why it needs vm here but not in AddReviewView, Guess I should check that later
-                    SplashScreen(isActive: $isActive, soundVM: SoundViewModel())
+                    SplashScreen(isActive: $authViewModel.isActive)
+                        .environmentObject(soundVM)
+                        .environmentObject(authViewModel)
                 }
             
             }

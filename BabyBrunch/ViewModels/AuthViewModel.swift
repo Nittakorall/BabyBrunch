@@ -17,6 +17,9 @@ public class AuthViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var isLoggedIn = false
     @Published var authError: AuthErrorHandler? = nil // not in use atm but leaving just in case
+//part of splash screen
+    @Published var isActive = false
+    
     
     private let db = Firestore.firestore()
     private let auth = Auth.auth()
@@ -101,6 +104,7 @@ public class AuthViewModel: ObservableObject {
             }
            // self.isSignedUp = true //checking, Kseniia
             self.isLoggedIn = true
+            self.isActive = true
             UserDefaults.standard.set(user.uid, forKey: "currentUserID")
             self.fetchUserInfo(uid: user.uid)
             completion(true)
@@ -145,6 +149,9 @@ public class AuthViewModel: ObservableObject {
             try auth.signOut()
             self.isLoggedIn = false
             self.currentUser = nil
+            
+            //part of splash screen
+            self.isActive = true
             self.isSignedUp = false // resets the flag so that the user can log in as guest after login out
             authError = nil        // kill any pending alert (to prevent "must sign in..." alert after signing out as guest
             UserDefaults.standard.set(false, forKey: "isLoggedIn")
